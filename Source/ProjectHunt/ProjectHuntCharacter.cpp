@@ -7,11 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "MotionControllerComponent.h"
-#include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
-
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,6 +29,12 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
+	//Create a StatsComponent
+	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
+
+	//Create a AudioComponent
+	CharacterAudioComponent = CreateDefaultSubobject<UAudioComponent>("CharacterAudioComponent");
+
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);
@@ -41,23 +44,6 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-	//// Create a gun mesh component
-	//FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
-	//FP_Gun->SetOnlyOwnerSee(true);			// only the owning player will see this mesh
-	//FP_Gun->bCastDynamicShadow = false;
-	//FP_Gun->CastShadow = false;
-	//// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
-	//FP_Gun->SetupAttachment(RootComponent);
-
-	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
-	FP_MuzzleLocation->SetupAttachment(FP_Gun);
-	FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
-
-	// Default offset from the character location for projectiles to spawn
-	GunOffset = FVector(100.0f, 0.0f, 10.0f);
-
-	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P, FP_Gun, and VR_Gun 
-	// are set in the derived blueprint asset named MyCharacter to avoid direct content references in C++.
 
 
 }
@@ -67,8 +53,6 @@ void AProjectHuntCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	////Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
-	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
 
 }
@@ -238,10 +222,34 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (DamageAmount > 0.0f)
 	{
-		CurrentHealth -= DamageAmount;
-		if (CurrentHealth <= 0.0f)
+		if (this->CanBeDamaged())
 		{
-			SetLifeSpan(0.001f);
+			StatsComponent->StatsData.CurrentHealth -= DamageAmount;
+		}
+		
+		if (DamageSounds.Num() != 0)
+		{
+			int RandomDamageSoundIndex = UKismetMathLibrary::RandomIntegerInRange(0, DamageSounds.Num());
+			if (DamageSounds.IsValidIndex(RandomDamageSoundIndex))
+			{
+				CharacterAudioComponent->SetSound(DamageSounds[RandomDamageSoundIndex]);
+				CharacterAudioComponent->Play();
+			}
+
+		}
+		if (StatsComponent->StatsData.CurrentHealth <= 0.0f)
+		{
+			if (DeathSounds.Num() != 0)
+			{
+				int RandomDeathSoundIndex = UKismetMathLibrary::RandomIntegerInRange(0, DeathSounds.Num());
+				if (DeathSounds.IsValidIndex(RandomDeathSoundIndex))
+				{
+					CharacterAudioComponent->SetSound(DeathSounds[RandomDeathSoundIndex]);
+					CharacterAudioComponent->Play();
+				}
+
+			}
+			SetLifeSpan(3.0f);
 		}
 	}
 

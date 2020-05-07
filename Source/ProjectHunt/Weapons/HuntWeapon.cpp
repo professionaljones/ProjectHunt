@@ -25,7 +25,8 @@ void AHuntWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	WeaponStatsData.TotalDamage = WeaponStatsData.BaseDamage * (WeaponStatsData.DamageMultiplierAmount + WeaponStatsData.DamageModifierAmount);
+	CalculateDamage();
+	ActorsToIgnore.Add(WeaponOwner);
 	
 }
 
@@ -45,6 +46,7 @@ void AHuntWeapon::FireWeapon()
 
 	if (WeaponOwner == UGameplayStatics::GetPlayerCharacter(GetWorld(),0))
 	{
+		
 		StartLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0)->GetRootComponent()->GetComponentLocation();
 		EndLocation = StartLocation + (UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetForwardVector() * WeaponStatsData.WeaponDistanceRange);
 		UE_LOG(ProjectHunt, Log, TEXT("Player shooting"));
@@ -90,11 +92,22 @@ void AHuntWeapon::FireWeapon()
 				UGameplayStatics::ApplyPointDamage(HitActor, WeaponStatsData.TotalDamage, SingleHit.ImpactPoint, SingleHit, UGameplayStatics::GetPlayerController(GetWorld(), 0), this, nullptr);
 
 				//this->Execute_OnHitTarget(this);
+				//this->Execute_OnWeaponActivate(this, GetWeaponAmmoType());
 			
 			}
 	
 		}
 	}
+
+void AHuntWeapon::CalculateDamage()
+{
+	WeaponStatsData.TotalDamage = WeaponStatsData.BaseDamage * (WeaponStatsData.DamageMultiplierAmount + WeaponStatsData.DamageModifierAmount);
+}
+
+EAmmoType AHuntWeapon::GetWeaponAmmoType()
+{
+	return WeaponStatsData.WeaponAmmoType;
+}
 
 void AHuntWeapon::StartFire()
 {

@@ -5,28 +5,21 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "ProjectHunt/Weapons/HuntWeapon.h"
+#include "ProjectHunt/Character/HuntCharacterInterface.h"
+#include "Runtime/Core/Public/Serialization/Archive.h"
+#include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "ProjectHuntCharacter.generated.h"
 
 class UInputComponent;
 
-UCLASS(config=Game)
-class AProjectHuntCharacter : public ACharacter
+
+
+//struct FCharacterSaveArchive : public FObjectAndNameAsStringProxyArchive { FCharacterSaveArchive(FArchive& InInnerArchive, bool bInLoadIfFindFails) : FObjectAndNameAsStringProxyArchive(InInnerArchive, bInLoadIfFindFails) { ArIsSaveGame = true;		ArNoDelta = true; } };
+
+UCLASS(config = Game)
+class AProjectHuntCharacter : public ACharacter,public IHuntCharacterInterface
 {
 	GENERATED_BODY()
-
-	
-	/** Gun mesh: 1st person view (seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USkeletalMeshComponent* FP_Gun;
-
-	/** Location on gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USceneComponent* FP_MuzzleLocation;
-
-	
-
-	
-	
 
 public:
 	AProjectHuntCharacter();
@@ -39,12 +32,19 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FirstPersonCameraComponent;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
-	//TSoftObjectPtr<AHuntWeapon> WeaponToLoad;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
-		class AHuntWeapon* CurrentWeapon; // Set the loaded asset returned by MyAsset to this.
+		class AHuntWeapon* CurrentWeapon;
 
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
+		TMap<int, class AHuntWeapon*> WeaponInventory;*/
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats)
+		class UHuntStatsComponent* StatsComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class UAudioComponent* CharacterAudioComponent;
 
 
 protected:
@@ -52,41 +52,27 @@ protected:
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseLookUpRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseLookUpRate;
 
-	/** Gun muzzle's offset from the characters location */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	FVector GunOffset;
 
-	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category=Projectile)
-	TSubclassOf<class AProjectHuntProjectile> ProjectileClass;
 
-	/** Sound to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	class USoundBase* FireSound;
-
-	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UAnimMontage* FireAnimation;
+		TArray<USoundBase*> DamageSounds;
 
-	/** Whether to use motion controller location for aiming. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	uint32 bUsingMotionControllers : 1;
+		TArray<USoundBase*> DeathSounds;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = Stats)
-	float CurrentHealth = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Stats)
-		float MaxHealth = 100.0f;
+
+
 
 protected:
-	
+
 	/** Fires a projectile. */
 	void OnFire();
 
@@ -114,7 +100,7 @@ protected:
 
 	struct TouchData
 	{
-		TouchData() { bIsPressed = false;Location=FVector::ZeroVector;}
+		TouchData() { bIsPressed = false; Location = FVector::ZeroVector; }
 		bool bIsPressed;
 		ETouchIndex::Type FingerIndex;
 		FVector Location;
@@ -124,14 +110,14 @@ protected:
 	void EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
 	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
 	TouchData	TouchItem;
-	
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
 
-	/* 
-	 * Configures input for touchscreen devices if there is a valid touch interface for doing so 
+	/*
+	 * Configures input for touchscreen devices if there is a valid touch interface for doing so
 	 *
 	 * @param	InputComponent	The input component pointer to bind controls to
 	 * @returns true if touch controls were enabled.
@@ -154,7 +140,6 @@ public:
 	 * @return					The amount of damage actually applied.
 	 */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
 
 
 };

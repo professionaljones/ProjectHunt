@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SkeletalMeshComponent.h"
-
 #include "ProjectHunt/ProjectHunt.h"
 #include "Components/AudioComponent.h"
 #include "HuntWeapon.generated.h"
@@ -32,7 +31,6 @@ enum EAmmoType
 	AT_Fire UMETA(DisplayName = "Incendiary"),
 	AT_Ice UMETA(DisplayName = "Ice"),
 	AT_Shock UMETA(DisplayName = "Shock"),
-	AT_Explosive UMETA(DisplayName = "Explosive"),
 	AT_Aragon UMETA(DisplayName = "Aragon")
 };
 
@@ -63,18 +61,18 @@ public:
 	//	TSubclassOf<UAsylumDamageType> C_WeaponDamageType;
 
 	//What level is this weapon at?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Stats|Level")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
 		int32 CurrentWeaponLevel = 1;
 
 
 	//What is the maximum level of this weapon?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Stats|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
 		int32 MaxWeaponLevel = 10;
 
 	//How fast does this weapon fire - if it is automatic
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 		float FireRate;
-	
+
 	//How fast does this weapon fire - if it is automatic
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 		float ChargeRate;
@@ -134,7 +132,7 @@ public:
 	////Start Charge
 
 	//How much can this weapon charge up to
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
 		float WeaponChargeLimit;
 
 
@@ -165,7 +163,7 @@ public:
 	//How much additional range gained at this level
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Damage")
 		float WeaponRangeUpgradeAmount;
-	
+
 
 	//How much faster can charge weapons charge?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Charge")
@@ -184,10 +182,14 @@ UCLASS()
 class PROJECTHUNT_API AHuntWeapon : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AHuntWeapon();
+
+	//This weapon's Ammo Type
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
+		TEnumAsByte<EAmmoType> OriginalAmmoType;
 
 
 	//Empty to hold weapon charge
@@ -289,14 +291,20 @@ protected:
 	class AProjectHuntCharacter* WeaponOwner;
 
 
-public:	
+public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	//Called when the player/AI want to fire the weapon
 	UFUNCTION()
-	void FireWeapon();
+		void FireWeapon();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void CalculateDamage();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		EAmmoType GetWeaponAmmoType();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void StartFire();
@@ -315,7 +323,7 @@ public:
 
 	void AttachToOwner();
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
-	void SetWeaponOwner(AProjectHuntCharacter* NewOwner);
+		void SetWeaponOwner(AProjectHuntCharacter* NewOwner);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

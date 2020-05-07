@@ -14,4 +14,11 @@ class PROJECTHUNT_API AHuntPlayerCharacter : public AProjectHuntCharacter
 {
 	GENERATED_BODY()
 	
+public:
+	AHuntPlayerCharacter();
+
+public:
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,SaveGame, Category = "Player|Inventory")
+		TMap<int, class AHuntWeapon*> WeaponInventory;
+
 };

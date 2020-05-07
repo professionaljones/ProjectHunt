@@ -3,3 +3,7 @@
 
 #include "HuntPistol.h"
 
+AHuntPistol::AHuntPistol()
+{
+	WeaponAttachPoint = "PistolSocket";
+}

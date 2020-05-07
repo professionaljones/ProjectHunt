@@ -3,3 +3,7 @@
 
 #include "HuntRifle.h"
 
+AHuntRifle::AHuntRifle()
+{
+	WeaponAttachPoint = "GripPoint";
+}

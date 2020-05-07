@@ -13,5 +13,7 @@ UCLASS()
 class PROJECTHUNT_API AHuntRifle : public AHuntWeapon
 {
 	GENERATED_BODY()
+public:
+	AHuntRifle();
 	
 };
