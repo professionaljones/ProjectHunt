@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "ProjectHunt/ProjectHunt.h"
+#include "Particles/ParticleSystem.h"
 #include "Components/AudioComponent.h"
 #include "HuntWeapon.generated.h"
 
@@ -191,6 +192,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
 		TEnumAsByte<EAmmoType> OriginalAmmoType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+		bool bCanWeaponCharge;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+		bool bIsCharging;
+
+	//Is this weapon automatic?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+		bool bIsAutomatic;
 
 	//Empty to hold weapon charge
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Charge")
@@ -204,19 +214,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
 		FName WeaponAttachPoint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
-		bool bCanWeaponCharge;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
-		bool bIsCharging;
-
-	//Is this weapon automatic?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
-		bool bIsAutomatic;
-
 	//Mainly for VFX - can also be used to spawn projectiles
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
-		FName ProjectileSocket;
+		FName WeaponMuzzlePoint;
+
+
+
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		UDataTable* WeaponUpgradeDataTable;
@@ -234,6 +238,12 @@ public:
 		TMap<int32, FName> WeaponLevelMap;
 
 	//Start Feedback
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Debug")
+		bool bEnableDebugMode = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Visual")
+		class UParticleSystem* WeaponFireVFX;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
 		class USoundBase* WeaponFireSound;

@@ -68,18 +68,16 @@ void AHuntWeapon::FireWeapon()
 			WeaponAudioComponent->SetSound(WeaponFireSound);
 			WeaponAudioComponent->Play();
 		}
+		if (WeaponFireVFX != NULL)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
+		}
 
-	
-
-	//	AAsylumPlayerCharacter* PChar = Cast<AAsylumPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		//The StartLocation of the raycast
-		//StartLocation = PChar->FollowCamera->GetComponentLocation();
-
-		//The EndLocation of the raycast
-		//EndLocation = StartLocation + (PChar->FollowCamera->GetForwardVector() * WeaponRange);
-		//UE_LOG(LogTemp, Warning, TEXT("Using Third Person Camera"));
-
-		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, true, 5.0f, 5, 5.0f);
+		if (bEnableDebugMode)
+		{
+			DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, true, 5.0f, 5, 5.0f);
+		}
+		
 	//Single line trace
 		if (GetWorld()->LineTraceSingleByObjectType(SingleHit, StartLocation, EndLocation, ObjectsToTarget, CollisionParameters))
 		{
