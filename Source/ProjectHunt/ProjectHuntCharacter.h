@@ -6,15 +6,27 @@
 #include "GameFramework/Character.h"
 #include "ProjectHunt/Weapons/HuntWeapon.h"
 #include "ProjectHunt/Character/HuntCharacterInterface.h"
-#include "Runtime/Core/Public/Serialization/Archive.h"
 #include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "ProjectHuntCharacter.generated.h"
 
 class UInputComponent;
 
 
+//What is the player's current style rank
+UENUM(BlueprintType)
+enum ECharacterStyleRank
+{
+	SR_Dull,
+	SR_Crazy,
+	SR_Blast,
+	SR_Alright,
+	SR_Showtime,
+	SR_Stylish,
+	SR_SuperStylish
 
-//struct FCharacterSaveArchive : public FObjectAndNameAsStringProxyArchive { FCharacterSaveArchive(FArchive& InInnerArchive, bool bInLoadIfFindFails) : FObjectAndNameAsStringProxyArchive(InInnerArchive, bInLoadIfFindFails) { ArIsSaveGame = true;		ArNoDelta = true; } };
+};
+
+
 
 UCLASS(config = Game)
 class AProjectHuntCharacter : public ACharacter,public IHuntCharacterInterface
@@ -67,9 +79,65 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		TArray<USoundBase*> DeathSounds;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient, Category = "Player|Style")
+	TEnumAsByte<ECharacterStyleRank> PlayerStyle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Damage")
+		float DamageTakenModifier = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Player|Style")
+		float StylePercentage = 0.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Player|Style")
+		float DamageStyleAmount = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Player|Style")
+		float CurrentStyleAmount = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float MaxStyleAmount = 250.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float StyleAmountMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float D_StyleLimit = 0.25f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float C_StyleLimit = 0.40f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float B_StyleLimit = 0.60f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float A_StyleLimit = 0.80f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float S_StyleLimit = 1.20f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float SS_StyleLimit = 2.20f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
+		float SSS_StyleLimit = 3.00f;
+
+	//This function can be used to increase or decrease the player's style amount
+	UFUNCTION(BlueprintCallable,Category = "Player|Style")
+		void ModifyStyle(float StyleModAmount);
+
+	//This function can be used to decrease the player's style amount
+	UFUNCTION(BlueprintCallable, Category = "Player|Style")
+		void DecreaseStyle();
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Style")
+		void UpdateStylePercentage();
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Style")
+		void StartStyleModTimer();
+
+	
+
+	FTimerHandle StyleDecreaseTimer;
 
 protected:
 

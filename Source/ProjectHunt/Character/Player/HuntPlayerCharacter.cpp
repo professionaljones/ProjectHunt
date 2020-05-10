@@ -9,5 +9,6 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	StatsComponent->StatsData.MaxAragon = 200;
 	StatsComponent->StatsData.CurrentHealth = StatsComponent->StatsData.MaxHealth;
 	StatsComponent->StatsData.CurrentAragon = StatsComponent->StatsData.MaxAragon;
+	MaxStyleAmount = D_StyleLimit;
 }
 

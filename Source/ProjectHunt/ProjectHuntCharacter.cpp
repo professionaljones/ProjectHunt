@@ -1,8 +1,6 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "ProjectHuntCharacter.h"
-#include "ProjectHuntProjectile.h"
-#include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -52,8 +50,9 @@ void AProjectHuntCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
-
+	StartStyleModTimer();
+	MaxStyleAmount = SS_StyleLimit;
+	
 
 }
 
@@ -72,6 +71,7 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AProjectHuntCharacter::OnFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AProjectHuntCharacter::OnFireEnd);
+	
 
 
 	// Enable touchscreen input
@@ -89,6 +89,85 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("TurnRate", this, &AProjectHuntCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectHuntCharacter::LookUpAtRate);
+}
+
+void AProjectHuntCharacter::ModifyStyle(float StyleModAmount)
+{
+	float Mod = 1.0f * StyleAmountMultiplier;
+	CurrentStyleAmount += Mod;
+	if (CurrentStyleAmount > 0.0f)
+	{
+		StartStyleModTimer();
+		//CurrentStyleAmount -= 1.0f;
+	}
+
+	UpdateStylePercentage();
+
+}
+
+void AProjectHuntCharacter::DecreaseStyle()
+{
+	CurrentStyleAmount -= DamageStyleAmount * StyleAmountMultiplier;
+	UpdateStylePercentage();
+}
+
+void AProjectHuntCharacter::UpdateStylePercentage()
+{
+	StylePercentage = CurrentStyleAmount / MaxStyleAmount;
+	if (CurrentStyleAmount)
+	{
+		if (StylePercentage <= D_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_Dull;
+			//MaxStyleAmount = C_StyleLimit;
+		}
+		if (StylePercentage > C_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_Crazy;
+			//MaxStyleAmount = B_StyleLimit;
+		}
+		if (StylePercentage > B_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_Blast;
+			//MaxStyleAmount = A_StyleLimit;
+		}
+
+		if (StylePercentage > A_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_Alright;
+			//MaxStyleAmount = S_StyleLimit;
+		}
+		if (StylePercentage > S_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_Showtime;
+		}
+		if (StylePercentage > SS_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_Stylish;
+		}
+		if (StylePercentage > SSS_StyleLimit)
+		{
+			PlayerStyle = ECharacterStyleRank::SR_SuperStylish;
+		}
+	}
+	
+}
+
+void AProjectHuntCharacter::StartStyleModTimer()
+{
+	if (CurrentStyleAmount >= 0.0f)
+	{
+		if (!GetWorldTimerManager().IsTimerActive(StyleDecreaseTimer))
+		{
+			GetWorldTimerManager().SetTimer(StyleDecreaseTimer, this, &AProjectHuntCharacter::DecreaseStyle, 1.0f, true);
+		}
+		
+	}
+	if (CurrentStyleAmount <= 0.0f)
+	{
+		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
+	}
+	
 }
 
 void AProjectHuntCharacter::OnFire()
@@ -224,7 +303,8 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 	{
 		if (this->CanBeDamaged())
 		{
-			StatsComponent->StatsData.CurrentHealth -= DamageAmount;
+			StatsComponent->StatsData.CurrentHealth -= (DamageAmount * DamageTakenModifier);
+			DecreaseStyle();
 		}
 		
 		if (DamageSounds.Num() != 0)

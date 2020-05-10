@@ -23,6 +23,10 @@ class PROJECTHUNT_API IHuntCharacterInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
+	//Use to call BP Event Dispatcher for updating UI
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent, Category = "Event Response|Character")
 	void UpdateStatsUI();
+
+	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent, Category = "Event Response|Player")
+	void UpdateStyleGauge(float StyleModAmount);
 };

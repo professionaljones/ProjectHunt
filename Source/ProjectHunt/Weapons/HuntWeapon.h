@@ -7,6 +7,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "ProjectHunt/ProjectHunt.h"
 #include "Particles/ParticleSystem.h"
+#include "HuntWeaponInterface.h"
+#include "HuntWeaponProjectile.h"
 #include "Components/AudioComponent.h"
 #include "HuntWeapon.generated.h"
 
@@ -35,6 +37,18 @@ enum EAmmoType
 	AT_Aragon UMETA(DisplayName = "Aragon")
 };
 
+//What form of projectile should spawn when we fire
+UENUM(BlueprintType)
+enum EProjectileState
+{
+	Projectile_None,
+	Projectile_Normal UMETA(DisplayName = "Standard Projectile"),
+	Projectile_Charge UMETA(DisplayName = "Charged Projectile"),
+	Projectile_Alt UMETA(DisplayName = "Alternate Projectile"),
+	Projectile_ChargeAlt UMETA(DisplayName = "Charged Alternate"),
+	Projectile_Laser
+};
+
 //This is the data for this weapon (base damage, ammo, etc)
 USTRUCT(BlueprintType)
 struct FWeaponStatsData : public FTableRowBase
@@ -44,22 +58,11 @@ public:
 	//We use this to determine the slot the weapon should fill in the inventory
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
 		TEnumAsByte<EWeaponType> WeaponType;
-
-	////What is this weapon's slot type?
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
-	//	TEnumAsByte<EWeaponSlotType> WeaponSlotType;
-
 	//This weapon's Ammo Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
 		TEnumAsByte<EAmmoType> WeaponAmmoType;
 
-	////Damage Type Object Reference
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage Type")
-	//	UAsylumDamageType* OR_WeaponDamageType = NULL;
 
-	////Our Damage Type - Class Reference
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage Type")
-	//	TSubclassOf<UAsylumDamageType> C_WeaponDamageType;
 
 	//What level is this weapon at?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
@@ -125,9 +128,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Range")
 		float WeaponDistanceRange = 0.0f;
 
-
 	////End Damage
-
 
 
 	////Start Charge
@@ -135,9 +136,6 @@ public:
 	//How much can this weapon charge up to
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
 		float WeaponChargeLimit;
-
-
-
 
 };
 /**
@@ -180,7 +178,7 @@ public:
 };
 
 UCLASS()
-class PROJECTHUNT_API AHuntWeapon : public AActor
+class PROJECTHUNT_API AHuntWeapon : public AActor, public IHuntWeaponInterface
 {
 	GENERATED_BODY()
 
@@ -188,9 +186,18 @@ public:
 	// Sets default values for this actor's properties
 	AHuntWeapon();
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+		class AHuntWeaponProjectile* ProjectileToSpawn = NULL;
+
 	//This weapon's Ammo Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
 		TEnumAsByte<EAmmoType> OriginalAmmoType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		TEnumAsByte<EProjectileState> WeaponProjectileState;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo|Projectiles")
+		TMap<TEnumAsByte<EProjectileState>, TSubclassOf<AHuntWeaponProjectile>> WeaponProjectiles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
 		bool bCanWeaponCharge;
@@ -217,9 +224,6 @@ public:
 	//Mainly for VFX - can also be used to spawn projectiles
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
 		FName WeaponMuzzlePoint;
-
-
-
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
@@ -249,22 +253,15 @@ public:
 		class USoundBase* WeaponFireSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
-		class USoundBase* OriginalWeaponFireSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
-		class USoundBase* SacrificeFireSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
 		class USoundBase* WeaponChargeFireSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
 		class USoundBase* WeaponAltFireSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
-		class USoundBase* WeaponReloadSound;
+		class USoundBase* WeaponEquipSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
-		class USoundBase* WeaponDryFireSound;
+	
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Targets")
@@ -298,7 +295,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	class AProjectHuntCharacter* WeaponOwner;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon|Data")
+		class AProjectHuntCharacter* WeaponOwner;
 
 
 public:
@@ -310,11 +308,18 @@ public:
 	UFUNCTION()
 		void FireWeapon();
 
+	//Called when the player/AI want to fire the weapon
+	UFUNCTION()
+		void FireCharge();
+
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void CalculateDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		EAmmoType GetWeaponAmmoType();
+
+	UFUNCTION()
+		void SpawnWeaponProjectile();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void StartFire();
