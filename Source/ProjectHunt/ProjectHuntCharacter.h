@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ProjectHunt/Weapons/HuntWeapon.h"
 #include "ProjectHunt/Character/HuntCharacterInterface.h"
-#include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "ProjectHuntCharacter.generated.h"
 
 class UInputComponent;
+class AHuntWeapon;
+class UHuntStatsComponent;
 
 
 //What is the player's current style rank

@@ -3,6 +3,8 @@
 #include "ProjectHuntCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "ProjectHunt/Weapons/HuntWeapon.h"
+#include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -119,23 +121,23 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 		if (StylePercentage <= D_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Dull;
-			//MaxStyleAmount = C_StyleLimit;
+		
 		}
 		if (StylePercentage > C_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Crazy;
-			//MaxStyleAmount = B_StyleLimit;
+			
 		}
 		if (StylePercentage > B_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Blast;
-			//MaxStyleAmount = A_StyleLimit;
+			
 		}
 
 		if (StylePercentage > A_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Alright;
-			//MaxStyleAmount = S_StyleLimit;
+			
 		}
 		if (StylePercentage > S_StyleLimit)
 		{
