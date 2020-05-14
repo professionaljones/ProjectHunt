@@ -34,25 +34,61 @@ void UHuntStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 float UHuntStatsComponent::GetPlayerCurrentHealth()
 {
-	UI_CurrentHealth = StatsData.CurrentHealth;
+	UI_CurrentHealth = CurrentHealth;
 	return UI_CurrentHealth;
 }
 
 float UHuntStatsComponent::GetPlayerMaxHealth()
 {
-	UI_MaxHealth = StatsData.MaxHealth;
+	UI_MaxHealth = MaxHealth;
 	return UI_MaxHealth;
 }
 
 float UHuntStatsComponent::GetPlayerCurrentAragon()
 {
-	UI_CurrentAragon = StatsData.CurrentAragon;
+	UI_CurrentAragon = CurrentAragon;
 	return UI_CurrentAragon;
 }
 
 float UHuntStatsComponent::GetPlayerMaxAragon()
 {
-	UI_MaxAragon = StatsData.MaxAragon;
+	UI_MaxAragon = MaxAragon;
 	return UI_MaxAragon;
+}
+
+void UHuntStatsComponent::UpgradeHealthStats(float IncreaseAmount)
+{
+	MaxHealth = MaxHealth + IncreaseAmount;
+	CurrentHealth = MaxHealth;
+}
+
+void UHuntStatsComponent::UpgradeAragonStats(float IncreaseAmount)
+{
+	MaxAragon = MaxAragon + IncreaseAmount;
+	CurrentAragon = MaxAragon;
+}
+
+void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
+{
+	CurrentAragon -= ConsumeAmount;
+	if (CurrentAragon <= MaxAragon)
+	{
+		bIsRecharging = true;
+	}
+	if (CurrentAragon <= 0)
+	{
+		bIsAragonEmpty = true;
+		
+	}
+}
+
+void UHuntStatsComponent::RechargeAragon()
+{
+	CurrentAragon += AragonRechargeAmount;
+	if (CurrentAragon >= MaxAragon)
+	{
+		CurrentAragon = MaxAragon;
+		bIsRecharging = false;
+	}
 }
 

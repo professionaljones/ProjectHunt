@@ -42,11 +42,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Player|Inventory")
 		TMap<int, class AHuntWeapon*> SavedPlayerInventory;
 
-	UPROPERTY(VisibleAnywhere, Category = "Player|Stats")
-		struct FCharacterStats SavedPlayerStats;
-
-	UFUNCTION(BlueprintCallable, Category = "Save/Load")
-		void SetPlayerData(FCharacterStats PlayerStats,TMap<int,class AHuntWeapon*> PlayerInventory);
+	
 
 
 	float GetPlayerCurrentHealth();

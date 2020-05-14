@@ -172,6 +172,16 @@ void AProjectHuntCharacter::StartStyleModTimer()
 	
 }
 
+float AProjectHuntCharacter::GetStylePercentage()
+{
+	return StylePercentage;
+}
+
+float AProjectHuntCharacter::GetCurrentStyleAmount()
+{
+	return CurrentStyleAmount;
+}
+
 void AProjectHuntCharacter::OnFire()
 {
 	if (CurrentWeapon)
@@ -305,7 +315,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 	{
 		if (this->CanBeDamaged())
 		{
-			StatsComponent->StatsData.CurrentHealth -= (DamageAmount * DamageTakenModifier);
+			StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
 			DecreaseStyle();
 		}
 		
@@ -319,7 +329,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 			}
 
 		}
-		if (StatsComponent->StatsData.CurrentHealth <= 0.0f)
+		if (StatsComponent->CurrentHealth <= 0.0f)
 		{
 			if (DeathSounds.Num() != 0)
 			{

@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Weapons/HuntWeapon.h"
+#include "Character/HuntStatsComponent.h"
 #include "ProjectHunt/Character/HuntCharacterInterface.h"
 #include "ProjectHuntCharacter.generated.h"
 
 class UInputComponent;
-class AHuntWeapon;
-class UHuntStatsComponent;
+//class UHuntStatsComponent;
 
 
 //What is the player's current style rank
@@ -134,6 +135,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Style")
 		void StartStyleModTimer();
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Player|Style")
+	float GetStylePercentage();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Style")
+		float GetCurrentStyleAmount();
 
 	
 

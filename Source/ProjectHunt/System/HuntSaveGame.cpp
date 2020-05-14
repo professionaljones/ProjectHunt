@@ -11,11 +11,6 @@ UHuntSaveGame::UHuntSaveGame()
 
 
 
-void UHuntSaveGame::SetPlayerData(FCharacterStats PlayerStats, TMap<int, class AHuntWeapon*> PlayerInventory)
-{
-	SavedPlayerStats = PlayerStats;
-	SavedPlayerInventory = PlayerInventory;
-}
 
 float UHuntSaveGame::GetPlayerCurrentHealth()
 {
