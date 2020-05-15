@@ -33,40 +33,40 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//How much health does the player currently have
+	//How much health does the owner currently have
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Health")
 		float CurrentHealth = 0.0f;
 
-	//How much health does the player start with
+	//How much health does the owner start with
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Health")
 		float MaxHealth = 100.0f;
 
-	//How much Aragon does the player currently have
+	//How much Aragon does the owner currently have
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
 		float CurrentAragon = 0.0f;
 
-	//How much Aragon does the player start with
+	//How much Aragon does the owner start with
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
 		float MaxAragon = 0.0f;
 
-	//How much Aragon does the player currently have
+	//By how many points does the owner's Current Aragon recharge
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
 		float AragonRechargeAmount = 0.0f;
 
 
-	//This is what the UI will report the player's Max Health is
+	//This is what the UI will report the owner's Max Health is
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Health")
 		float UI_CurrentHealth = 0.0f;
 
-	//This is what the UI will report the player's Max Health is
+	//This is what the UI will report the owner's Max Health is
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Health")
 		float UI_MaxHealth = 100.0f;
 
-	//This is what the UI will report the player's Current Aragon is
+	//This is what the UI will report the owner's Current Aragon is
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Aragon")
 		float UI_CurrentAragon = 0.0f;
 
-	//This is what the UI will report the player's Max Aragon is
+	//This is what the UI will report the owner's Max Aragon is
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Aragon")
 		float UI_MaxAragon = 0.0f;
 
@@ -78,41 +78,55 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Powers")
 		TMap<FString, bool> PlayerPowerUnlockMap;
 
-	//This returns the player's current health
+	//This returns the owner's current health
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetPlayerCurrentHealth();
 
-	//This returns the player's max health
+	//This returns the owner's max health
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetPlayerMaxHealth();
 
-	//This returns the player's current Aragon
+	//This returns the owner's current Aragon
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetPlayerCurrentAragon();
 
-	//This returns the player's max Aragon
+	//This returns the owner's max Aragon
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetPlayerMaxAragon();
 
-	//This function will add the @param IncreaseAmount to the player's Max Health, then reset the Current Health 
+	//This function will add the @param IncreaseAmount to the owner's Max Health, then reset the Current Health 
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void UpgradeHealthStats(float IncreaseAmount);
 
-	//This function will add the @param IncreaseAmount to the player's Max Aragon, then reset the Current Aragon
+	//This function will add the @param IncreaseAmount to the owner's Max Aragon, then reset the Current Aragon
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void UpgradeAragonStats(float IncreaseAmount);
 
-	//This function will decrease the @param ConsumeAmount to the player's Current Aragon
+	//This function will decrease the @param ConsumeAmount to the owner's Current Aragon
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void ConsumeAragon(float ConsumeAmount);
 
-	//This function will add to the player's Current Aragon - for timer
+	//This function will add to the owner's Current Aragon - for timer
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void RechargeAragon();
 
+	//This function will decrease the owner's Current Health
+	UFUNCTION(BlueprintCallable, Category = "Stats|Damage")
+		void DamageHealth(float DecreaseAmount);
+
+	//This function will increase the owner's Current Health, up to their Max Health
+	UFUNCTION(BlueprintCallable, Category = "Stats|Damage")
+		void RecoverHealth(float RecoverAmount);
+
+	//Is the owner's Current Health less than or equal to 0?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Power")
+		bool bIsDead = false;
+
+	//Is the owner's Current Aragon less than or equal to 0?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Power")
 		bool bIsAragonEmpty = false;
 
+	//Is the owner's Current Aragon recharging?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Power")
 		bool bIsRecharging = false;
 

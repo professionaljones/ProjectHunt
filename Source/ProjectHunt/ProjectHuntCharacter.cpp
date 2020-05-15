@@ -315,7 +315,8 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 	{
 		if (this->CanBeDamaged())
 		{
-			StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
+			//StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
+			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
 			DecreaseStyle();
 		}
 		
@@ -329,7 +330,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 			}
 
 		}
-		if (StatsComponent->CurrentHealth <= 0.0f)
+		if (StatsComponent->bIsDead)
 		{
 			if (DeathSounds.Num() != 0)
 			{

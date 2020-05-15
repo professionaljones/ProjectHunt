@@ -92,3 +92,23 @@ void UHuntStatsComponent::RechargeAragon()
 	}
 }
 
+void UHuntStatsComponent::DamageHealth(float DecreaseAmount)
+{
+	CurrentHealth -= DecreaseAmount;
+	if (CurrentHealth <= 0.0f)
+	{
+		CurrentHealth = 0.0f;
+		bIsDead = true;
+	}
+}
+
+void UHuntStatsComponent::RecoverHealth(float RecoverAmount)
+{
+	CurrentHealth += RecoverAmount;
+	if (CurrentHealth >= MaxHealth)
+	{
+		CurrentHealth = MaxHealth;
+		
+	}
+}
+
