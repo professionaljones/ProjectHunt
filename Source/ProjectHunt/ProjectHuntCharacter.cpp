@@ -53,7 +53,7 @@ void AProjectHuntCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	StartStyleModTimer();
-	MaxStyleAmount = SS_StyleLimit;
+	MaxStyleAmount = SSS_StyleLimit;
 	
 
 }
@@ -87,9 +87,9 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &AProjectHuntCharacter::TurnCharacter);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AProjectHuntCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &AProjectHuntCharacter::LookUpAtCamera);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectHuntCharacter::LookUpAtRate);
 }
 
@@ -281,14 +281,29 @@ void AProjectHuntCharacter::MoveRight(float Value)
 	}
 }
 
+void AProjectHuntCharacter::TurnCharacter(float Rate)
+{
+	float NewTurn = Rate * MyPlayerController->GetLookXSensitivity_PC();
+	AddControllerYawInput(NewTurn * GetWorld()->GetDeltaSeconds());
+}
+
+void AProjectHuntCharacter::LookUpAtCamera(float Rate)
+{
+	float NewLookUp = Rate * MyPlayerController->GetLookYSensitivity_PC();
+	AddControllerYawInput(NewLookUp * GetWorld()->GetDeltaSeconds());
+}
+
 void AProjectHuntCharacter::TurnAtRate(float Rate)
 {
+	BaseTurnRate =  MyPlayerController->GetLookXSensitivity_Gamepad();
+	
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void AProjectHuntCharacter::LookUpAtRate(float Rate)
 {
+	BaseLookUpRate = MyPlayerController->GetLookYSensitivity_Gamepad();
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
@@ -310,6 +325,7 @@ bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 
 float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
+	
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (DamageAmount > 0.0f)
 	{

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Weapons/HuntWeapon.h"
 #include "Character/HuntStatsComponent.h"
+#include "ProjectHunt/Character/Player/HuntPlayerController.h"
 #include "ProjectHunt/Character/HuntCharacterInterface.h"
 #include "ProjectHuntCharacter.generated.h"
 
@@ -45,17 +46,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FirstPersonCameraComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat, meta = (AllowPrivateAccess = "true"))
+		class UHuntStatsComponent* StatsComponent;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
 		class AHuntWeapon* CurrentWeapon;
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
-		TMap<int, class AHuntWeapon*> WeaponInventory;*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
+		class AHuntPlayerController* MyPlayerController;
 
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats)
-		class UHuntStatsComponent* StatsComponent;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* CharacterAudioComponent;
 
@@ -165,6 +166,18 @@ protected:
 	 * Called via input to turn at a given rate.
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
+	void TurnCharacter(float Rate);
+
+	/**
+	 * Called via input to turn look up/down at a given rate.
+	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	 */
+	void LookUpAtCamera(float Rate);
+
+	/**
+	 * Called via input to turn at a given rate.
+	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	 */
 	void TurnAtRate(float Rate);
 
 	/**
@@ -204,6 +217,8 @@ public:
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	
 
 	/**
 	 * Apply damage to this actor.

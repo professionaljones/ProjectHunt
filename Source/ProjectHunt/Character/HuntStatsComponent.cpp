@@ -32,25 +32,25 @@ void UHuntStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
-float UHuntStatsComponent::GetPlayerCurrentHealth()
+float UHuntStatsComponent::GetCurrentHealth()
 {
 	UI_CurrentHealth = CurrentHealth;
 	return UI_CurrentHealth;
 }
 
-float UHuntStatsComponent::GetPlayerMaxHealth()
+float UHuntStatsComponent::GetMaxHealth()
 {
 	UI_MaxHealth = MaxHealth;
 	return UI_MaxHealth;
 }
 
-float UHuntStatsComponent::GetPlayerCurrentAragon()
+float UHuntStatsComponent::GetCurrentAragon()
 {
 	UI_CurrentAragon = CurrentAragon;
 	return UI_CurrentAragon;
 }
 
-float UHuntStatsComponent::GetPlayerMaxAragon()
+float UHuntStatsComponent::GetMaxAragon()
 {
 	UI_MaxAragon = MaxAragon;
 	return UI_MaxAragon;

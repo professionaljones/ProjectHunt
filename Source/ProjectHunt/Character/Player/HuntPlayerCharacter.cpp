@@ -22,5 +22,45 @@ int32 AHuntPlayerCharacter::GetDashCount()
 	return DashCount;
 }
 
+void AHuntPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+}
 
+int32 AHuntPlayerCharacter::GetCurrentMissiles()
+{
+	UI_CurrentMissileCount = CurrentMissileCount;
+	return UI_CurrentMissileCount;
+}
+
+int32 AHuntPlayerCharacter::GetMaxMissiles()
+{
+	UI_MaxMissileCount = MaxMissileCount;
+	return UI_MaxMissileCount;
+}
+
+void AHuntPlayerCharacter::ConsumeMissiles(int32 ConsumeMissileAmount)
+{
+	CurrentMissileCount -= ConsumeMissileAmount;
+	if (CurrentMissileCount <= 0)
+	{
+		bAreMissilesEmpty = true;
+		CurrentMissileCount = 0;
+	}
+}
+
+void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)
+{
+	CurrentMissileCount += RecoverAmount;
+	if (bAreMissilesEmpty == false)
+	{
+		bAreMissilesEmpty = false;
+	}
+	if (CurrentMissileCount >= MaxMissileCount)
+	{
+		CurrentMissileCount = MaxMissileCount;
+		
+	}
+}
 

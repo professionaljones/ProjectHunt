@@ -27,4 +27,7 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent,Category = "Event Response|Weapon")
 		void OnWeaponFire();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Weapon")
+		void OnWeaponAltFire();
 };

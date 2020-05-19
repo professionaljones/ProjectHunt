@@ -16,7 +16,9 @@ enum ESuitMainAbilities
 	MA_Overload UMETA(DisplayName = "Overload")
 };
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+/**HuntStatsComponent serves as a container for a character's stats and functions
+for adding, reducing and changing the overall values **/
+UCLASS(Blueprintable, BlueprintType,ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECTHUNT_API UHuntStatsComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -80,19 +82,19 @@ public:
 
 	//This returns the owner's current health
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
-		float GetPlayerCurrentHealth();
+		float GetCurrentHealth();
 
 	//This returns the owner's max health
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
-		float GetPlayerMaxHealth();
+		float GetMaxHealth();
 
 	//This returns the owner's current Aragon
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
-		float GetPlayerCurrentAragon();
+		float GetCurrentAragon();
 
 	//This returns the owner's max Aragon
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
-		float GetPlayerMaxAragon();
+		float GetMaxAragon();
 
 	//This function will add the @param IncreaseAmount to the owner's Max Health, then reset the Current Health 
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")

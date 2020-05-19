@@ -21,8 +21,8 @@ FLoadingScreenSlotText::FLoadingScreenSlotText()
 {
 	if (!IsRunningDedicatedServer())
 	{
-		static ConstructorHelpers::FObjectFinder<UFont> RobotoFontObj(TEXT("/Engine/EngineFonts/Roboto"));
-		Font = FSlateFontInfo(RobotoFontObj.Object, 20, FName("Normal"));;
+		/*static ConstructorHelpers::FObjectFinder<UFont> RobotoFontObj(TEXT("/Engine/EngineFonts/Roboto"));
+		Font = FSlateFontInfo(RobotoFontObj.Object, 20, FName("Normal"));;*/
 	}
 }
 

@@ -40,6 +40,23 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,SaveGame, Category = "Player|Inventory")
 		TMap<TEnumAsByte<EWeaponType>, class AHuntWeapon*> WeaponInventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
+		int32 CurrentMissileCount = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
+		int32 MaxMissileCount = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
+		bool bAreMissilesEmpty = false;
+
+	//This is what the UI will report the owner's Current Missiles is
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
+		float UI_CurrentMissileCount = 0.0f;
+
+	//This is what the UI will report the owner's Max Missiles is
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
+		float UI_MaxMissileCount = 0.0f;
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,SaveGame,Category = "Player|Suit")
 		TEnumAsByte<EPlayerSuit> PlayerSuit;
 
@@ -77,7 +94,24 @@ public:
 		int32 GetDashCount();
 
 protected:
+	virtual void BeginPlay() override;
 
 public:
+
+	//This returns the owner's current Missiles
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+		int32 GetCurrentMissiles();
+
+	//This returns the owner's max Missiles
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+		int32 GetMaxMissiles();
+
+	//This will tell another function to remove current Missiles
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void ConsumeMissiles(int32 ConsumeMissileAmount);
+
+	//This will add missiles back to the current Missiles
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void RecoverMissiles(int32 RecoverAmount);
 	
 };
