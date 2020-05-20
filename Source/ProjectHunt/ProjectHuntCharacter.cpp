@@ -197,6 +197,8 @@ void AProjectHuntCharacter::OnFireEnd()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->EndFire();
+		
+		//CurrentWeaponCharge = 0.f;
 	}
 }
 

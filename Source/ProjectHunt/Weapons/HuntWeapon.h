@@ -137,6 +137,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
 		float WeaponChargeLimit;
 
+	//How much of a delay before the weapon begins to charge
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
+		float WeaponChargeDelay;
+
 };
 /**
  * This is for getting the data for Weapon upgrades
@@ -210,7 +214,7 @@ public:
 		bool bIsAutomatic;
 
 	//Empty to hold weapon charge
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Charge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
 		float CurrentWeaponCharge;
 
 	//How much to charge the weapon by
@@ -256,6 +260,9 @@ public:
 		class USoundBase* WeaponChargeFireSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
+		class USoundBase* WeaponChargingSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
 		class USoundBase* WeaponAltFireSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
@@ -290,6 +297,7 @@ public:
 
 	FTimerHandle AutoFireTimer;
 	FTimerHandle ChargeFireTimer;
+	FTimerHandle ResetDamageTimer;
 
 protected:
 	// Called when the game starts or when spawned
@@ -312,8 +320,15 @@ public:
 	UFUNCTION()
 		void FireCharge();
 
+	//Called when the player/AI needs to reset damage and charge
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void ResetCharge();
+
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void CalculateDamage();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void ResetDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		EAmmoType GetWeaponAmmoType();
@@ -346,5 +361,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, VisibleDefaultsOnly, Category = "Weapon|SFX")
 		UAudioComponent* WeaponAudioComponent;
+
+	UPROPERTY(BlueprintReadWrite, VisibleDefaultsOnly, Category = "Weapon|SFX")
+		UAudioComponent* WeaponAltAudioComponent;
 
 };

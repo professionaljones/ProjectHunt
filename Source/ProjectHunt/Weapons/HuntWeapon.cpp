@@ -18,6 +18,9 @@ AHuntWeapon::AHuntWeapon()
 	//Create audio component that handles weapon SFX
 	WeaponAudioComponent = CreateDefaultSubobject<UAudioComponent>("WeaponAudioComponent");
 
+	//Create secondary audio component that handles aux weapon SFX
+	WeaponAltAudioComponent = CreateDefaultSubobject<UAudioComponent>("WeaponAltAudioComponent");
+
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +30,8 @@ void AHuntWeapon::BeginPlay()
 
 	CalculateDamage();
 	ActorsToIgnore.Add(WeaponOwner);
+	WeaponStatsData.OriginalDamageModifier = WeaponStatsData.DamageModifierAmount;
+	WeaponStatsData.OriginalDamageMultiplier = WeaponStatsData.DamageMultiplierAmount;
 
 }
 
@@ -72,7 +77,6 @@ void AHuntWeapon::FireWeapon()
 	//Play Fire SFX
 	if (WeaponFireSound != NULL)
 	{
-		//UGameplayStatics::PlaySoundAtLocation(this, WeaponFireSound, GetActorLocation());
 		WeaponAudioComponent->SetSound(WeaponFireSound);
 		WeaponAudioComponent->Play();
 	}
@@ -87,6 +91,7 @@ void AHuntWeapon::FireWeapon()
 	}
 
 	SpawnWeaponProjectile();
+	CalculateDamage();
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
 	
 }
@@ -102,9 +107,8 @@ void AHuntWeapon::FireCharge()
 	}
 
 	//Play Fire SFX
-	if (WeaponFireSound != NULL)
+	if (WeaponChargeFireSound != NULL)
 	{
-		//UGameplayStatics::PlaySoundAtLocation(this, WeaponFireSound, GetActorLocation());
 		WeaponAudioComponent->SetSound(WeaponChargeFireSound);
 		WeaponAudioComponent->Play();
 	}
@@ -112,12 +116,26 @@ void AHuntWeapon::FireCharge()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
 	}
+	CalculateDamage();
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
+}
+
+void AHuntWeapon::ResetCharge()
+{
+	CurrentWeaponCharge = 0.0f;
+	ResetDamage();
 }
 
 void AHuntWeapon::CalculateDamage()
 {
 	WeaponStatsData.TotalDamage = WeaponStatsData.BaseDamage * (WeaponStatsData.DamageMultiplierAmount + WeaponStatsData.DamageModifierAmount);
+}
+
+void AHuntWeapon::ResetDamage()
+{
+	WeaponStatsData.DamageModifierAmount = WeaponStatsData.OriginalDamageModifier;
+	WeaponStatsData.DamageMultiplierAmount = WeaponStatsData.OriginalDamageMultiplier;
+	CalculateDamage();
 }
 
 EAmmoType AHuntWeapon::GetWeaponAmmoType()
@@ -160,6 +178,8 @@ void AHuntWeapon::SpawnWeaponProjectile()
 
 void AHuntWeapon::StartFire()
 {
+	//ResetDamage();
+	//CalculateDamage();
 	if (bCanWeaponCharge)
 	{
 		FireWeapon();
@@ -190,12 +210,19 @@ void AHuntWeapon::EndFire()
 	{
 		GetWorldTimerManager().ClearTimer(AutoFireTimer);
 	}
+	WeaponAltAudioComponent->Stop();
+	GetWorldTimerManager().SetTimer(ResetDamageTimer, this, &AHuntWeapon::ResetCharge, 0.02f, false, 0.0f);
 }
 
 void AHuntWeapon::StartCharge()
 {
-	
-	GetWorldTimerManager().SetTimer(ChargeFireTimer, this, &AHuntWeapon::Charge, WeaponStatsData.ChargeRate, true,1.0f);
+	//Play Fire SFX
+	if (WeaponChargingSound != NULL)
+	{
+		WeaponAltAudioComponent->SetSound(WeaponChargingSound);
+		WeaponAltAudioComponent->Play();
+	}
+	GetWorldTimerManager().SetTimer(ChargeFireTimer, this, &AHuntWeapon::Charge, WeaponStatsData.ChargeRate, true,WeaponStatsData.WeaponChargeDelay);
 }
 
 void AHuntWeapon::Charge()
@@ -224,9 +251,8 @@ void AHuntWeapon::FinishCharge()
 	{
 		FireCharge();
 		//Reset Charge value
-		CurrentWeaponCharge = 0.f;
-		//Reset Damage modifier
-		WeaponStatsData.DamageModifierAmount = 1.0f;
+		
+		WeaponAltAudioComponent->Stop();
 	}
 	
 	WeaponProjectileState = EProjectileState::Projectile_Normal;
