@@ -19,7 +19,7 @@ void UHuntStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	CurrentHealth = MaxHealth;
 	
 }
 

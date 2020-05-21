@@ -116,7 +116,7 @@ void AProjectHuntCharacter::DecreaseStyle()
 void AProjectHuntCharacter::UpdateStylePercentage()
 {
 	StylePercentage = CurrentStyleAmount / MaxStyleAmount;
-	if (CurrentStyleAmount)
+	if (CurrentStyleAmount > 0.0f)
 	{
 		if (StylePercentage <= D_StyleLimit)
 		{
@@ -151,6 +151,10 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 		{
 			PlayerStyle = ECharacterStyleRank::SR_SuperStylish;
 		}
+	}
+	if (CurrentStyleAmount < 0.0f)
+	{
+		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
 	}
 	
 }

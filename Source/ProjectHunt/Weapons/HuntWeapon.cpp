@@ -201,10 +201,11 @@ void AHuntWeapon::StartFire()
 
 void AHuntWeapon::EndFire()
 {
-	if (bCanWeaponCharge)
+	if (bIsCharging)
 	{
 		FinishCharge();
 		GetWorldTimerManager().ClearTimer(ChargeFireTimer);
+		bIsCharging = false;
 	}
 	if (GetWorldTimerManager().IsTimerActive(AutoFireTimer))
 	{
@@ -245,7 +246,7 @@ void AHuntWeapon::Charge()
 
 void AHuntWeapon::FinishCharge()
 {
-	bIsCharging = false;
+	
 	//Attempt to apply damage
 	if (CurrentWeaponCharge > 0.0f)
 	{

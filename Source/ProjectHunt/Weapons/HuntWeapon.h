@@ -190,7 +190,7 @@ public:
 	// Sets default values for this actor's properties
 	AHuntWeapon();
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class AHuntWeaponProjectile* ProjectileToSpawn = NULL;
 
 	//This weapon's Ammo Type
@@ -203,14 +203,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo|Projectiles")
 		TMap<TEnumAsByte<EProjectileState>, TSubclassOf<AHuntWeaponProjectile>> WeaponProjectiles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		bool bCanWeaponCharge;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
 		bool bIsCharging;
 
 	//Is this weapon automatic?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		bool bIsAutomatic;
 
 	//Empty to hold weapon charge
@@ -228,7 +228,7 @@ public:
 	//Mainly for VFX - can also be used to spawn projectiles
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
 		FName WeaponMuzzlePoint;
-	
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		UDataTable* WeaponUpgradeDataTable;
@@ -268,7 +268,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
 		class USoundBase* WeaponEquipSound;
 
-	
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Targets")
@@ -294,16 +294,18 @@ public:
 
 
 	////End Feedback
-
-	FTimerHandle AutoFireTimer;
-	FTimerHandle ChargeFireTimer;
-	FTimerHandle ResetDamageTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+		FTimerHandle AutoFireTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+		FTimerHandle ChargeFireTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Data")
+		FTimerHandle ResetDamageTimer;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon|Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
 		class AProjectHuntCharacter* WeaponOwner;
 
 
