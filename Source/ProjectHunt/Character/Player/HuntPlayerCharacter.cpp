@@ -42,12 +42,16 @@ int32 AHuntPlayerCharacter::GetMaxMissiles()
 
 void AHuntPlayerCharacter::ConsumeMissiles(int32 ConsumeMissileAmount)
 {
-	CurrentMissileCount -= ConsumeMissileAmount;
-	if (CurrentMissileCount <= 0)
+	if (!bAreMissilesEmpty)
 	{
-		bAreMissilesEmpty = true;
-		CurrentMissileCount = 0;
+		CurrentMissileCount -= ConsumeMissileAmount;
+		if (CurrentMissileCount <= 0)
+		{
+			bAreMissilesEmpty = true;
+			CurrentMissileCount = 0;
+		}
 	}
+	
 }
 
 void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)

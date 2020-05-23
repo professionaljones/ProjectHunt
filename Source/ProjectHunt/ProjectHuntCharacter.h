@@ -46,7 +46,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FirstPersonCameraComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 		class UHuntStatsComponent* StatsComponent;
 
 
@@ -59,6 +59,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* CharacterAudioComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio)
+		class UAudioComponent* SuitAudioComponent;
 
 
 protected:
@@ -103,7 +106,7 @@ public:
 		float StyleAmountMultiplier = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
-		float D_StyleLimit = 0.25f;
+		float D_StyleLimit = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
 		float C_StyleLimit = 0.40f;
@@ -112,16 +115,16 @@ public:
 		float B_StyleLimit = 0.60f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
-		float A_StyleLimit = 0.80f;
+		float A_StyleLimit = 0.85f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
-		float S_StyleLimit = 1.20f;
+		float S_StyleLimit = 0.90f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
-		float SS_StyleLimit = 2.20f;
+		float SS_StyleLimit = 1.50f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
-		float SSS_StyleLimit = 3.00f;
+		float SSS_StyleLimit = 2.50f;
 
 	//This function can be used to increase or decrease the player's style amount
 	UFUNCTION(BlueprintCallable,Category = "Player|Style")

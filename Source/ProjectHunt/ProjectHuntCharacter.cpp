@@ -35,6 +35,9 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	//Create a AudioComponent
 	CharacterAudioComponent = CreateDefaultSubobject<UAudioComponent>("CharacterAudioComponent");
 
+	//Create a secondary AudioComponent 
+	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
+
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);
@@ -53,7 +56,7 @@ void AProjectHuntCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	StartStyleModTimer();
-	MaxStyleAmount = SSS_StyleLimit;
+	//MaxStyleAmount = SSS_StyleLimit;
 	
 
 }
@@ -95,12 +98,11 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 void AProjectHuntCharacter::ModifyStyle(float StyleModAmount)
 {
-	float Mod = 1.0f * StyleAmountMultiplier;
+	float Mod = StyleModAmount * StyleAmountMultiplier;
 	CurrentStyleAmount += Mod;
 	if (CurrentStyleAmount > 0.0f)
 	{
 		StartStyleModTimer();
-		//CurrentStyleAmount -= 1.0f;
 	}
 
 	UpdateStylePercentage();
@@ -155,13 +157,14 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 	if (CurrentStyleAmount < 0.0f)
 	{
 		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
+		CurrentStyleAmount = 0.0f;
 	}
 	
 }
 
 void AProjectHuntCharacter::StartStyleModTimer()
 {
-	if (CurrentStyleAmount >= 0.0f)
+	if (CurrentStyleAmount > 0.0f)
 	{
 		if (!GetWorldTimerManager().IsTimerActive(StyleDecreaseTimer))
 		{
@@ -169,9 +172,10 @@ void AProjectHuntCharacter::StartStyleModTimer()
 		}
 		
 	}
-	if (CurrentStyleAmount <= 0.0f)
+	if (CurrentStyleAmount < 0.0f)
 	{
 		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
+		CurrentStyleAmount = 0.0f;
 	}
 	
 }

@@ -201,10 +201,14 @@ void AHuntWeapon::StartFire()
 
 void AHuntWeapon::EndFire()
 {
+	if (GetWorldTimerManager().IsTimerActive(ChargeFireTimer))
+	{
+		GetWorldTimerManager().ClearTimer(ChargeFireTimer);
+	}
 	if (bIsCharging)
 	{
 		FinishCharge();
-		GetWorldTimerManager().ClearTimer(ChargeFireTimer);
+		
 		bIsCharging = false;
 	}
 	if (GetWorldTimerManager().IsTimerActive(AutoFireTimer))

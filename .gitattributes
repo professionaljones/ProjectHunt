@@ -6,3 +6,5 @@ Content/VFX_Toolkit_V1/** filter=lfs diff=lfs merge=lfs -text
 Content/Wormholes/** filter=lfs diff=lfs merge=lfs -text
 Content/Chameleon/** filter=lfs diff=lfs merge=lfs -text
 Content/ChameleonDemo/** filter=lfs diff=lfs merge=lfs -text
+content/animstarterpack/** filter=lfs diff=lfs merge=lfs -text
+content/dialog/** filter=lfs diff=lfs merge=lfs -text
