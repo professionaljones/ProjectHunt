@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{35FBDEDC-4C76-7E3E-FEAD-F192E1D16193}",
+	"EngineAssociation": "{FEE4A30E-42D1-E463-990A-F7A84DF08E7B}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -108,6 +108,15 @@
 		{
 			"Name": "OptionalMobileFeaturesBPLibrary",
 			"Enabled": true
+		},
+		{
+			"Name": "AutoSettings",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/7f6a777da2724d4a9a3dd551f03a3ad1"
+		},
+		{
+			"Name": "ArchVisCharacter",
+			"Enabled": false
 		}
 	],
 	"TargetPlatforms": [

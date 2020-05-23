@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "HuntWeaponInterface.generated.h"
 
@@ -25,4 +24,10 @@ public:
 
 	/*UFUNCTION(BlueprintCallable,BlueprintImplementableEvent,Category = "Event Response|Weapon")
 	void OnWeaponActivate(EAmmoType AmmoTypeUsed);*/
+
+	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent,Category = "Event Response|Weapon")
+		void OnWeaponFire();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Weapon")
+		void OnWeaponAltFire();
 };
