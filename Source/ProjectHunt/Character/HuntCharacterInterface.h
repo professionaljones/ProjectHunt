@@ -29,4 +29,7 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent, Category = "Event Response|Player")
 	void UpdateStyleGauge(float StyleModAmount);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnUpgradeHealth(float IncreaseAmount);
 };

@@ -68,3 +68,9 @@ void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)
 	}
 }
 
+void AHuntPlayerCharacter::UpgradeMissileCapacity(int32 IncreaseAmount)
+{
+	MaxMissileCount = MaxMissileCount + IncreaseAmount;
+	CurrentMissileCount = MaxMissileCount;
+}
+

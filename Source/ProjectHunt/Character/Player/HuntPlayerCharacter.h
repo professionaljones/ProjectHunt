@@ -113,5 +113,9 @@ public:
 	//This will add missiles back to the current Missiles
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void RecoverMissiles(int32 RecoverAmount);
+
+	//This will modify Max Missiles, then reset current Missiles
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void UpgradeMissileCapacity(int32 IncreaseAmount);
 	
 };
