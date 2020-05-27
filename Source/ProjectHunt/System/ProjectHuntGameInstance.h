@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2020 Brandon Jones. All Rights Reserved.
 
 #pragma once
 
@@ -19,6 +19,8 @@ class PROJECTHUNT_API UProjectHuntGameInstance : public UGameInstance
 
 public:
 
+	UProjectHuntGameInstance();
+
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 	//	class AHuntPlayerCharacter* PlayerReference;
 
@@ -35,5 +37,22 @@ public:
 	//
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save Data")
 	//class UHuntSaveGame* SaveGameInstance;
+
+	//Name for the recorded replay
+	UPROPERTY(EditDefaultsOnly, Category = "Replays")
+		FString RecordingName;
+
+	//Name for the recorded replay for UI
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Replays")
+		FString friendlyRecordingName;
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StartRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StopRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StartReplay();
 
 };

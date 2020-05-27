@@ -32,4 +32,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnUpgradeHealth(float IncreaseAmount);
+
+	
 };

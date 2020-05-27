@@ -277,3 +277,22 @@ void AHuntWeapon::SetWeaponOwner(AProjectHuntCharacter* NewOwner)
 	}
 }
 
+void AHuntWeapon::SetWeaponStats(FWeaponStatsData NewWeaponStats)
+{
+	//TODO: Find way to validate data
+
+	WeaponStatsData.BaseDamage = NewWeaponStats.BaseDamage;
+	WeaponStatsData.DamageMultiplierAmount = NewWeaponStats.DamageMultiplierAmount;
+	WeaponStatsData.DamageModifierAmount = NewWeaponStats.DamageModifierAmount;
+	WeaponStatsData.CriticalHitMultiplier = NewWeaponStats.CriticalHitMultiplier;
+	WeaponStatsData.ChargeRate = NewWeaponStats.ChargeRate;
+	WeaponStatsData.WeaponChargeDelay = NewWeaponStats.WeaponChargeDelay;
+	WeaponStatsData.WeaponChargeLimit = NewWeaponStats.WeaponChargeLimit;
+	WeaponStatsData.FireRate = NewWeaponStats.FireRate;
+	WeaponStatsData.SpecialDamageMultiplier = NewWeaponStats.SpecialDamageMultiplier;
+	WeaponStatsData.CurrentWeaponLevel = NewWeaponStats.CurrentWeaponLevel;
+	WeaponStatsData.MaxWeaponLevel = NewWeaponStats.MaxWeaponLevel;
+}
+
+
+

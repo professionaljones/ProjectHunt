@@ -30,6 +30,7 @@ enum EWeaponType
 UENUM(BlueprintType)
 enum EAmmoType
 {
+	AT_None UMETA(DisplayName = "None"),
 	AT_Standard UMETA(DisplayName = "Standard"),
 	AT_Fire UMETA(DisplayName = "Incendiary"),
 	AT_Ice UMETA(DisplayName = "Ice"),
@@ -354,8 +355,12 @@ public:
 		void FinishCharge();
 
 	void AttachToOwner();
+
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
 		void SetWeaponOwner(AProjectHuntCharacter* NewOwner);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void SetWeaponStats(FWeaponStatsData NewWeaponStats);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

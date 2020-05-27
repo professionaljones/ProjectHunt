@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Engine/DemoNetDriver.h"
 #include "HuntPlayerController.generated.h"
 
 /**
@@ -42,11 +43,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 		float GetLookYSensitivity_Gamepad();
 
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void RestartReplayRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void SeekReplayRecording(float NewPosition);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Replays")
+		float GetReplayPlaybackPosition();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Replays")
+		float GetReplayPlaybackLength();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+		float CurrentItemPercentage = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+		float MaxItemPercentage = 1.0f;
+
+	UDemoNetDriver* DemoDriver;
+
 protected:
 
 	/*UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category = "cheats")
 	class UWidgetBlueprint* ConsoleWBP;*/
 
+	
 
 
 };
