@@ -80,6 +80,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Powers")
 		TMap<FString, bool> PlayerPowerUnlockMap;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Enemy")
+		bool bWasScanned = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+		FString CharacterName;
+
+
 	//This returns the owner's current health
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetCurrentHealth();
