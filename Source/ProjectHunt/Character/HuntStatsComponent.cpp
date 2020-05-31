@@ -110,5 +110,6 @@ void UHuntStatsComponent::RecoverHealth(float RecoverAmount)
 		CurrentHealth = MaxHealth;
 		
 	}
+	//if(this->GetOwner() == Cast<AProjectHuntCharacter>(GetOwner()))
 }
 

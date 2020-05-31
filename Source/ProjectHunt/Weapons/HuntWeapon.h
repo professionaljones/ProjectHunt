@@ -333,7 +333,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void ResetDamage();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Weapon")
 		EAmmoType GetWeaponAmmoType();
 
 	UFUNCTION()

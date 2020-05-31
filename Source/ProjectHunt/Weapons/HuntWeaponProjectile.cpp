@@ -11,6 +11,7 @@ AHuntWeaponProjectile::AHuntWeaponProjectile()
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	SphereCollision = CreateDefaultSubobject<USphereComponent>("SphereCollision");
+	RootComponent = SphereCollision;
 
 }
 

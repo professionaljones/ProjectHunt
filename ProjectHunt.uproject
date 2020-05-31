@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{FEE4A30E-42D1-E463-990A-F7A84DF08E7B}",
+	"EngineAssociation": "{7CE5C442-4CC3-1289-97B0-469FDA8D346F}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -112,6 +112,22 @@
 		},
 		{
 			"Name": "ArchVisCharacter",
+			"Enabled": false
+		},
+		{
+			"Name": "MediaCompositing",
+			"Enabled": false
+		},
+		{
+			"Name": "OnlineSubsystemGoogle",
+			"Enabled": true
+		},
+		{
+			"Name": "AvfMedia",
+			"Enabled": false
+		},
+		{
+			"Name": "GooglePAD",
 			"Enabled": false
 		}
 	],

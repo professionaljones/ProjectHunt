@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "HuntSaveGame.h"
 #include "ProjectHunt/Character/Player/HuntPlayerCharacter.h"
 #include "ProjectHuntGameInstance.generated.h"
 

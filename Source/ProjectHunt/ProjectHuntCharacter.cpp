@@ -190,6 +190,11 @@ float AProjectHuntCharacter::GetCurrentStyleAmount()
 	return CurrentStyleAmount;
 }
 
+AHuntWeapon* AProjectHuntCharacter::GetCurrentWeapon()
+{
+	return CurrentWeapon;
+}
+
 void AProjectHuntCharacter::OnFire()
 {
 	if (CurrentWeapon)
@@ -374,3 +379,5 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 
 	return ActualDamage;
 }
+
+

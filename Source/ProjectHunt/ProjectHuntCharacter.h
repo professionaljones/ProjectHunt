@@ -146,6 +146,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Style")
 		float GetCurrentStyleAmount();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon")
+		class AHuntWeapon* GetCurrentWeapon();
+
 	
 
 	FTimerHandle StyleDecreaseTimer;
@@ -233,6 +236,8 @@ public:
 	 * @return					The amount of damage actually applied.
 	 */
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	
 
 
 };

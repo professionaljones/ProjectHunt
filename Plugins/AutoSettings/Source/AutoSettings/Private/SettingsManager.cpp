@@ -1,7 +1,8 @@
 // Copyright Sam Bonifacio. All Rights Reserved.
 
 #include "SettingsManager.h"
-#include "Logging/MessageLog.h"
+
+#include "Misc/AutoSettingsConfig.h"
 #include "Scalability.h"
 #include "Console/ConsoleUtils.h"
 #include "Misc/ConfigCacheIni.h"
@@ -39,11 +40,6 @@ FString USettingsManager::GetValue(FName Key, bool bPreferConfigValue)
 	}
 
 	return Value;
-}
-
-FString USettingsManager::GetInitialValue(FName Key)
-{
-	return GetValue(Key, false);
 }
 
 void USettingsManager::RegisterIntCVarSetting(FName Name, int32 DefaultValue, const FString& Help)
@@ -129,10 +125,11 @@ void USettingsManager::ApplySettingStatic(FAutoSettingData SettingData)
 	Get()->ApplySetting(SettingData);
 }
 
-USettingsManager::USettingsManager() : IniName("Settings"), SectionName("Settings")
+USettingsManager::USettingsManager()
 {
+	const FString IniName = GetDefault<UAutoSettingsConfig>()->SettingsIniName;
 	// Load Ini
-	FConfigCacheIni::LoadGlobalIniFile(IniFilename, IniName.GetCharArray().GetData());
+	FConfigCacheIni::LoadGlobalIniFile(IniFilename, *IniName);
 }
 
 void USettingsManager::Init()
@@ -181,7 +178,7 @@ void USettingsManager::SetConfigValue(FName Key, FString Value)
 {
 	if (!Key.IsNone() && !Value.IsEmpty())
 	{
-		GConfig->SetString(SectionName.GetCharArray().GetData(), Key.ToString().GetCharArray().GetData(), Value.GetCharArray().GetData(), IniFilename);
+		GConfig->SetString(*GetSectionName(), *Key.ToString(), *Value, IniFilename);
 		GConfig->Flush(false, IniFilename);
 	}
 }
@@ -190,6 +187,11 @@ void USettingsManager::ApplySetting(FAutoSettingData SettingData)
 {
 	if (UConsoleUtils::IsCVarRegistered(SettingData.Key))
 		UConsoleUtils::SetStringCVar(SettingData.Key, SettingData.Value);
+}
+
+FString USettingsManager::GetSectionName()
+{
+	return GetDefault<UAutoSettingsConfig>()->SettingsSectionName;
 }
 
 void USettingsManager::ApplySettingsFromConfig()
@@ -236,5 +238,5 @@ void USettingsManager::AutoDetectSettings(int32 WorkScale, float CPUMultiplier, 
 
 FConfigSection * USettingsManager::GetSection() const
 {
-	return GConfig->GetSectionPrivate(SectionName.GetCharArray().GetData(), false, true, IniFilename);
+	return GConfig->GetSectionPrivate(*GetSectionName(), false, true, IniFilename);
 }

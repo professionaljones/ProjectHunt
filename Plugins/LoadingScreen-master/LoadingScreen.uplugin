@@ -10,7 +10,7 @@
   "CreatedByURL": "https://www.epicgames.com",
   "DocsURL": "https://github.com/ue4plugins/LoadingScreen",
   "SupportURL": "https://github.com/ue4plugins/LoadingScreen/issues",
-  "EngineVersion": "4.24",
+  "EngineVersion": "4.25.0",
   "EnabledByDefault": true,
   "CanContainContent": true,
 
@@ -18,7 +18,8 @@
     {
       "Name": "LoadingScreen",
       "Type": "Runtime",
-      "LoadingPhase": "PreLoadingScreen"
+      "LoadingPhase": "PreLoadingScreen", 
+      "WhitelistPlatforms": [ "Win64", "Win32", "Android", "Mac", "Linux" ]
     }
   ]
 }

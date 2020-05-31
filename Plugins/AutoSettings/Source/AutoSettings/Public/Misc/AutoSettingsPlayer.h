@@ -27,7 +27,7 @@ public:
 	static FString GetUniquePlayerIdentifier_Default(const APlayerController* PlayerController);
 
 	// This should return a unique identifier for the player that can be used as a key to store custom input overrides
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Auto Settings")
 	FString GetUniquePlayerIdentifier() const;
 	virtual FString GetUniquePlayerIdentifier_Implementation() const;
 
@@ -37,7 +37,7 @@ public:
 	static FInputMappingPreset GetDefaultInputMappingPreset_Default();
 
 	// Override to determine which preset the player should use by default
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Input Mapping")
 	FInputMappingPreset GetDefaultInputMappingPreset() const;
 	virtual FInputMappingPreset GetDefaultInputMappingPreset_Implementation() const;
 

@@ -62,12 +62,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Settings")
 	static FString GetValue(FName Key, bool bPreferConfigValue = false);
 
-	// Deprecated - Use GetValue instead
-	UE_DEPRECATED(1.3, "Use GetValue instead")
-	UFUNCTION(BlueprintPure, Category = "Settings", meta = (DeprecatedFunction, DeprecationMessage = "Use GetValue instead"))
-	static FString GetInitialValue(FName Key);
-
-
 	// Register new int console variable and check config for a saved value
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 	static void RegisterIntCVarSetting(FName Name, int32 DefaultValue, const FString& Help);
@@ -143,18 +137,14 @@ private:
 	static USettingsManager* Singleton;
 
 	UPROPERTY()
-	FString IniName;
-
-	UPROPERTY()
 	FString IniFilename;
 
-	UPROPERTY()
-	FString SectionName;
+	static FString GetSectionName();
 
 	// Load and apply any settings in config
 	void ApplySettingsFromConfig();
 
 	void AutoDetectSettings(int32 WorkScale = 10, float CPUMultiplier = 1.0f, float GPUMultiplier = 1.0f);
-
+	
 	FConfigSection* GetSection() const;
 };
