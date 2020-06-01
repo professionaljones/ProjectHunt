@@ -27,7 +27,7 @@ enum EWeaponType
 
 
 //What ammo does this weapon use
-UENUM(BlueprintType)
+UENUM(BlueprintType, meta = (Bitflags))
 enum EAmmoType
 {
 	AT_None UMETA(DisplayName = "None"),
