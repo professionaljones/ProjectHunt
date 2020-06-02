@@ -126,6 +126,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
 		float SSS_StyleLimit = 2.50f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		int32 CurrentDataPoints = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		int32 MaxDataPoints = 99999999;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		int32 DataPointsToAdd = 0;
+
+	//This function can be used to increase or decrease the player's style amount
+	UFUNCTION(BlueprintCallable, Category = "Player|Style")
+		void ModifyDataPoints(int32 NewDataPoints);
+
 	//This function can be used to increase or decrease the player's style amount
 	UFUNCTION(BlueprintCallable,Category = "Player|Style")
 		void ModifyStyle(float StyleModAmount);

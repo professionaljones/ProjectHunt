@@ -57,6 +57,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
 		float UI_MaxMissileCount = 0.0f;
 
+	//This is the player's maximum health amount
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
+		float MaxHealthLimit = 1500.0f;
+
+	//This is the player's maximum missile count
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
+		float MaxMissileLimit = 255.0f;
+	
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,SaveGame,Category = "Player|Suit")
 		TEnumAsByte<EPlayerSuit> PlayerSuit;
 

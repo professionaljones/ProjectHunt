@@ -96,6 +96,15 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectHuntCharacter::LookUpAtRate);
 }
 
+void AProjectHuntCharacter::ModifyDataPoints(int32 NewDataPoints)
+{
+	CurrentDataPoints += NewDataPoints;
+	if (CurrentDataPoints == MaxDataPoints)
+	{
+		CurrentDataPoints = MaxDataPoints;
+	}
+}
+
 void AProjectHuntCharacter::ModifyStyle(float StyleModAmount)
 {
 	float Mod = StyleModAmount * StyleAmountMultiplier;
