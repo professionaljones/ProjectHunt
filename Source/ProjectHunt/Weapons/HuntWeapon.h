@@ -124,11 +124,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Reset")
 		float OriginalDamageModifier = 0.0;
 
-
-	//How far does this weapon's "projectile" extend to?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Range")
-		float WeaponDistanceRange = 0.0f;
-
 	////End Damage
 
 
@@ -164,21 +159,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Damage")
 		float FireRateUpgradeAmount;
 
-	//How much additional range gained at this level
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Damage")
-		float WeaponRangeUpgradeAmount;
-
 
 	//How much faster can charge weapons charge?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Charge")
-		float ChargeWeaponAmountIncrease;
+		float ChargeRateAmountIncrease;
 
 	//What is the new maximum limit for charge weapons
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Charge")
 		float ChargeLimitAmountIncrease;
 
 	//What is the price of this upgrade?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Reload")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
 		float WeaponUpgradePrice;
 };
 
@@ -361,6 +352,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
 		void SetWeaponStats(FWeaponStatsData NewWeaponStats);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void UpgradeDamage(float IncreaseAmount);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void UpgradeFireRate(float IncreaseAmount);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void UpgradeChargeRate(float IncreaseAmount);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void UpgradeChargeLimit(float IncreaseAmount);
+
+	
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

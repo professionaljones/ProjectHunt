@@ -96,10 +96,16 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectHuntCharacter::LookUpAtRate);
 }
 
+int32 AProjectHuntCharacter::GetDataPoints()
+{
+	UI_CurrentDataPoints = CurrentDataPoints;
+	return UI_CurrentDataPoints;
+}
+
 void AProjectHuntCharacter::ModifyDataPoints(int32 NewDataPoints)
 {
 	CurrentDataPoints += NewDataPoints;
-	if (CurrentDataPoints == MaxDataPoints)
+	if (CurrentDataPoints >= MaxDataPoints)
 	{
 		CurrentDataPoints = MaxDataPoints;
 	}

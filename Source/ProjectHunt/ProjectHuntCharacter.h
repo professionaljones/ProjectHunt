@@ -130,10 +130,17 @@ public:
 		int32 CurrentDataPoints = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		int32 UI_CurrentDataPoints = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 MaxDataPoints = 99999999;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 DataPointsToAdd = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Style")
+		int32 GetDataPoints();
+
 
 	//This function can be used to increase or decrease the player's style amount
 	UFUNCTION(BlueprintCallable, Category = "Player|Style")

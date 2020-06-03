@@ -57,13 +57,13 @@ void AHuntWeapon::FireWeapon()
 
 	//this->Execute_OnFire(this);
 
-	if (WeaponOwner == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
+	/*if (WeaponOwner == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
 	{
 
 		StartLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetComponentLocation();
 		EndLocation = StartLocation + (UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetForwardVector() * WeaponStatsData.WeaponDistanceRange);
 
-	}
+	}*/
 
 	
 	
@@ -72,7 +72,7 @@ void AHuntWeapon::FireWeapon()
 	AActor* HitActor = SingleHit.GetActor();
 
 	//Length of the ray in Unreal units
-	float WeaponRange = WeaponStatsData.WeaponDistanceRange;
+	//float WeaponRange = WeaponStatsData.WeaponDistanceRange;
 
 	//Play Fire SFX
 	if (WeaponFireSound != NULL)
@@ -83,11 +83,6 @@ void AHuntWeapon::FireWeapon()
 	if (WeaponFireVFX != NULL)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
-	}
-
-	if (bEnableDebugMode)
-	{
-		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, true, 5.0f, 5, 5.0f);
 	}
 
 	SpawnWeaponProjectile();
@@ -294,5 +289,24 @@ void AHuntWeapon::SetWeaponStats(FWeaponStatsData NewWeaponStats)
 	WeaponStatsData.MaxWeaponLevel = NewWeaponStats.MaxWeaponLevel;
 }
 
+void AHuntWeapon::UpgradeDamage(float IncreaseAmount)
+{
+	WeaponStatsData.DamageModifierAmount = WeaponStatsData.DamageModifierAmount + IncreaseAmount;
+	CalculateDamage();
+}
 
+void AHuntWeapon::UpgradeFireRate(float IncreaseAmount)
+{
+	WeaponStatsData.FireRate = WeaponStatsData.FireRate + IncreaseAmount;
+}
+
+void AHuntWeapon::UpgradeChargeRate(float IncreaseAmount)
+{
+	WeaponStatsData.ChargeRate = WeaponStatsData.ChargeRate - IncreaseAmount;
+}
+
+void AHuntWeapon::UpgradeChargeLimit(float IncreaseAmount)
+{
+	WeaponStatsData.WeaponChargeLimit = WeaponStatsData.WeaponChargeLimit + IncreaseAmount;
+}
 
