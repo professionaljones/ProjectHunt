@@ -56,23 +56,37 @@ struct FWeaponStatsData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 public:
+
 	//We use this to determine the slot the weapon should fill in the inventory
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
 		TEnumAsByte<EWeaponType> WeaponType;
+
 	//This weapon's Ammo Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
 		TEnumAsByte<EAmmoType> WeaponAmmoType;
 
 
 
-	//What level is this weapon at?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
-		int32 CurrentWeaponLevel = 1;
+	//What is the damage level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Stats|Level")
+		int32 WeaponDamageLevel = 1;
+
+	//What is the fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Stats|Level")
+		int32 FireRateLevel = 1;
+
+	//What is the fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Stats|Level")
+		int32 ChargeRateLevel = 1;
+
+	//What is the fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Stats|Level")
+		int32 ChargeLimitLevel = 1;
 
 
 	//What is the maximum level of this weapon?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
-		int32 MaxWeaponLevel = 10;
+		int32 MaxWeaponLevel = 5;
 
 	//How fast does this weapon fire - if it is automatic
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
@@ -146,31 +160,56 @@ struct FWeaponUpgradeData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	//What is the new level of this weapon
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Level")
-		int32 NewWeaponLevel;
+
+	//What is the new damage level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 WeaponDamageLevel;
 
 	//How much additional damage gained at this level
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Damage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
 		float DamageUpgradeAmount;
 
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float DamageUpgradePrice;
+
+	//What is the new fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 FireRateLevel;
 
 	//How much faster can this weapon fire?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Damage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
 		float FireRateUpgradeAmount;
 
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float FireRateUpgradePrice;
+
+	//What is the charge rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 ChargeRateLevel;
 
 	//How much faster can charge weapons charge?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Charge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
 		float ChargeRateAmountIncrease;
 
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float ChargeRateUpgradePrice;
+
+	//What is the new fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 ChargeLimitLevel;
+
 	//What is the new maximum limit for charge weapons
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade|Charge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
 		float ChargeLimitAmountIncrease;
 
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
-		float WeaponUpgradePrice;
+		float ChargeLimitUpgradePrice;
+
+	
 };
 
 UCLASS()

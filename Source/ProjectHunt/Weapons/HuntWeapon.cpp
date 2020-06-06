@@ -3,7 +3,6 @@
 
 #include "HuntWeapon.h"
 #include "ProjectHunt/ProjectHuntCharacter.h"
-#include "DrawDebugHelpers.h"
 
 // Sets default values
 AHuntWeapon::AHuntWeapon()
@@ -285,28 +284,51 @@ void AHuntWeapon::SetWeaponStats(FWeaponStatsData NewWeaponStats)
 	WeaponStatsData.WeaponChargeLimit = NewWeaponStats.WeaponChargeLimit;
 	WeaponStatsData.FireRate = NewWeaponStats.FireRate;
 	WeaponStatsData.SpecialDamageMultiplier = NewWeaponStats.SpecialDamageMultiplier;
-	WeaponStatsData.CurrentWeaponLevel = NewWeaponStats.CurrentWeaponLevel;
+	WeaponStatsData.WeaponDamageLevel = NewWeaponStats.WeaponDamageLevel;
+	WeaponStatsData.FireRateLevel = NewWeaponStats.FireRateLevel;
+	WeaponStatsData.ChargeRateLevel = NewWeaponStats.ChargeRateLevel;
+	WeaponStatsData.ChargeLimitLevel = NewWeaponStats.ChargeLimitLevel;
 	WeaponStatsData.MaxWeaponLevel = NewWeaponStats.MaxWeaponLevel;
 }
 
 void AHuntWeapon::UpgradeDamage(float IncreaseAmount)
 {
 	WeaponStatsData.DamageModifierAmount = WeaponStatsData.DamageModifierAmount + IncreaseAmount;
+	WeaponStatsData.WeaponDamageLevel++;
+	if (WeaponStatsData.WeaponDamageLevel >= WeaponStatsData.MaxWeaponLevel)
+	{
+		WeaponStatsData.WeaponDamageLevel = WeaponStatsData.MaxWeaponLevel;
+	}
 	CalculateDamage();
 }
 
 void AHuntWeapon::UpgradeFireRate(float IncreaseAmount)
 {
 	WeaponStatsData.FireRate = WeaponStatsData.FireRate + IncreaseAmount;
+	WeaponStatsData.FireRateLevel++;
+	if (WeaponStatsData.FireRateLevel >= WeaponStatsData.MaxWeaponLevel)
+	{
+		WeaponStatsData.FireRateLevel = WeaponStatsData.MaxWeaponLevel;
+	}
 }
 
 void AHuntWeapon::UpgradeChargeRate(float IncreaseAmount)
 {
 	WeaponStatsData.ChargeRate = WeaponStatsData.ChargeRate - IncreaseAmount;
+	WeaponStatsData.ChargeRateLevel++;
+	if (WeaponStatsData.ChargeRateLevel >= WeaponStatsData.MaxWeaponLevel)
+	{
+		WeaponStatsData.ChargeRateLevel = WeaponStatsData.MaxWeaponLevel;
+	}
 }
 
 void AHuntWeapon::UpgradeChargeLimit(float IncreaseAmount)
 {
 	WeaponStatsData.WeaponChargeLimit = WeaponStatsData.WeaponChargeLimit + IncreaseAmount;
+	WeaponStatsData.ChargeLimitLevel++;
+	if (WeaponStatsData.ChargeLimitLevel >= WeaponStatsData.MaxWeaponLevel)
+	{
+		WeaponStatsData.ChargeLimitLevel = WeaponStatsData.MaxWeaponLevel;
+	}
 }
 
