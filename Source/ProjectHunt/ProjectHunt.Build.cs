@@ -8,6 +8,12 @@ public class ProjectHunt : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Slate", "SlateCore", "RenderCore", "GameplayTasks", "AIModule", "RenderCore" });
-	}
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Slate", "SlateCore", "RenderCore", "GameplayTasks", "AIModule" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem" });
+        if (Target.Platform == UnrealTargetPlatform.Android)
+        {
+            DynamicallyLoadedModuleNames.AddRange(new string[] { "OnlineSubsystemGooglePlay" });
+        }
+
+    }
 }
