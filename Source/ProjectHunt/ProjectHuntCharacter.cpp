@@ -313,27 +313,28 @@ void AProjectHuntCharacter::MoveRight(float Value)
 
 void AProjectHuntCharacter::TurnCharacter(float Rate)
 {
-	float NewTurn = Rate * MyPlayerController->GetLookXSensitivity_PC();
+	float NewTurn = Rate * Cached_MouseSensitivityX;
 	AddControllerYawInput(NewTurn * GetWorld()->GetDeltaSeconds());
 }
 
 void AProjectHuntCharacter::LookUpAtCamera(float Rate)
 {
-	float NewLookUp = Rate * MyPlayerController->GetLookYSensitivity_PC();
+	float NewLookUp = Rate * Cached_MouseSensitivityY;
 	AddControllerYawInput(NewLookUp * GetWorld()->GetDeltaSeconds());
 }
 
 void AProjectHuntCharacter::TurnAtRate(float Rate)
 {
-	BaseTurnRate =  MyPlayerController->GetLookXSensitivity_Gamepad();
-	
+	//BaseTurnRate =  MyPlayerController->GetLookXSensitivity_Gamepad();
+	BaseTurnRate = Cached_GamepadSensitivityX;
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void AProjectHuntCharacter::LookUpAtRate(float Rate)
 {
-	BaseLookUpRate = MyPlayerController->GetLookYSensitivity_Gamepad();
+	//BaseLookUpRate = MyPlayerController->GetLookYSensitivity_Gamepad();
+	BaseLookUpRate = Cached_GamepadSensitivityY;
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }

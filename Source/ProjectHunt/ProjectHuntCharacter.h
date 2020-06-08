@@ -133,6 +133,18 @@ public:
 		int32 UI_CurrentDataPoints = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		float Cached_MouseSensitivityX = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		float Cached_MouseSensitivityY = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		float Cached_GamepadSensitivityX = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		float Cached_GamepadSensitivityY = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 MaxDataPoints = 99999999;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
