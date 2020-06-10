@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/DemoNetDriver.h"
+#include "HuntPlayerInterface.h"
 #include "HuntPlayerController.generated.h"
 
 /**
  *
  */
 UCLASS()
-class PROJECTHUNT_API AHuntPlayerController : public APlayerController
+class PROJECTHUNT_API AHuntPlayerController : public APlayerController, public IHuntPlayerInterface
 {
 	GENERATED_BODY()
 

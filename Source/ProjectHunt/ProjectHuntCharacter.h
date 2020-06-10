@@ -153,6 +153,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Style")
 		int32 GetDataPoints();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Character")
+		bool bEnableMovementInput = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+		bool bEnableLookInput = true;
+
 
 	//This function can be used to increase or decrease the player's style amount
 	UFUNCTION(BlueprintCallable, Category = "Player|Style")

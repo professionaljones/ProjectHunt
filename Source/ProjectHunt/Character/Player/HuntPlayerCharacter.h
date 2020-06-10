@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ProjectHunt/ProjectHuntCharacter.h"
+#include "HuntPlayerInterface.h"
 #include "HuntPlayerCharacter.generated.h"
 
 //What is the player's current style rank
@@ -21,7 +22,7 @@ enum EPlayerSuit
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdatePlayerHUD);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateWeaponSlot, TEnumAsByte<EWeaponType>, NewWeaponType);
 UCLASS()
-class PROJECTHUNT_API AHuntPlayerCharacter : public AProjectHuntCharacter
+class PROJECTHUNT_API AHuntPlayerCharacter : public AProjectHuntCharacter, public IHuntPlayerInterface
 
 {
 	GENERATED_BODY()

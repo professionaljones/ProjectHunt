@@ -57,7 +57,7 @@ void AProjectHuntCharacter::BeginPlay()
 	Super::BeginPlay();
 	StartStyleModTimer();
 	//MaxStyleAmount = SSS_StyleLimit;
-	
+
 
 }
 
@@ -76,7 +76,7 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AProjectHuntCharacter::OnFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AProjectHuntCharacter::OnFireEnd);
-	
+
 
 
 	// Enable touchscreen input
@@ -138,23 +138,23 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 		if (StylePercentage <= D_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Dull;
-		
+
 		}
 		if (StylePercentage > C_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Crazy;
-			
+
 		}
 		if (StylePercentage > B_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Blast;
-			
+
 		}
 
 		if (StylePercentage > A_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Alright;
-			
+
 		}
 		if (StylePercentage > S_StyleLimit)
 		{
@@ -174,7 +174,7 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
 		CurrentStyleAmount = 0.0f;
 	}
-	
+
 }
 
 void AProjectHuntCharacter::StartStyleModTimer()
@@ -185,14 +185,14 @@ void AProjectHuntCharacter::StartStyleModTimer()
 		{
 			GetWorldTimerManager().SetTimer(StyleDecreaseTimer, this, &AProjectHuntCharacter::DecreaseStyle, 1.0f, true);
 		}
-		
+
 	}
 	if (CurrentStyleAmount < 0.0f)
 	{
 		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
 		CurrentStyleAmount = 0.0f;
 	}
-	
+
 }
 
 float AProjectHuntCharacter::GetStylePercentage()
@@ -225,7 +225,7 @@ void AProjectHuntCharacter::OnFireEnd()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->EndFire();
-		
+
 		//CurrentWeaponCharge = 0.f;
 	}
 }
@@ -297,8 +297,12 @@ void AProjectHuntCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// add movement in that direction
-		AddMovementInput(GetActorForwardVector(), Value);
+		if (bEnableMovementInput)
+		{
+			// add movement in that direction
+			AddMovementInput(GetActorForwardVector(), Value);
+		}
+
 	}
 }
 
@@ -306,21 +310,33 @@ void AProjectHuntCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// add movement in that direction
-		AddMovementInput(GetActorRightVector(), Value);
+		if (bEnableMovementInput)
+		{
+			// add movement in that direction
+			AddMovementInput(GetActorRightVector(), Value);
+		}
+
 	}
 }
 
 void AProjectHuntCharacter::TurnCharacter(float Rate)
 {
 	float NewTurn = Rate * Cached_MouseSensitivityX;
-	AddControllerYawInput(NewTurn * GetWorld()->GetDeltaSeconds());
+	if (bEnableLookInput)
+	{
+		AddControllerYawInput(NewTurn * GetWorld()->GetDeltaSeconds());
+	}
+
 }
 
 void AProjectHuntCharacter::LookUpAtCamera(float Rate)
 {
 	float NewLookUp = Rate * Cached_MouseSensitivityY;
-	AddControllerYawInput(NewLookUp * GetWorld()->GetDeltaSeconds());
+	if (bEnableLookInput)
+	{
+		AddControllerYawInput(NewLookUp * GetWorld()->GetDeltaSeconds());
+	}
+
 }
 
 void AProjectHuntCharacter::TurnAtRate(float Rate)
@@ -328,7 +344,10 @@ void AProjectHuntCharacter::TurnAtRate(float Rate)
 	//BaseTurnRate =  MyPlayerController->GetLookXSensitivity_Gamepad();
 	BaseTurnRate = Cached_GamepadSensitivityX;
 	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	if (bEnableLookInput)
+	{
+		AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 void AProjectHuntCharacter::LookUpAtRate(float Rate)
@@ -336,7 +355,11 @@ void AProjectHuntCharacter::LookUpAtRate(float Rate)
 	//BaseLookUpRate = MyPlayerController->GetLookYSensitivity_Gamepad();
 	BaseLookUpRate = Cached_GamepadSensitivityY;
 	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	if (bEnableLookInput)
+	{
+		AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	}
+
 }
 
 bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
@@ -356,7 +379,7 @@ bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 
 float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
-	
+
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (DamageAmount > 0.0f)
 	{
@@ -366,7 +389,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
 			DecreaseStyle();
 		}
-		
+
 		if (DamageSounds.Num() != 0)
 		{
 			int RandomDamageSoundIndex = UKismetMathLibrary::RandomIntegerInRange(0, DamageSounds.Num());
