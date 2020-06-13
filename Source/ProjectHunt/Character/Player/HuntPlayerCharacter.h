@@ -16,8 +16,22 @@ enum EPlayerSuit
 	Suit_Version4
 
 };
+
+USTRUCT(BlueprintType)
+struct FPlayerSaveableStats : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+		//Has the player unlocked the ability to dash
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
+		bool bUnlockedDash = false;
+
+	//Has the player unlocked the ability to wallrun
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
+		bool bUnlockedWallrun = false;
+};
 /**
- * 
+ *
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdatePlayerHUD);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateWeaponSlot, TEnumAsByte<EWeaponType>, NewWeaponType);
@@ -26,19 +40,25 @@ class PROJECTHUNT_API AHuntPlayerCharacter : public AProjectHuntCharacter, publi
 
 {
 	GENERATED_BODY()
-	
+
 public:
 	AHuntPlayerCharacter();
 
 public:
 
-	UPROPERTY(BlueprintAssignable,BlueprintCallable,Category = "Player|Data")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdatePlayerHUD UpdatePlayerHUD_Delegate;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdateWeaponSlot UpdateWeaponSlotEvent;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,SaveGame, Category = "Player|Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
+		bool bCanDash = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
+		bool bCanWallrun = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Inventory")
 		TMap<TEnumAsByte<EWeaponType>, class AHuntWeapon*> WeaponInventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
@@ -65,13 +85,13 @@ public:
 	//This is the player's maximum missile count
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
 		float MaxMissileLimit = 255.0f;
-	
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,SaveGame,Category = "Player|Suit")
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Suit")
 		TEnumAsByte<EPlayerSuit> PlayerSuit;
 
 	//How fast can the player move on land
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,SaveGame,Category = "Movement|Walking")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Walking")
 		float MovementSpeed = 1300.0f;
 
 	//What is the max number of limits for dashing
@@ -84,7 +104,7 @@ public:
 
 	//Multiplier of character Velocity for dashing - prototyping
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-	float DashVelocityMod = 100.0f;
+		float DashVelocityMod = 100.0f;
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
@@ -97,7 +117,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		float PlayerAirControl = 0.16f;
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Player Data|Movement")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Movement")
 		int32 GetJumpCount();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Movement")
@@ -107,6 +127,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	//This will toggle the @param bool
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void UnlockAbility(bool bUnlockAbility);
 
 	//This returns the owner's current Missiles
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
@@ -127,5 +151,5 @@ public:
 	//This will modify Max Missiles, then reset current Missiles
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void UpgradeMissileCapacity(int32 IncreaseAmount);
-	
+
 };

@@ -28,6 +28,11 @@ void AHuntPlayerCharacter::BeginPlay()
 	MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 
+void AHuntPlayerCharacter::UnlockAbility(bool bUnlockAbility)
+{
+	bUnlockAbility = true;
+}
+
 int32 AHuntPlayerCharacter::GetCurrentMissiles()
 {
 	UI_CurrentMissileCount = CurrentMissileCount;
