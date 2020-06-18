@@ -58,6 +58,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
 		bool bCanWallrun = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
+		bool bHasMissileLauncher = false;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Inventory")
 		TMap<TEnumAsByte<EWeaponType>, class AHuntWeapon*> WeaponInventory;
 
@@ -123,6 +126,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Movement")
 		int32 GetDashCount();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Weapons")
+		bool CanPlayerUseMissiles();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -151,5 +157,16 @@ public:
 	//This will modify Max Missiles, then reset current Missiles
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void UpgradeMissileCapacity(int32 IncreaseAmount);
+
+	/**
+ * Apply damage to this actor.
+ * @see https://www.unrealengine.com/blog/damage-in-ue4
+ * @param DamageAmount		How much damage to apply
+ * @param DamageEvent		Data package that fully describes the damage received.
+ * @param EventInstigator	The Controller responsible for the damage.
+ * @param DamageCauser		The Actor that directly caused the damage (e.g. the projectile that exploded, the rock that landed on you)
+ * @return					The amount of damage actually applied.
+ */
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 };

@@ -88,7 +88,16 @@ public:
 	TEnumAsByte<ECharacterStyleRank> PlayerStyle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Damage")
-		float DamageTakenModifier = 1.0f;
+		float DamageTakenModifier = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Damage")
+		float DamageDefenseModifer = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		float DamageRankModifier = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		float PlayerRankReference = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Player|Style")
 		float StylePercentage = 0.0f;
@@ -143,6 +152,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		float Cached_GamepadSensitivityY = 0.0f;
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 MaxDataPoints = 99999999;

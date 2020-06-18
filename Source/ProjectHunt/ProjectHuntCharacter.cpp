@@ -386,6 +386,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 		if (this->CanBeDamaged())
 		{
 			//StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
+			DamageTakenModifier = DamageRankModifier - DamageDefenseModifer;
 			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
 			DecreaseStyle();
 		}
