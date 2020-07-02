@@ -95,6 +95,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetMaxHealth();
 
+	//This returns the owner's current health percentage
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+		float GetHealthPercentage();
+
 	//This returns the owner's current Aragon
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetCurrentAragon();
@@ -102,6 +106,10 @@ public:
 	//This returns the owner's max Aragon
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
 		float GetMaxAragon();
+
+	//This returns the owner's current Aragon percentage
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+		float GetAragonPercentage();
 
 	//This function will add the @param IncreaseAmount to the owner's Max Health, then reset the Current Health 
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")

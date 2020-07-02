@@ -10,6 +10,9 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	StatsComponent->CurrentHealth = StatsComponent->MaxHealth;
 	StatsComponent->CurrentAragon = StatsComponent->MaxAragon;
 	MaxStyleAmount = SSS_StyleLimit;
+	Mesh1P->bCastDynamicShadow = false;
+	Mesh1P->CastShadow = false;
+	Mesh1P->SetOnlyOwnerSee(false);
 }
 
 int32 AHuntPlayerCharacter::GetJumpCount()

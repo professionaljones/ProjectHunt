@@ -118,6 +118,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
 		float TotalDamage = 0.0f;
 
+	//Give us the sum/product of BaseDamage and CritMultiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
+		float CriticalHitDamage = 0.0f;
+
 	//When in Quicksilver or Overdrive, how much should the damage be multiplied by?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage|Modifiers")
 		float SpecialDamageMultiplier = 0.0f;
@@ -359,6 +363,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void CalculateDamage();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void CalculateCritDamage();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void CalculateSpecialDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void ResetDamage();

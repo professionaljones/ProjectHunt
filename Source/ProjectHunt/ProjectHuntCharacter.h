@@ -204,6 +204,10 @@ public:
 
 protected:
 
+	//List of sockets where when hit, character should take critical damage
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Damage")
+		TArray<FName> CriticalHitLocations;
+
 	/** Fires a projectile. */
 	void OnFire();
 

@@ -31,6 +31,7 @@ void AHuntWeapon::BeginPlay()
 	ActorsToIgnore.Add(WeaponOwner);
 	WeaponStatsData.OriginalDamageModifier = WeaponStatsData.DamageModifierAmount;
 	WeaponStatsData.OriginalDamageMultiplier = WeaponStatsData.DamageMultiplierAmount;
+	CalculateCritDamage();
 
 }
 
@@ -50,7 +51,7 @@ void AHuntWeapon::FireWeapon()
 			WeaponProjectileState = EProjectileState::Projectile_Normal;
 		}
 	}
-	
+
 	//Collision parameters
 	FCollisionQueryParams CollisionParameters;
 
@@ -64,8 +65,8 @@ void AHuntWeapon::FireWeapon()
 
 	}*/
 
-	
-	
+
+
 
 	//Create temp variable for Actor we hit
 	AActor* HitActor = SingleHit.GetActor();
@@ -87,7 +88,7 @@ void AHuntWeapon::FireWeapon()
 	SpawnWeaponProjectile();
 	CalculateDamage();
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
-	
+
 }
 
 void AHuntWeapon::FireCharge()
@@ -125,6 +126,16 @@ void AHuntWeapon::CalculateDamage()
 	WeaponStatsData.TotalDamage = WeaponStatsData.BaseDamage * (WeaponStatsData.DamageMultiplierAmount + WeaponStatsData.DamageModifierAmount);
 }
 
+void AHuntWeapon::CalculateCritDamage()
+{
+	WeaponStatsData.CriticalHitDamage = WeaponStatsData.BaseDamage * (WeaponStatsData.CriticalHitMultiplier + WeaponStatsData.DamageModifierAmount);
+}
+
+void AHuntWeapon::CalculateSpecialDamage()
+{
+	WeaponStatsData.TotalDamage = WeaponStatsData.BaseDamage * (WeaponStatsData.SpecialDamageMultiplier + WeaponStatsData.DamageModifierAmount);
+}
+
 void AHuntWeapon::ResetDamage()
 {
 	WeaponStatsData.DamageModifierAmount = WeaponStatsData.OriginalDamageModifier;
@@ -142,9 +153,9 @@ void AHuntWeapon::SpawnWeaponProjectile()
 	/*FActorSpawnParameters SpawnParameters;
 	TSubclassOf<AHuntWeaponProjectile>* test = WeaponProjectiles.Find(WeaponProjectileState);
 	class AHuntWeaponProjectile* testDO = test->GetDefaultObject();
-	
-	
-	
+
+
+
 	switch (WeaponProjectileState)
 	{
 	case EProjectileState::Projectile_Normal:
@@ -153,7 +164,7 @@ void AHuntWeapon::SpawnWeaponProjectile()
 		{
 			testDO = GetWorld()->SpawnActor<AHuntWeaponProjectile>(testDO::StaticClass(), WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), SpawnParameters);
 		}
-		
+
 	}
 	case EProjectileState::Projectile_Charge:
 	{
@@ -202,7 +213,7 @@ void AHuntWeapon::EndFire()
 	if (bIsCharging)
 	{
 		FinishCharge();
-		
+
 		bIsCharging = false;
 	}
 	if (GetWorldTimerManager().IsTimerActive(AutoFireTimer))
@@ -221,7 +232,7 @@ void AHuntWeapon::StartCharge()
 		WeaponAltAudioComponent->SetSound(WeaponChargingSound);
 		WeaponAltAudioComponent->Play();
 	}
-	GetWorldTimerManager().SetTimer(ChargeFireTimer, this, &AHuntWeapon::Charge, WeaponStatsData.ChargeRate, true,WeaponStatsData.WeaponChargeDelay);
+	GetWorldTimerManager().SetTimer(ChargeFireTimer, this, &AHuntWeapon::Charge, WeaponStatsData.ChargeRate, true, WeaponStatsData.WeaponChargeDelay);
 }
 
 void AHuntWeapon::Charge()
@@ -244,18 +255,18 @@ void AHuntWeapon::Charge()
 
 void AHuntWeapon::FinishCharge()
 {
-	
+
 	//Attempt to apply damage
 	if (CurrentWeaponCharge > 0.0f)
 	{
 		FireCharge();
 		//Reset Charge value
-		
+
 		WeaponAltAudioComponent->Stop();
 	}
-	
+
 	WeaponProjectileState = EProjectileState::Projectile_Normal;
-	
+
 }
 
 void AHuntWeapon::AttachToOwner()

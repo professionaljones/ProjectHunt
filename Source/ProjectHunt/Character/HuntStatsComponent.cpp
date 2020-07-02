@@ -44,6 +44,11 @@ float UHuntStatsComponent::GetMaxHealth()
 	return UI_MaxHealth;
 }
 
+float UHuntStatsComponent::GetHealthPercentage()
+{
+	return CurrentHealth / MaxHealth;
+}
+
 float UHuntStatsComponent::GetCurrentAragon()
 {
 	UI_CurrentAragon = CurrentAragon;
@@ -54,6 +59,11 @@ float UHuntStatsComponent::GetMaxAragon()
 {
 	UI_MaxAragon = MaxAragon;
 	return UI_MaxAragon;
+}
+
+float UHuntStatsComponent::GetAragonPercentage()
+{
+	return CurrentAragon / MaxAragon;
 }
 
 void UHuntStatsComponent::UpgradeHealthStats(float IncreaseAmount)
