@@ -34,6 +34,7 @@ struct FPlayerSaveableStats : public FTableRowBase
  *
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdatePlayerHUD);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSecondaryPlayerUpdate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateWeaponSlot, TEnumAsByte<EWeaponType>, NewWeaponType);
 UCLASS()
 class PROJECTHUNT_API AHuntPlayerCharacter : public AProjectHuntCharacter, public IHuntPlayerInterface
@@ -48,6 +49,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdatePlayerHUD UpdatePlayerHUD_Delegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
+		FSecondaryPlayerUpdate SecondaryPlayerUpdateDelegate;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdateWeaponSlot UpdateWeaponSlotEvent;
