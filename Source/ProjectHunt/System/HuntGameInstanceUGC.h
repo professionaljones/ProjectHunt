@@ -3,23 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
+#include "UGCBaseGameInstance.h"
 #include "ProjectHunt/Character/Player/HuntPlayerCharacter.h"
-#include "ProjectHuntGameInstance.generated.h"
-
+#include "HuntGameInstanceUGC.generated.h"
 
 /**
  *
  */
 UCLASS()
-class PROJECTHUNT_API UProjectHuntGameInstance : public UGameInstance
+class PROJECTHUNT_API UHuntGameInstanceUGC : public UUGCBaseGameInstance
 {
 	GENERATED_BODY()
 
 public:
-
-	UProjectHuntGameInstance();
-
+	UHuntGameInstanceUGC();
 
 	//Name for the recorded replay
 	UPROPERTY(EditDefaultsOnly, Category = "Replays")
