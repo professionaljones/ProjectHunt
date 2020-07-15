@@ -9,6 +9,14 @@ UHuntGameInstanceUGC::UHuntGameInstanceUGC()
 	friendlyRecordingName = "My Replay";
 }
 
+void UHuntGameInstanceUGC::Init()
+{
+	// Instantiate the registry and find mod packages
+	UGCRegistry = NewObject<UUGCRegistry>(this);
+	UGCRegistry->FindUGCPackages();
+	Super::Init();
+}
+
 void UHuntGameInstanceUGC::StartRecording()
 {
 	StartRecordingReplay(RecordingName, friendlyRecordingName);

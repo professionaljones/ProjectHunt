@@ -18,6 +18,8 @@ class PROJECTHUNT_API UHuntGameInstanceUGC : public UUGCBaseGameInstance
 public:
 	UHuntGameInstanceUGC();
 
+	virtual void Init() override;
+
 	//Name for the recorded replay
 	UPROPERTY(EditDefaultsOnly, Category = "Replays")
 		FString RecordingName;
