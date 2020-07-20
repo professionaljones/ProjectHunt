@@ -106,7 +106,7 @@ void FSimpleUGCPackager::PackagePlugin(TSharedRef<class IPlugin> Plugin, const F
 #endif
 
 	// Hard coded here for simplicity. You will probably want to read this from an ini file
-	FString ReleaseVersion = TEXT("UGCExampleGame_v1");
+	FString ReleaseVersion = TEXT("ProjectHunt");
 
 	FString CommandLine = FString::Printf(TEXT("PackageUGC -Project=\"%s\" -PluginPath=\"%s\" -basedonreleaseversion=\"%s\" -StagingDirectory=\"%s\" -nocompile"),
 		*FPaths::ConvertRelativePathToFull(FPaths::GetProjectFilePath()),

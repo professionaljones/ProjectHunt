@@ -46,4 +46,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void ToggleLookInput(bool bToggleInput);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnModifyStyle(float NewStyleAmount);
 };

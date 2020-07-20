@@ -4,6 +4,7 @@
 
 #include "ProjectHunt/ProjectHuntCharacter.h"
 #include "HuntPlayerInterface.h"
+#include "PlayerStatsComponent.h"
 #include "HuntPlayerCharacter.generated.h"
 
 //What is the player's current style rank
@@ -161,6 +162,13 @@ public:
 	//This will modify Max Missiles, then reset current Missiles
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void UpgradeMissileCapacity(int32 IncreaseAmount);
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
+		class AHuntPlayerController* MyPlayerController;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class UAudioComponent* SuitAudioComponent;
 
 	/**
  * Apply damage to this actor.

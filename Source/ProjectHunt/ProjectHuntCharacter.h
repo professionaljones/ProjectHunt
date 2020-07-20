@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Weapons/HuntWeapon.h"
-#include "Character/HuntStatsComponent.h"
+#include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "ProjectHunt/Character/Player/HuntPlayerController.h"
 #include "ProjectHunt/Character/HuntCharacterInterface.h"
 #include "ProjectHuntCharacter.generated.h"
@@ -53,15 +53,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
 		class AHuntWeapon* CurrentWeapon;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
-		class AHuntPlayerController* MyPlayerController;
 
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* CharacterAudioComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio)
-		class UAudioComponent* SuitAudioComponent;
+	
 
 
 protected:

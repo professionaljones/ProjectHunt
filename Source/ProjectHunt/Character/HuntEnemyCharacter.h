@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ProjectHuntCharacter.h"
+#include "ProjectHunt/ProjectHuntCharacter.h"
 #include "HuntEnemyCharacter.generated.h"
 
 /**
@@ -13,5 +13,15 @@ UCLASS()
 class PROJECTHUNT_API AHuntEnemyCharacter : public AProjectHuntCharacter
 {
 	GENERATED_BODY()
+
+		AHuntEnemyCharacter();
+public:
+
 	
+
+protected:
+	
+public:
+
+
 };

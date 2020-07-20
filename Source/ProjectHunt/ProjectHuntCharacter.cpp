@@ -35,9 +35,6 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	//Create a AudioComponent
 	CharacterAudioComponent = CreateDefaultSubobject<UAudioComponent>("CharacterAudioComponent");
 
-	//Create a secondary AudioComponent 
-	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
-
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);

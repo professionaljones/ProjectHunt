@@ -32,6 +32,12 @@ void UHuntStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
+
+ESuitMainAbilities UHuntStatsComponent::GetCurrentPower()
+{
+	return CurrentSuitPower;
+}
+
 float UHuntStatsComponent::GetCurrentHealth()
 {
 	UI_CurrentHealth = CurrentHealth;

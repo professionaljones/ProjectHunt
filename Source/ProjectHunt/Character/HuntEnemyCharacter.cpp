@@ -3,3 +3,7 @@
 
 #include "HuntEnemyCharacter.h"
 
+AHuntEnemyCharacter::AHuntEnemyCharacter()
+{
+	
+}

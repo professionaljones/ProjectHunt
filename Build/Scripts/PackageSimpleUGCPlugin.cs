@@ -35,7 +35,7 @@ namespace SimpleUGC.Automation
 				throw new AutomationException("Plugin '{0}' not found", PluginFile.FullName);
 			}
 
-			string ReleaseVersion = Cmd.ParseParamValue("BasedOnReleaseVersion", "UGCExampleGame_v1");
+			string ReleaseVersion = Cmd.ParseParamValue("BasedOnReleaseVersion", "ProjectHunt");
 
 			FileReference ProjectFile = new FileReference(ProjectFileName);
 

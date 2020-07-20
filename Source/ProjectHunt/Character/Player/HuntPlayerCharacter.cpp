@@ -9,10 +9,11 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	StatsComponent->MaxAragon = 200;
 	StatsComponent->CurrentHealth = StatsComponent->MaxHealth;
 	StatsComponent->CurrentAragon = StatsComponent->MaxAragon;
+	StatsComponent->AragonRechargeAmount = 15.0f;
 	MaxStyleAmount = SSS_StyleLimit;
-	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false;
-	Mesh1P->SetOnlyOwnerSee(false);
+
+	//Create a secondary AudioComponent 
+	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
 }
 
 int32 AHuntPlayerCharacter::GetJumpCount()

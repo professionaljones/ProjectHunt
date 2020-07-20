@@ -72,6 +72,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Aragon")
 		float UI_MaxAragon = 0.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Enemy")
+		bool bWasScanned = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+		FString CharacterName;
+
 	//What is the player's current power 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
 		TEnumAsByte<ESuitMainAbilities> CurrentSuitPower;
@@ -80,35 +86,32 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Powers")
 		TMap<FString, bool> PlayerPowerUnlockMap;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Enemy")
-		bool bWasScanned = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		FString CharacterName;
-
+	//This returns the owner's current power
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
+		ESuitMainAbilities GetCurrentPower();
 
 	//This returns the owner's current health
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
 		float GetCurrentHealth();
 
 	//This returns the owner's max health
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
 		float GetMaxHealth();
 
 	//This returns the owner's current health percentage
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
 		float GetHealthPercentage();
 
 	//This returns the owner's current Aragon
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
 		float GetCurrentAragon();
 
 	//This returns the owner's max Aragon
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
 		float GetMaxAragon();
 
 	//This returns the owner's current Aragon percentage
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats|Data")
 		float GetAragonPercentage();
 
 	//This function will add the @param IncreaseAmount to the owner's Max Health, then reset the Current Health 
