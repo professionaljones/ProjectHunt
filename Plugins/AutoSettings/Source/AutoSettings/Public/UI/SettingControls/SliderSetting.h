@@ -25,6 +25,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Slider Setting")
 	float RightValue;
 
+	// Clamps a value between the Left Value and Right Value of the slider
+	UFUNCTION(BlueprintPure, Category = "Slider Setting")
+	float ClampRawValue(float RawValue) const;
+
+	// Converts from a raw setting value between Left Value and Right Value to a normalized 0-1 slider value
+	UFUNCTION(BlueprintPure, Category = "Slider Setting")
+	float RawValueToNormalized(float RawValue) const;
+
+	// Converts from normalized 0-1 slider value to a raw setting value between Left Value and Right Value
+	UFUNCTION(BlueprintPure, Category = "Slider Setting")
+	float NormalizedValueToRaw(float NormalizedValue) const;
+
 protected:
 
 	virtual void UpdateSelection_Implementation(const FString& Value) override;

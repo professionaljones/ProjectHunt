@@ -169,6 +169,8 @@ void USettingsManager::SaveSetting(FAutoSettingData SettingData, bool bApplySett
 			ApplySetting(SettingData);
 		}
 
+		UE_LOG(LogAutoSettings, Log, TEXT("Saving setting %s with value %s"), *SettingData.Key.ToString(), *SettingData.Value);
+
 		SetConfigValue(SettingData.Key, SettingData.Value);
 		OnSettingSaved.Broadcast(SettingData);
 	}
@@ -178,6 +180,11 @@ void USettingsManager::SetConfigValue(FName Key, FString Value)
 {
 	if (!Key.IsNone() && !Value.IsEmpty())
 	{
+		// Remove the existing value and compact the map, so that the new value gets added to the end of the config section rather than inserted back in it's original place
+		// This is important because config are applied in the order they are saved when the engine is started, and we want to preserve the order that the user applied
+		// in case there are any CVars that set other CVars, like the scalability ones
+		GConfig->RemoveKey(*GetSectionName(), *Key.ToString(), IniFilename);
+		GConfig->GetSectionPrivate(*GetSectionName(), true, false, IniFilename)->CompactStable();
 		GConfig->SetString(*GetSectionName(), *Key.ToString(), *Value, IniFilename);
 		GConfig->Flush(false, IniFilename);
 	}
@@ -185,8 +192,14 @@ void USettingsManager::SetConfigValue(FName Key, FString Value)
 
 void USettingsManager::ApplySetting(FAutoSettingData SettingData)
 {
-	if (UConsoleUtils::IsCVarRegistered(SettingData.Key))
-		UConsoleUtils::SetStringCVar(SettingData.Key, SettingData.Value);
+	if(!UConsoleUtils::IsCVarRegistered(SettingData.Key))
+	{
+		FAutoSettingsError::LogMissingCVar("Apply Setting", SettingData.Key);
+		return;
+	}
+	
+	UE_LOG(LogAutoSettings, Log, TEXT("Applying setting %s with value %s"), *SettingData.Key.ToString(), *SettingData.Value);
+	UConsoleUtils::SetStringCVar(SettingData.Key, SettingData.Value);
 }
 
 FString USettingsManager::GetSectionName()
@@ -222,7 +235,7 @@ void USettingsManager::ApplySettingsFromConfig()
 void USettingsManager::AutoDetectSettings(int32 WorkScale, float CPUMultiplier, float GPUMultiplier)
 {
 	const Scalability::FQualityLevels State = Scalability::BenchmarkQualityLevels(WorkScale, CPUMultiplier, GPUMultiplier);
-	Scalability::SetQualityLevels(State);
+	Scalability::SetQualityLevels(State, true);
 
 	// Save new scalability values to config
 	// These are all the values that the Unreal scalability benchmark changes

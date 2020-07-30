@@ -99,7 +99,7 @@ private:
 	UPROPERTY()
 	bool bUpdatingSettingSelection;
 
-	void ApplyInternal(bool bPendingSave);
+	void ApplyInternal();
 
 	FString ProcessIncomingValue(FString Value) const;
 
