@@ -10,10 +10,12 @@ AHuntWeapon::AHuntWeapon()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Create a skeletal mesh component that will be used
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
+	//Create a skeletal mesh component that will be used for First Person
+	WeaponMeshFP = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMeshFP");
+	//Create a skeletal mesh component that will be used for Third Person
+	WeaponMeshTP = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMeshTP");
 	//Set mesh as root component
-	RootComponent = WeaponMesh;
+	RootComponent = WeaponMeshFP;
 	//Create audio component that handles weapon SFX
 	WeaponAudioComponent = CreateDefaultSubobject<UAudioComponent>("WeaponAudioComponent");
 
@@ -82,7 +84,7 @@ void AHuntWeapon::FireWeapon()
 	}
 	if (WeaponFireVFX != NULL)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
 	}
 
 	SpawnWeaponProjectile();
@@ -109,7 +111,7 @@ void AHuntWeapon::FireCharge()
 	}
 	if (WeaponFireVFX != NULL)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
 	}
 	CalculateDamage();
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
@@ -162,7 +164,7 @@ void AHuntWeapon::SpawnWeaponProjectile()
 	{
 		if (WeaponProjectiles.Find(Projectile_Normal))
 		{
-			testDO = GetWorld()->SpawnActor<AHuntWeaponProjectile>(testDO::StaticClass(), WeaponMesh->GetSocketTransform(WeaponMuzzlePoint), SpawnParameters);
+			testDO = GetWorld()->SpawnActor<AHuntWeaponProjectile>(testDO::StaticClass(), WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), SpawnParameters);
 		}
 
 	}

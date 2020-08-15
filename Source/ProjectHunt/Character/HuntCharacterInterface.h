@@ -43,6 +43,9 @@ public:
 		void OnAttackTarget();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnWeaponFire();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnFindCover();
 
 

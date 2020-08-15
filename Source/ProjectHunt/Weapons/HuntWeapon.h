@@ -17,12 +17,27 @@ UENUM(BlueprintType)
 enum EWeaponType
 {
 	WT_Unequipped UMETA(DisplayName = "Unequipped"),
+	WT_Explosive UMETA(DisplayName = "Explosives"),
 	WT_Pistol UMETA(DisplayName = "Pistol"),
 	WT_SMG UMETA(DisplayName = "SMG"),
 	WT_Rifle UMETA(DisplayName = "Rifle"),
 	WT_Shotgun UMETA(DisplayName = "Shotgun"),
 	WT_RocketLauncher UMETA(DisplayName = "Rocket Launcher"),
 	WT_Sniper UMETA(DisplayName = "Sniper Rifle")
+};
+
+//What kind of projectile does this weapon use
+UENUM(BlueprintType)
+enum EProjectileType
+{
+	//No projectile used
+	PT_None UMETA(DisplayName = "None"),
+	//Use this for weapons that would directly hit the target
+	PT_Instant UMETA(DisplayName = "Instant"),
+	//Use this for weapons that require the user to make contact with the target
+	PT_Projectile UMETA(DisplayName = "Projectile"),
+	//Unused for now
+	PT_Special,
 };
 
 
@@ -228,6 +243,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class AHuntWeaponProjectile* ProjectileToSpawn = NULL;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		TEnumAsByte<EProjectileType> WeaponProjectile;
+
 	//This weapon's Ammo Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
 		TEnumAsByte<EAmmoType> OriginalAmmoType;
@@ -418,7 +436,10 @@ public:
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		USkeletalMeshComponent* WeaponMesh;
+		USkeletalMeshComponent* WeaponMeshFP;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		USkeletalMeshComponent* WeaponMeshTP;
 
 	UPROPERTY(BlueprintReadWrite, VisibleDefaultsOnly, Category = "Weapon|SFX")
 		UAudioComponent* WeaponAudioComponent;
