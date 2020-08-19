@@ -90,6 +90,7 @@ void AHuntWeapon::FireWeapon()
 	SpawnWeaponProjectile();
 	CalculateDamage();
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
+	
 
 }
 
