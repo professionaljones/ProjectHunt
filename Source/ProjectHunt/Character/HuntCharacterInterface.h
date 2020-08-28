@@ -48,5 +48,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnFindCover();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerLockOn(bool bIsLockedOn);
+
 
 };
