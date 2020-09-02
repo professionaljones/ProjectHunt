@@ -17,7 +17,8 @@
 		{
 			"Name": "SimpleUGC",
 			"Type": "Runtime",
-			"LoadingPhase": "PreLoadingScreen"
+			"LoadingPhase": "PreLoadingScreen",
+			"BlacklistPlatforms": [ "Android", "IOS" ]
 		},
 		{
 			"Name": "SimpleUGCEditor",
