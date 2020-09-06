@@ -207,6 +207,11 @@ AHuntWeapon* AProjectHuntCharacter::GetCurrentWeapon()
 	return CurrentWeapon;
 }
 
+void AProjectHuntCharacter::SetDamageDefenseModifer(float NewDefenseMod)
+{
+	DamageDefenseModifer = NewDefenseMod;
+}
+
 void AProjectHuntCharacter::OnFire()
 {
 	if (CurrentWeapon)
@@ -349,7 +354,6 @@ void AProjectHuntCharacter::TurnAtRate(float Rate)
 
 void AProjectHuntCharacter::LookUpAtRate(float Rate)
 {
-	//BaseLookUpRate = MyPlayerController->GetLookYSensitivity_Gamepad();
 	BaseLookUpRate = Cached_GamepadSensitivityY;
 	// calculate delta for this frame from the rate information
 	if (bEnableLookInput)
@@ -382,7 +386,6 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 	{
 		if (this->CanBeDamaged())
 		{
-			//StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
 			DamageTakenModifier = DamageRankModifier - DamageDefenseModifer;
 			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
 			DecreaseStyle();

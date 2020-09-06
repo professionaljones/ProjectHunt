@@ -7,7 +7,7 @@
 #include "PlayerStatsComponent.h"
 #include "HuntPlayerCharacter.generated.h"
 
-//What is the player's current style rank
+//What is the player's current suit level
 UENUM(BlueprintType)
 enum EPlayerSuit
 {
@@ -92,11 +92,11 @@ public:
 
 	//This is the player's maximum missile count
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
-		float MaxMissileLimit = 255.0f;
+		int MaxMissileLimit = 255;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Suit")
-		TEnumAsByte<EPlayerSuit> PlayerSuit;
+		TEnumAsByte<EPlayerSuit> CurrentPlayerSuit;
 
 	//How fast can the player move on land
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Walking")
@@ -118,7 +118,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		int32 MaxJumpCount = 2;
 
-	//How many dashes has the character executed
+	//How many jumps can the character execute
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		int32 JumpCount = 2;
 
@@ -162,6 +162,10 @@ public:
 	//This will modify Max Missiles, then reset current Missiles
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void UpgradeMissileCapacity(int32 IncreaseAmount);
+
+	//This will modify Max Missiles, then reset current Missiles
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
+		void SetPlayerSuit(TEnumAsByte<EPlayerSuit> NewPlayerSuit);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))

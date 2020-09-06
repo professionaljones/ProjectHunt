@@ -69,7 +69,7 @@ void AHuntPlayerCharacter::ConsumeMissiles(int32 ConsumeMissileAmount)
 		}
 	}
 
-	
+
 }
 
 void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)
@@ -82,7 +82,7 @@ void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)
 	if (CurrentMissileCount >= MaxMissileCount)
 	{
 		CurrentMissileCount = MaxMissileCount;
-		
+
 	}
 }
 
@@ -90,6 +90,32 @@ void AHuntPlayerCharacter::UpgradeMissileCapacity(int32 IncreaseAmount)
 {
 	MaxMissileCount = MaxMissileCount + IncreaseAmount;
 	CurrentMissileCount = MaxMissileCount;
+}
+
+void AHuntPlayerCharacter::SetPlayerSuit(TEnumAsByte<EPlayerSuit> NewPlayerSuit)
+{
+	switch (CurrentPlayerSuit)
+	{
+	case EPlayerSuit::Suit_Standard:
+	
+		DamageDefenseModifer = 0.0f;
+	
+	case EPlayerSuit::Suit_Version2:
+	
+		DamageDefenseModifer = 0.15f;
+	
+	case EPlayerSuit::Suit_Version3:
+	
+		DamageDefenseModifer = 0.30f;
+	
+	case EPlayerSuit::Suit_Version4:
+	
+		DamageDefenseModifer = 0.50f;
+	
+	default:
+		break;
+	
+	}
 }
 
 float AHuntPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)

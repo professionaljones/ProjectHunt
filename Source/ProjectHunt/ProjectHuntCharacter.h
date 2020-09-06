@@ -195,6 +195,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon")
 		class AHuntWeapon* GetCurrentWeapon();
 
+	//This will modify DamageDefenseModifer
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void SetDamageDefenseModifer(float NewDefenseMod);
 	
 
 	FTimerHandle StyleDecreaseTimer;
