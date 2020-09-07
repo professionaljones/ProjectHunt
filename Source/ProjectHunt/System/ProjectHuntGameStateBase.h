@@ -8,7 +8,7 @@
 #include "ProjectHuntGameStateBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class PROJECTHUNT_API AProjectHuntGameStateBase : public AGameStateBase, public IHuntGameInterface
@@ -18,7 +18,10 @@ class PROJECTHUNT_API AProjectHuntGameStateBase : public AGameStateBase, public 
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arena")
-	float LastArenaScore = 0;
+		float LastArenaScore = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arena")
+		float ArenaScoreModifier = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arena")
 		int CurrentWave = 0;
@@ -28,21 +31,30 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "Arena")
-	float GetLastArenaScore();
+		float GetLastArenaScore();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game|Time")
-	FTimespan CurrentPlayTime;
+		FTimespan CurrentPlayTime;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Timers")
-	FTimerHandle PlayTimeHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+		FTimerHandle PlayTimeHandle;
 
 	UFUNCTION(BlueprintCallable, Category = "Game|Time")
-	void IncrementPlayTime();
-protected:
+		void IncrementPlayTime();
 
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable, Category = "Arena")
+		float UpdatePlayerScore(int ScoreModAmount);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game|Time")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game|Time")
+		FTimespan GetCurrentPlayTime();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game|Time")
 		FTimespan PlayTimeModifier;
-	
+
+
+
+
+
+
+
 };

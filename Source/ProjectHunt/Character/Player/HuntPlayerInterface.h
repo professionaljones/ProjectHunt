@@ -51,6 +51,9 @@ public:
 		void OnModifyStyle(float NewStyleAmount);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnModifyArenaScore(float NewStyleAmount);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnPlayerWeaponPickup(TSubclassOf<AHuntWeapon> NewWeapon);
 
 	/*UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")

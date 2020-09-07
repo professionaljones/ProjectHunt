@@ -3,3 +3,7 @@
 
 #include "HuntPlayerState.h"
 
+float AHuntPlayerState::GetPlayerArenaScore()
+{
+	return CurrentArenaScore;
+}

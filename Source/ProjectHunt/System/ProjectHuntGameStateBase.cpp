@@ -3,8 +3,6 @@
 
 #include "ProjectHuntGameStateBase.h"
 
-
-
 float AProjectHuntGameStateBase::GetLastArenaScore()
 {
 	return LastArenaScore;
@@ -15,8 +13,16 @@ void AProjectHuntGameStateBase::IncrementPlayTime()
 	CurrentPlayTime = CurrentPlayTime + PlayTimeModifier;
 }
 
-void AProjectHuntGameStateBase::BeginPlay()
+float AProjectHuntGameStateBase::UpdatePlayerScore(int ScoreModAmount)
 {
-	//Start incrementing our play time
-	GetWorldTimerManager().SetTimer(PlayTimeHandle, this, &AProjectHuntGameStateBase::IncrementPlayTime, 1.0f, true);
+	float NewPlayerScoreMod = 0.0f;
+	NewPlayerScoreMod = ScoreModAmount * ArenaScoreModifier;
+	return NewPlayerScoreMod;
 }
+
+FTimespan AProjectHuntGameStateBase::GetCurrentPlayTime()
+{
+	return CurrentPlayTime;
+}
+
+

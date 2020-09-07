@@ -158,8 +158,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 DataPointsToAdd = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+		int ArenaPointsToAdd = 0;
+
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Style")
 		int32 GetDataPoints();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Style")
+		int GetArenaPointsToAdd();
+
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Character")
 		bool bEnableMovementInput = true;

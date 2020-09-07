@@ -99,6 +99,11 @@ int32 AProjectHuntCharacter::GetDataPoints()
 	return UI_CurrentDataPoints;
 }
 
+int AProjectHuntCharacter::GetArenaPointsToAdd()
+{
+	return ArenaPointsToAdd;
+}
+
 void AProjectHuntCharacter::ModifyDataPoints(int32 NewDataPoints)
 {
 	CurrentDataPoints += NewDataPoints;
