@@ -346,3 +346,28 @@ void AHuntWeapon::UpgradeChargeLimit(float IncreaseAmount)
 	}
 }
 
+void AHuntWeapon::UpgradeDamageMultiplier(float IncreaseAmount)
+{
+	WeaponStatsData.DamageMultiplierAmount = WeaponStatsData.DamageMultiplierAmount + IncreaseAmount;
+	CalculateDamage();
+
+}
+
+void AHuntWeapon::UpgradeDamageModifier(float IncreaseAmount)
+{
+	WeaponStatsData.DamageModifierAmount = WeaponStatsData.DamageModifierAmount + IncreaseAmount;
+	CalculateDamage();
+}
+
+void AHuntWeapon::ResetDamageMultiplier()
+{
+	WeaponStatsData.DamageMultiplierAmount = 1.0f;
+	CalculateDamage();
+}
+
+void AHuntWeapon::ResetDamageModifier()
+{
+	WeaponStatsData.DamageModifierAmount = 0.0f;
+	CalculateDamage();
+}
+

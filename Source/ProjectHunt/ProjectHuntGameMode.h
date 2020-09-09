@@ -7,17 +7,6 @@
 #include "Interfaces/Game/HuntDifficultyInterface.h"
 #include "ProjectHuntGameMode.generated.h"
 
-//Modifiers for Arena Mode, possibly Campaign mode
-UENUM(BlueprintType)
-enum EGameModifiers
-{
-	Mod_EnemyDoubleDamage,
-	Mod_RocketsOnly,
-	Mod_PlayerSloMo,
-	Mod_EnemySloMo,
-	Mod_Sandbag
-
-};
 
 UCLASS(minimalapi)
 class AProjectHuntGameMode : public AGameModeBase, public IHuntDifficultyInterface
@@ -54,11 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
 		float VeryHardRankMax = 18.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
-		TEnumAsByte<EGameModifiers> GameModiferOne;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
-		TEnumAsByte<EGameModifiers> GameModiferTwo;
+	
 
 		
 

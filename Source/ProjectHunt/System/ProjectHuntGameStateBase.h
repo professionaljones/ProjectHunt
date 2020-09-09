@@ -7,6 +7,21 @@
 #include "ProjectHunt/Interfaces/Game/HuntGameInterface.h"
 #include "ProjectHuntGameStateBase.generated.h"
 
+//Modifiers for Arena Mode, possibly Campaign mode
+UENUM(BlueprintType)
+enum EGameModifiers
+{
+	Mod_None,
+	Mod_EnemyDoubleDamage,
+	Mod_RocketsOnly,
+	Mod_PlayerSloMo,
+	Mod_EnemySloMo,
+	Mod_Sandbag,
+	Mod_Countdown
+
+};
+
+
 /**
  *
  */
@@ -51,7 +66,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game|Time")
 		FTimespan PlayTimeModifier;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
+		TEnumAsByte<EGameModifiers> GameModiferOne;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
+		TEnumAsByte<EGameModifiers> GameModiferTwo;
 
 
 

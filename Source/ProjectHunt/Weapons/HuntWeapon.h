@@ -432,6 +432,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
 		void UpgradeChargeLimit(float IncreaseAmount);
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void UpgradeDamageMultiplier(float IncreaseAmount);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void UpgradeDamageModifier(float IncreaseAmount);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void ResetDamageMultiplier();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
+		void ResetDamageModifier();
+
 	
 
 
