@@ -57,5 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnRecoverAragon(float RecoverAmount);
 
+	//Overrideable event for handling death
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnCharacterDeath();
+
 
 };

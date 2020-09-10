@@ -418,7 +418,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 				}
 
 			}
-			SetLifeSpan(3.0f);
+			IHuntCharacterInterface::Execute_OnCharacterDeath(this);
 		}
 	}
 
