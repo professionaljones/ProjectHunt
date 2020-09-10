@@ -166,7 +166,7 @@ float AHuntPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent c
 				}
 
 			}
-			SetLifeSpan(3.0f);
+			IHuntCharacterInterface::Execute_OnCharacterDeath(this);
 		}
 	}
 
