@@ -67,7 +67,7 @@ public:
 		bool bHasMissileLauncher = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Inventory")
-		TMap<TEnumAsByte<EWeaponType>, class AHuntWeapon*> WeaponInventory;
+		TMap<int32, class AHuntWeapon*> WeaponInventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
 		int32 CurrentMissileCount = 10;

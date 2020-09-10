@@ -332,6 +332,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Targets")
 		TArray<AActor*> ActorsToIgnore;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
+		int32 WeaponInventorySlot = 0;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		FHitResult SingleHit;
 
