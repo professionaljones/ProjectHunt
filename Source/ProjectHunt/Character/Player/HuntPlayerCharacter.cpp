@@ -14,6 +14,7 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 
 	//Create a secondary AudioComponent 
 	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
+	MovementSpeed = 1300.0f;
 }
 
 int32 AHuntPlayerCharacter::GetJumpCount()
@@ -35,6 +36,7 @@ void AHuntPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	
 }
 
 void AHuntPlayerCharacter::UnlockAbility(bool bUnlockAbility)
@@ -118,58 +120,4 @@ void AHuntPlayerCharacter::SetPlayerSuit(TEnumAsByte<EPlayerSuit> NewPlayerSuit)
 	}
 }
 
-float AHuntPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
-{
-	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if (DamageAmount > 0.0f)
-	{
-		if (this->CanBeDamaged())
-		{
-			//StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
-			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
-			DecreaseStyle();
-			/*switch (EPlayerSuit)
-			{
-			case EPlayerSuit::Suit_Standard:
-				break;
-			case EPlayerSuit::Suit_Version2:
-				DamageTakenModifier = DamageTakenModifier - 0.15f;
-				break;
-			case EPlayerSuit::Suit_Version3:
-				DamageTakenModifier = DamageTakenModifier - 0.30f;
-				break;
-			case EPlayerSuit::Suit_Version4:
-				DamageTakenModifier = DamageTakenModifier - 0.50f;
-				break;
-			}*/
-		}
-
-		if (DamageSounds.Num() != 0)
-		{
-			int RandomDamageSoundIndex = UKismetMathLibrary::RandomIntegerInRange(0, DamageSounds.Num());
-			if (DamageSounds.IsValidIndex(RandomDamageSoundIndex))
-			{
-				CharacterAudioComponent->SetSound(DamageSounds[RandomDamageSoundIndex]);
-				CharacterAudioComponent->Play();
-			}
-
-		}
-		if (StatsComponent->bIsDead)
-		{
-			if (DeathSounds.Num() != 0)
-			{
-				int RandomDeathSoundIndex = UKismetMathLibrary::RandomIntegerInRange(0, DeathSounds.Num());
-				if (DeathSounds.IsValidIndex(RandomDeathSoundIndex))
-				{
-					CharacterAudioComponent->SetSound(DeathSounds[RandomDeathSoundIndex]);
-					CharacterAudioComponent->Play();
-				}
-
-			}
-			IHuntCharacterInterface::Execute_OnCharacterDeath(this);
-		}
-	}
-
-	return ActualDamage;
-}
 

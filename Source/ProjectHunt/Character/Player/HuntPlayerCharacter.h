@@ -98,9 +98,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Suit")
 		TEnumAsByte<EPlayerSuit> CurrentPlayerSuit;
 
-	//How fast can the player move on land
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Walking")
-		float MovementSpeed = 1300.0f;
+	
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
@@ -174,15 +172,5 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* SuitAudioComponent;
 
-	/**
- * Apply damage to this actor.
- * @see https://www.unrealengine.com/blog/damage-in-ue4
- * @param DamageAmount		How much damage to apply
- * @param DamageEvent		Data package that fully describes the damage received.
- * @param EventInstigator	The Controller responsible for the damage.
- * @param DamageCauser		The Actor that directly caused the damage (e.g. the projectile that exploded, the rock that landed on you)
- * @return					The amount of damage actually applied.
- */
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
+	
 };

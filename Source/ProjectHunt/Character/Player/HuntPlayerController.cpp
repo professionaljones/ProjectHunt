@@ -6,7 +6,7 @@
 
 AHuntPlayerController::AHuntPlayerController()
 {
-
+	TeamId = 18;
 }
 
 float AHuntPlayerController::GetLookXSensitivity_PC()
@@ -56,4 +56,8 @@ float AHuntPlayerController::GetReplayPlaybackLength()
 	return DemoDriver->GetDemoTotalTime();
 }
 
+FGenericTeamId AHuntPlayerController::GetGenericTeamId() const
+{
+	return TeamId;
+}
 

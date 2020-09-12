@@ -10,6 +10,7 @@
 #include "HuntWeaponInterface.h"
 #include "HuntWeaponProjectile.h"
 #include "Components/AudioComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "HuntWeapon.generated.h"
 
 //What kind of weapon is this
@@ -448,7 +449,8 @@ public:
 		void ResetDamageModifier();
 
 	
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		UAIPerceptionStimuliSourceComponent* MyStimuliSourceComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		USkeletalMeshComponent* WeaponMeshFP;

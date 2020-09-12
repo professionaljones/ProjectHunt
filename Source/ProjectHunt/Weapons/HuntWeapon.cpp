@@ -22,6 +22,9 @@ AHuntWeapon::AHuntWeapon()
 	//Create secondary audio component that handles aux weapon SFX
 	WeaponAltAudioComponent = CreateDefaultSubobject<UAudioComponent>("WeaponAltAudioComponent");
 
+	//Create stimuli source component that registers for Hearing perception
+	MyStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSourceComponent");
+
 }
 
 // Called when the game starts or when spawned
@@ -349,6 +352,7 @@ void AHuntWeapon::UpgradeChargeLimit(float IncreaseAmount)
 void AHuntWeapon::UpgradeDamageMultiplier(float IncreaseAmount)
 {
 	WeaponStatsData.DamageMultiplierAmount = WeaponStatsData.DamageMultiplierAmount + IncreaseAmount;
+	WeaponStatsData.OriginalDamageMultiplier = WeaponStatsData.DamageMultiplierAmount;
 	CalculateDamage();
 
 }
@@ -356,6 +360,7 @@ void AHuntWeapon::UpgradeDamageMultiplier(float IncreaseAmount)
 void AHuntWeapon::UpgradeDamageModifier(float IncreaseAmount)
 {
 	WeaponStatsData.DamageModifierAmount = WeaponStatsData.DamageModifierAmount + IncreaseAmount;
+	WeaponStatsData.OriginalDamageModifier = WeaponStatsData.DamageModifierAmount;
 	CalculateDamage();
 }
 

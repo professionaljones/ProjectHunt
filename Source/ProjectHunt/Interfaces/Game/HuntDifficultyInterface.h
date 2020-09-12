@@ -30,5 +30,14 @@ public:
 		void PlayerReceivedDamage(float RankModiferAmount);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
-		float GetGameRank();
+		float GetPlayerRank();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		float GetPlayerRankPercentage();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		float GetDifficultyRankMin();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		float GetDifficultyRankMax();
 };

@@ -7,6 +7,7 @@
 #include "Weapons/HuntWeapon.h"
 #include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "ProjectHunt/Character/Player/HuntPlayerController.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ProjectHunt/Character/HuntCharacterInterface.h"
 #include "ProjectHuntCharacter.generated.h"
 
@@ -65,6 +66,26 @@ protected:
 	virtual void BeginPlay();
 
 public:
+
+	//How fast can the player move on land
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Walking")
+		float MovementSpeed = 250.0f;
+
+	//How fast can the player move on land
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Walking")
+		float MovementSpeedModifier = 1.0f;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+		float GetMovementSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+		void UpdateMovementSpeed(float NewMovementSpeed);
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+		void UpdateMovementSpeedModifier(float NewMovementModifier);
+
+
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseTurnRate;
@@ -203,8 +224,11 @@ public:
 		class AHuntWeapon* GetCurrentWeapon();
 
 	//This will modify DamageDefenseModifer
-	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, Category = "Character|Data")
 		void SetDamageDefenseModifer(float NewDefenseMod);
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent, Category = "Character|Stats")
+	void ReactToDamage(AHuntWeapon* WeaponUsed);
 	
 
 	FTimerHandle StyleDecreaseTimer;
@@ -284,6 +308,8 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		UAIPerceptionStimuliSourceComponent* MyStimuliSourceComponent;
 	
 
 	/**

@@ -18,6 +18,51 @@ AProjectHuntGameMode::AProjectHuntGameMode()
 	//SetStartingDifficulty();
 }
 
+void AProjectHuntGameMode::ModifyRank(float RankModAmount)
+{
+	float Mod = RankModAmount * 1.0f;
+	PlayerCurrentRankAmount += Mod;
+	MeasureRank();
+}
+
+void AProjectHuntGameMode::SetGameDifficulty(TEnumAsByte<EGameDifficulty> NewDifficulty)
+{
+	CurrentGameDifficulty = NewDifficulty;
+	switch (CurrentGameDifficulty)
+	{
+	case EGameDifficulty::GD_Easy:
+	{
+		break;
+	}
+	case EGameDifficulty::GD_Normal:
+	{
+		GameDifficulty = 2;
+		SetStartingDifficulty();
+		break;
+	}
+	case EGameDifficulty::GD_Hard:
+	{
+		GameDifficulty = 3;
+		SetStartingDifficulty();
+		break;
+	}
+	case EGameDifficulty::GD_VeryHard:
+	{
+		GameDifficulty = 4;
+		SetStartingDifficulty();
+		break;
+	}
+	case EGameDifficulty::GD_TMD:
+	{
+		GameDifficulty = 5;
+		SetStartingDifficulty();
+		break;
+	}
+	case EGameDifficulty::GD_None:
+		break;
+	}
+}
+
 int AProjectHuntGameMode::GetGameDifficulty()
 {
 	return GameDifficulty;
@@ -29,55 +74,119 @@ void AProjectHuntGameMode::SetStartingDifficulty()
 	switch (GameDifficulty)
 	{
 	case 2:
-
-		CurrentRankReference = NormalRankReference;
-		PlayerRank = NormalRankMin;
+		PlayerCurrentRankAmount = NormalMinRankReferenceAmount;
+		PlayerCurrentRankPercentage = NormalRankMin;
+		MaxPlayerRank = NormalRankMax;
 		break;
 	case 3:
-		CurrentRankReference = HardRankReference;
-		PlayerRank = HardRankMin;
+		PlayerCurrentRankAmount = NormalMaxRankReferenceAmount;
+		PlayerCurrentRankPercentage = HardRankMin;
+		MaxPlayerRank = HardRankMax;
 		break;
 	case 4:
-		CurrentRankReference = VeryHardRankReference;
-		PlayerRank = VeryHardRankMin;
+		PlayerCurrentRankAmount = HardMaxRankReferenceAmount;
+		PlayerCurrentRankPercentage = VeryHardRankMin;
+		MaxPlayerRank = VeryHardRankMin;
 		break;
 	case 5:
-		CurrentRankReference = ExtremeRankReference;
+		PlayerCurrentRankAmount = VeryHardRankReferenceAmount;
+		PlayerCurrentRankPercentage = VeryHardRankMax;
 		break;
 	default:
-		CurrentRankReference = NormalRankReference;
-		PlayerRank = NormalRankMin;
+		PlayerCurrentRankAmount = NormalMinRankReferenceAmount;
+		PlayerCurrentRankPercentage = NormalRankMin;
 		break;
 	}
 }
 
 void AProjectHuntGameMode::MeasureRank()
 {
-
 	switch (GameDifficulty)
 	{
 	case 2:
-		if (CurrentRankReference >= 4000)
+		//PlayerCurrentRankAmount = NormalMinRankReferenceAmount;
+		if (PlayerCurrentRankAmount <= NormalMinRankReferenceAmount)
 		{
-			PlayerRank++;
+			PlayerCurrentRankAmount = NormalMinRankReferenceAmount;
+			PlayerCurrentRankPercentage = NormalRankMin;
 		}
-		if (CurrentRankReference >= 5000)
+		if (PlayerCurrentRankAmount >= NormalMaxRankReferenceAmount)
 		{
-			PlayerRank++;
+			PlayerCurrentRankAmount = NormalMaxRankReferenceAmount;
+			PlayerCurrentRankPercentage = NormalRankMax;
 		}
-		if (CurrentRankReference <= NormalRankReference)
+		break;
+	case 3:
+	{
+		if (PlayerCurrentRankAmount <= NormalMaxRankReferenceAmount)
 		{
-			CurrentRankReference = NormalRankReference;
-			PlayerRank = NormalRankMin;
+			PlayerCurrentRankAmount = NormalMaxRankReferenceAmount;
+			PlayerCurrentRankPercentage = HardRankMin;
 		}
-		if (CurrentRankReference >= HardRankReference)
+		if (PlayerCurrentRankAmount >= HardMaxRankReferenceAmount)
 		{
-			CurrentRankReference = HardRankReference;
-			PlayerRank = NormalRankMax;
+			PlayerCurrentRankAmount = HardMaxRankReferenceAmount;
+			PlayerCurrentRankPercentage = HardRankMax;
 		}
-		if (PlayerRank >= NormalRankMax)
+		if (PlayerCurrentRankPercentage >= HardRankMax)
 		{
-			PlayerRank = NormalRankMax;
+			PlayerCurrentRankPercentage = HardRankMax;
 		}
+		break;
+	}
+	case 4:
+	{
+		if (PlayerCurrentRankAmount <= HardMaxRankReferenceAmount)
+		{
+			PlayerCurrentRankAmount = HardMaxRankReferenceAmount;
+			PlayerCurrentRankPercentage = VeryHardRankMin;
+		}
+		if (PlayerCurrentRankAmount >= VeryHardRankReferenceAmount)
+		{
+			PlayerCurrentRankAmount = VeryHardRankReferenceAmount;
+			PlayerCurrentRankPercentage = VeryHardRankMax;
+		}
+		if (PlayerCurrentRankPercentage >= VeryHardRankMax)
+		{
+			PlayerCurrentRankPercentage = VeryHardRankMax;
+		}
+		break;
+	}
+	case 5:
+	{
+		if (PlayerCurrentRankAmount <= VeryHardRankReferenceAmount)
+		{
+			PlayerCurrentRankAmount = VeryHardRankReferenceAmount;
+			PlayerCurrentRankPercentage = VeryHardRankMax;
+		}
+		if (PlayerCurrentRankAmount >= ExtremeRankReferenceAmount)
+		{
+			PlayerCurrentRankAmount = ExtremeRankReferenceAmount;
+			PlayerCurrentRankPercentage = VeryHardRankMax;
+		}
+		if (PlayerCurrentRankPercentage >= VeryHardRankMax)
+		{
+			PlayerCurrentRankPercentage = VeryHardRankMax;
+		}
+		break;
+	}
+	case 0:
+	{
+		if (PlayerCurrentRankAmount <= NormalMinRankReferenceAmount)
+		{
+			PlayerCurrentRankAmount = NormalMinRankReferenceAmount;
+			PlayerCurrentRankPercentage = NormalRankMin;
+		}
+		if (PlayerCurrentRankAmount >= NormalMaxRankReferenceAmount)
+		{
+			PlayerCurrentRankAmount = NormalMaxRankReferenceAmount;
+			PlayerCurrentRankPercentage = NormalRankMax;
+		}
+		if (PlayerCurrentRankPercentage >= NormalRankMax)
+		{
+			PlayerCurrentRankPercentage = NormalRankMax;
+		}
+		break;
+	}
 	}
 }

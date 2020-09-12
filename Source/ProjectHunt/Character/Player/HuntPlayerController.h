@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/DemoNetDriver.h"
+#include "GenericTeamAgentInterface.h"
 #include "HuntPlayerInterface.h"
 #include "HuntPlayerController.generated.h"
 
@@ -12,7 +13,7 @@
  *
  */
 UCLASS()
-class PROJECTHUNT_API AHuntPlayerController : public APlayerController, public IHuntPlayerInterface
+class PROJECTHUNT_API AHuntPlayerController : public APlayerController, public IHuntPlayerInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -63,6 +64,12 @@ public:
 		float MaxItemPercentage = 1.0f;
 
 	UDemoNetDriver* DemoDriver;
+
+	// Implement The Generic Team Interface 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
+		FGenericTeamId TeamId;
+
+	FGenericTeamId GetGenericTeamId() const;
 
 protected:
 

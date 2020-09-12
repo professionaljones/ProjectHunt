@@ -61,5 +61,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnCharacterDeath();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnInteract();
+
 
 };

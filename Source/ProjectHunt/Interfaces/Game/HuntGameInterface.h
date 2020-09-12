@@ -26,9 +26,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnPlayerArenaKill(int ScoreModAmount);
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Arena")
 		void OnArenaWaveStart();
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Arena")
 		void OnArenaWaveComplete();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		void OnTimerElapsed();
 };

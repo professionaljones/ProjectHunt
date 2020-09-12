@@ -44,7 +44,8 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-
+	//Create stimuli source component that registers for Sight, Team, and Hearing perception
+	MyStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSourceComponent");
 
 }
 
@@ -53,7 +54,7 @@ void AProjectHuntCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	StartStyleModTimer();
-	//MaxStyleAmount = SSS_StyleLimit;
+	//UpdateMovementSpeed(MovementSpeed);
 
 
 }
@@ -91,6 +92,23 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("TurnRate", this, &AProjectHuntCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &AProjectHuntCharacter::LookUpAtCamera);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectHuntCharacter::LookUpAtRate);
+}
+
+float AProjectHuntCharacter::GetMovementSpeed()
+{
+	return MovementSpeed;
+}
+
+void AProjectHuntCharacter::UpdateMovementSpeed(float NewMovementSpeed)
+{
+	MovementSpeed = NewMovementSpeed;
+	//this->CharacterMovement->MaxWalkSpeed = MovementSpeed * MovementSpeedModifier;
+}
+
+void AProjectHuntCharacter::UpdateMovementSpeedModifier(float NewMovementModifier)
+{
+	MovementSpeedModifier = NewMovementModifier;
+	
 }
 
 int32 AProjectHuntCharacter::GetDataPoints()
@@ -215,6 +233,12 @@ AHuntWeapon* AProjectHuntCharacter::GetCurrentWeapon()
 void AProjectHuntCharacter::SetDamageDefenseModifer(float NewDefenseMod)
 {
 	DamageDefenseModifer = NewDefenseMod;
+}
+
+
+void AProjectHuntCharacter::ReactToDamage_Implementation(AHuntWeapon* WeaponUsed)
+{
+
 }
 
 void AProjectHuntCharacter::OnFire()
@@ -385,6 +409,7 @@ bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 
 float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
+	AHuntWeapon* WeaponUsed = Cast<AHuntWeapon>(DamageCauser);
 
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (DamageAmount > 0.0f)
@@ -393,6 +418,11 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 		{
 			DamageTakenModifier = DamageRankModifier - DamageDefenseModifer;
 			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+			if (WeaponUsed)
+			{
+				ReactToDamage(WeaponUsed);
+			}
+			ReactToDamage(nullptr);
 			DecreaseStyle();
 		}
 
