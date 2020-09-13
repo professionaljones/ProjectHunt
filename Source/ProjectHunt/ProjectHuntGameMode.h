@@ -69,6 +69,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
 		void ModifyRank(float RankModAmount);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
+		bool bShouldUseDynamicDifficulty = false;
+
 	
 	UFUNCTION(BlueprintCallable, Category = "Diffculty")
 	void SetGameDifficulty(TEnumAsByte<EGameDifficulty> NewDifficulty);
