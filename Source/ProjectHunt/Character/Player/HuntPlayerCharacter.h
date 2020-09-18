@@ -123,6 +123,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		float PlayerAirControl = 0.16f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
+		float JumpBlastLimit = 2.50f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
+		float JumpBlastChargeModifer = 0.01f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
+		float CurrentJumpBlastChargeAmount = 2.50f;
+
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Movement")
 		int32 GetJumpCount();
 
