@@ -16,6 +16,15 @@ enum ESuitMainAbilities
 	MA_Overload UMETA(DisplayName = "Overload")
 };
 
+UENUM(BlueprintType)
+enum ESuitPowerModifiers
+{
+	PM_None UMETA(DisplayName = "Unequipped"),
+	PM_Rush UMETA(DisplayName = "Dash Rush"),
+	PM_Blast UMETA(DisplayName = "Jump Blast"),
+	
+};
+
 /**HuntStatsComponent serves as a container for a character's stats and functions
 for adding, reducing and changing the overall values **/
 UCLASS(Blueprintable, BlueprintType,ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -81,6 +90,14 @@ public:
 	//What is the player's current power 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
 		TEnumAsByte<ESuitMainAbilities> CurrentSuitPower;
+
+	//What is the player's First Power Modifier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
+		TEnumAsByte<ESuitPowerModifiers> PowerModifierSlotOne;
+
+	//What is the player's Second Power Modifier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
+		TEnumAsByte<ESuitPowerModifiers> PowerModifierSlotTwo;
 
 	//This will track what abilities the player should have unlocked
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Powers")

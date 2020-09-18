@@ -75,6 +75,33 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Walking")
 		float MovementSpeedModifier = 1.0f;
 
+	//How fast should the Rush recharge increment by
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Dash")
+		float RushRechargeAmount = 0.05f;
+
+
+	//How long until the Rush count is incremented
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dash")
+		float RushRechargeLimit = 5.0f;
+
+	//Value to modify to control Rush recharging - zero-filled on start
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Movement|Dash")
+		float CurrentRushRecharge = 0.0f;
+
+	//How fast should the dash recharge increment by
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Dash")
+		float DashRechargeAmount = 0.01f;
+
+
+	//How long until the dash count is incremented
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dash")
+		float DashRechargeLimit = 3.0f;
+
+	//Value to modify to control dash recharging - zero-filled on start
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Movement|Dash")
+		float CurrentDashRecharge = 0.0f;
+
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 		float GetMovementSpeed();
 
