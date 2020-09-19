@@ -4,6 +4,7 @@
 
 #include "ProjectHunt/ProjectHuntCharacter.h"
 #include "HuntPlayerInterface.h"
+#include "ProjectHunt/Weapons/HuntWeapon.h"
 #include "PlayerStatsComponent.h"
 #include "HuntPlayerCharacter.generated.h"
 
@@ -140,6 +141,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Weapons")
 		bool CanPlayerUseMissiles();
+
+	
 
 protected:
 	virtual void BeginPlay() override;

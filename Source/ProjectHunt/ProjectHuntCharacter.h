@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "GameFramework/Character.h"
-#include "Weapons/HuntWeapon.h"
+//#include "Weapons/HuntWeapon.h"
 #include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "ProjectHunt/Character/Player/HuntPlayerController.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -12,7 +12,7 @@
 #include "ProjectHuntCharacter.generated.h"
 
 class UInputComponent;
-//class UHuntStatsComponent;
+class AHuntWeapon;
 
 
 //What is the player's current style rank

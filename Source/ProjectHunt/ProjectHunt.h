@@ -2,11 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "TimerManager.h"
-#include "Engine/DataTable.h"
+#include "EngineMinimal.h"
+#include "Engine/Engine.h"
 #include "Engine/EngineTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"

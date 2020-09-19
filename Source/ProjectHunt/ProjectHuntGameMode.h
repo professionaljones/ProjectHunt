@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "GameFramework/GameModeBase.h"
 #include "Interfaces/Game/HuntDifficultyInterface.h"
 #include "ProjectHuntGameMode.generated.h"

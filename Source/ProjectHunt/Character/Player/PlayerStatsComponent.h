@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "ProjectHunt/Character/HuntStatsComponent.h"
 #include "PlayerStatsComponent.generated.h"
 

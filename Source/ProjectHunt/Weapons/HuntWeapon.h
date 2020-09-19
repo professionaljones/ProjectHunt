@@ -2,10 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "ProjectHunt/ProjectHunt.h"
+#include "TimerManager.h"
+#include "Engine/DataTable.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "HuntWeaponInterface.h"
 #include "HuntWeaponProjectile.h"
