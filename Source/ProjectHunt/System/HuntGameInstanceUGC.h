@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "UGCBaseGameInstance.h"
 #include "ProjectHunt/Character/Player/HuntPlayerCharacter.h"
 #include "HuntGameInstanceUGC.generated.h"

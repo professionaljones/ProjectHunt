@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "GameFramework/Actor.h"
 #include "ProjectHuntProjectile.generated.h"
 

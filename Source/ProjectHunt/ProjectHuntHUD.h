@@ -2,7 +2,7 @@
 
 #pragma once 
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "GameFramework/HUD.h"
 #include "ProjectHuntHUD.generated.h"
 

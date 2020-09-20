@@ -27,6 +27,11 @@ AHuntWeapon::AHuntWeapon()
 
 }
 
+bool AHuntWeapon::GetIsFiring()
+{
+	return bIsFiring;
+}
+
 // Called when the game starts or when spawned
 void AHuntWeapon::BeginPlay()
 {
@@ -92,6 +97,7 @@ void AHuntWeapon::FireWeapon()
 
 	SpawnWeaponProjectile();
 	CalculateDamage();
+	bIsFiring = true;
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
 	
 
@@ -118,6 +124,7 @@ void AHuntWeapon::FireCharge()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
 	}
 	CalculateDamage();
+	bIsFiring = true;
 	IHuntWeaponInterface::Execute_OnWeaponFire(this);
 }
 
@@ -125,6 +132,7 @@ void AHuntWeapon::ResetCharge()
 {
 	CurrentWeaponCharge = 0.0f;
 	ResetDamage();
+	bIsFiring = false;
 }
 
 void AHuntWeapon::CalculateDamage()
@@ -212,6 +220,10 @@ void AHuntWeapon::StartFire()
 
 void AHuntWeapon::EndFire()
 {
+	if (bIsFiring)
+	{
+		bIsFiring = false;
+	}
 	if (GetWorldTimerManager().IsTimerActive(ChargeFireTimer))
 	{
 		GetWorldTimerManager().ClearTimer(ChargeFireTimer);

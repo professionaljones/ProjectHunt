@@ -325,7 +325,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback|Audio")
 		class USoundBase* WeaponEquipSound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Feedback")
+		bool bIsFiring = false;
 
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Feedback")
+		bool GetIsFiring();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Targets")

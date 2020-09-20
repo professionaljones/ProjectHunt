@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "GameFramework/GameStateBase.h"
 #include "ProjectHunt/Interfaces/Game/HuntGameInterface.h"
 #include "ProjectHuntGameStateBase.generated.h"
