@@ -64,5 +64,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnInteract();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnTakeFireDamage();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnTakeIceDamage();
+
 
 };
