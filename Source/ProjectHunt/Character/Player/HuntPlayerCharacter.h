@@ -12,10 +12,10 @@
 UENUM(BlueprintType)
 enum EPlayerSuit
 {
-	Suit_Standard,
-	Suit_Version2,
-	Suit_Version3,
-	Suit_Version4
+	Suit_Standard UMETA(DisplayName = "Alpha Suit"),
+	Suit_Version2 UMETA(DisplayName = "Beta Suit"),
+	Suit_Version3 UMETA(DisplayName = "Gamma Suit"),
+	Suit_Version4 UMETA(DisplayName = "Aragon Suit")
 
 };
 
@@ -230,7 +230,7 @@ public:
 		void UpdateJumpCount(int32 IncreaseAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
-		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun,bool bCanPlayerUseAragon, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
+		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanPlayerUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun,bool bCanPlayerUseAragon, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
