@@ -230,7 +230,7 @@ public:
 		void UpdateJumpCount(int32 IncreaseAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
-		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
+		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun,bool bCanPlayerUseAragon, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
