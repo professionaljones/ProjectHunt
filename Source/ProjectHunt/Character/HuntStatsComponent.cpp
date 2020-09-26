@@ -84,6 +84,18 @@ void UHuntStatsComponent::UpgradeAragonStats(float IncreaseAmount)
 	CurrentAragon = MaxAragon;
 }
 
+void UHuntStatsComponent::UpdateMaxHealth(float NewHealthAmount)
+{
+	MaxHealth = NewHealthAmount;
+	CurrentHealth = MaxHealth;
+}
+
+void UHuntStatsComponent::UpdateMaxAragon(float NewAragonAmount)
+{
+	MaxAragon = NewAragonAmount;
+	CurrentAragon = MaxAragon;
+}
+
 void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
 {
 	CurrentAragon -= ConsumeAmount;

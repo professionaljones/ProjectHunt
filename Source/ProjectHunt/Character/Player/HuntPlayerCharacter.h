@@ -24,13 +24,22 @@ struct FPlayerSaveableStats : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-		//Has the player unlocked the ability to dash
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
+	//Has the player unlocked the ability to dash?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
 		bool bUnlockedDash = false;
 
-	//Has the player unlocked the ability to wallrun
+	//Has the player unlocked the ability to wall run?
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
 		bool bUnlockedWallrun = false;
+
+	//Has the player unlocked the ability to use the missile launcher?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
+		bool bHasMissileLauncher = false;
+
+	//Has the player unlocked the ability to use Aragon abilities?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Aragon")
+		bool bUnlockedAragon = false;
 };
 /**
  *
@@ -58,14 +67,17 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdateWeaponSlot UpdateWeaponSlotEvent;
 
+	//This struct will hold the player's unlocked abilities (dash, wallrun, double jump, missiles, etc)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Stats")
+		FPlayerSaveableStats PlayerSavedStats;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
 		bool bCanDash = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
 		bool bCanWallrun = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
-		bool bHasMissileLauncher = false;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Inventory")
 		TMap<int32, class AHuntWeapon*> WeaponInventory;
@@ -99,7 +111,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Suit")
 		TEnumAsByte<EPlayerSuit> CurrentPlayerSuit;
 
-	
+
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
@@ -107,7 +119,7 @@ public:
 
 	//How many dashes has the character executed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		int32 DashCount = 2;
+		int32 CurrentDashCount = 2;
 
 	//Multiplier of character Velocity for dashing - prototyping
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
@@ -119,7 +131,7 @@ public:
 
 	//How many jumps can the character execute
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		int32 JumpCount = 2;
+		int32 CurrentJumpCount = 2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		float PlayerAirControl = 0.16f;
@@ -142,16 +154,25 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Weapons")
 		bool CanPlayerUseMissiles();
 
-	
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Aragon")
+		bool CanPlayerUseAragon();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Movement")
+		bool CanPlayerDash();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Data|Movement")
+		bool CanPlayerWallrun();
+
+
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
 
-	//This will toggle the @param bool
+	//This will take a bool @param AbilityToToggle, and set it to @param bUnlockAbility
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
-		void UnlockAbility(bool bUnlockAbility);
+		void UnlockAbility(bool AbilityToToggle, bool bUnlockAbility);
 
 	//This returns the owner's current Missiles
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player|Data")
@@ -166,16 +187,50 @@ public:
 		void ConsumeMissiles(int32 ConsumeMissileAmount);
 
 	//This will add missiles back to the current Missiles
-	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
 		void RecoverMissiles(int32 RecoverAmount);
 
-	//This will modify Max Missiles, then reset current Missiles
-	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+	//This will modify Max Missiles by @param IncreaseAmount , then reset current Missiles
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
 		void UpgradeMissileCapacity(int32 IncreaseAmount);
 
-	//This will modify Max Missiles, then reset current Missiles
+	//This will modify Max Missiles to @param NewMissileAmount, then reset current Missiles
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
+		void UpdateMissileCapacity(int32 NewMissileAmount);
+
+	//This will update the player's stats according to the new suit
+
 	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
 		void SetPlayerSuit(TEnumAsByte<EPlayerSuit> NewPlayerSuit);
+
+	//This will set the player's Current Suit Power
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
+		void SetCurrentSuitPower(TEnumAsByte<ESuitMainAbilities> NewSuitPower);
+
+	//This will set the player's first Power Modifier
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
+		void SetPowerModifierOne(TEnumAsByte<ESuitPowerModifiers> NewPowerModifier);
+
+	//This will set the player's second Power Modifier
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Stats")
+		void SetPowerModifierTwo(TEnumAsByte<ESuitPowerModifiers> NewPowerModifier);
+
+	//This will modify Max Dash Count, then reset current Dash Count
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void UpdateDashCount(int32 IncreaseAmount);
+
+	//This will modify Max Jump Count, then reset current Jump Count
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Data")
+		void UpdateJumpCount(int32 IncreaseAmount);
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
+		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
@@ -184,5 +239,5 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* SuitAudioComponent;
 
-	
+
 };

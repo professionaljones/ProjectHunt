@@ -226,6 +226,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void UpgradeAragonStats(float IncreaseAmount);
 
+	//This function will directly set MaxHealth to @param NewHealthAmount, then reset Current Health
+	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
+		void UpdateMaxHealth(float NewHealthAmount);
+
+	//This function will directly set MaxAragon to @param NewAragonAmount, then reset Current Aragon
+	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
+		void UpdateMaxAragon(float NewAragonAmount);
+
 	//This function will decrease the @param ConsumeAmount to the owner's Current Aragon
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void ConsumeAragon(float ConsumeAmount);

@@ -223,9 +223,13 @@ public:
 		bool bEnableLookInput = true;
 
 
-	//This function can be used to increase or decrease the player's style amount
+	//This function can be used to increase or decrease the player's data points
 	UFUNCTION(BlueprintCallable, Category = "Player|Style")
 		void ModifyDataPoints(int32 NewDataPoints);
+
+	//This function can be used to directly set the player's data points
+	UFUNCTION(BlueprintCallable, Category = "Player|Style")
+		void UpdateDataPoints(int32 NewDataPoints);
 
 	//This function can be used to increase or decrease the player's style amount
 	UFUNCTION(BlueprintCallable,Category = "Player|Style")

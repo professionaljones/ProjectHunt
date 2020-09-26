@@ -131,6 +131,15 @@ void AProjectHuntCharacter::ModifyDataPoints(int32 NewDataPoints)
 	}
 }
 
+void AProjectHuntCharacter::UpdateDataPoints(int32 NewDataPoints)
+{
+	CurrentDataPoints = NewDataPoints;
+	if (CurrentDataPoints >= MaxDataPoints)
+	{
+		CurrentDataPoints = MaxDataPoints;
+	}
+}
+
 void AProjectHuntCharacter::ModifyStyle(float StyleModAmount)
 {
 	float Mod = StyleModAmount * StyleAmountMultiplier;

@@ -19,17 +19,32 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 
 int32 AHuntPlayerCharacter::GetJumpCount()
 {
-	return JumpCount;
+	return CurrentJumpCount;
 }
 
 int32 AHuntPlayerCharacter::GetDashCount()
 {
-	return DashCount;
+	return CurrentDashCount;
 }
 
 bool AHuntPlayerCharacter::CanPlayerUseMissiles()
 {
-	return bHasMissileLauncher;
+	return PlayerSavedStats.bHasMissileLauncher;
+}
+
+bool AHuntPlayerCharacter::CanPlayerUseAragon()
+{
+	return PlayerSavedStats.bUnlockedAragon;
+}
+
+bool AHuntPlayerCharacter::CanPlayerDash()
+{
+	return PlayerSavedStats.bUnlockedDash;
+}
+
+bool AHuntPlayerCharacter::CanPlayerWallrun()
+{
+	return PlayerSavedStats.bUnlockedWallrun;
 }
 
 void AHuntPlayerCharacter::BeginPlay()
@@ -39,9 +54,9 @@ void AHuntPlayerCharacter::BeginPlay()
 	
 }
 
-void AHuntPlayerCharacter::UnlockAbility(bool bUnlockAbility)
+void AHuntPlayerCharacter::UnlockAbility(bool AbilityToToggle, bool bUnlockAbility)
 {
-	bUnlockAbility = true;
+	AbilityToToggle = bUnlockAbility;
 }
 
 int32 AHuntPlayerCharacter::GetCurrentMissiles()
@@ -58,7 +73,7 @@ int32 AHuntPlayerCharacter::GetMaxMissiles()
 
 void AHuntPlayerCharacter::ConsumeMissiles(int32 ConsumeMissileAmount)
 {
-	if (bHasMissileLauncher)
+	if (CanPlayerUseMissiles())
 	{
 		if (!bAreMissilesEmpty)
 		{
@@ -77,7 +92,7 @@ void AHuntPlayerCharacter::ConsumeMissiles(int32 ConsumeMissileAmount)
 void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)
 {
 	CurrentMissileCount += RecoverAmount;
-	if (bAreMissilesEmpty == false)
+	if (bAreMissilesEmpty == true)
 	{
 		bAreMissilesEmpty = false;
 	}
@@ -91,6 +106,12 @@ void AHuntPlayerCharacter::RecoverMissiles(int32 RecoverAmount)
 void AHuntPlayerCharacter::UpgradeMissileCapacity(int32 IncreaseAmount)
 {
 	MaxMissileCount = MaxMissileCount + IncreaseAmount;
+	CurrentMissileCount = MaxMissileCount;
+}
+
+void AHuntPlayerCharacter::UpdateMissileCapacity(int32 NewMissileAmount)
+{
+	MaxMissileCount = NewMissileAmount;
 	CurrentMissileCount = MaxMissileCount;
 }
 
@@ -120,4 +141,48 @@ void AHuntPlayerCharacter::SetPlayerSuit(TEnumAsByte<EPlayerSuit> NewPlayerSuit)
 	}
 }
 
+void AHuntPlayerCharacter::SetCurrentSuitPower(TEnumAsByte<ESuitMainAbilities> NewSuitPower)
+{
+	StatsComponent->CurrentSuitPower = NewSuitPower;
+}
+
+void AHuntPlayerCharacter::SetPowerModifierOne(TEnumAsByte<ESuitPowerModifiers> NewPowerModifier)
+{
+	StatsComponent->PowerModifierSlotOne = NewPowerModifier;
+}
+
+void AHuntPlayerCharacter::SetPowerModifierTwo(TEnumAsByte<ESuitPowerModifiers> NewPowerModifier)
+{
+	StatsComponent->PowerModifierSlotTwo = NewPowerModifier;
+}
+
+void AHuntPlayerCharacter::UpdateDashCount(int32 IncreaseAmount)
+{
+	MaxDashCount += IncreaseAmount;
+	CurrentDashCount = MaxDashCount;
+
+}
+
+void AHuntPlayerCharacter::UpdateJumpCount(int32 IncreaseAmount)
+{
+	MaxJumpCount += IncreaseAmount;
+	CurrentJumpCount = MaxDashCount;
+}
+
+void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
+{
+	StatsComponent->UpdateMaxHealth(NewMaxHealth);
+	StatsComponent->UpdateMaxAragon(NewMaxAragon);
+	SetPlayerSuit(NewPlayerSuit);
+	SetCurrentSuitPower(NewSuitPower);
+	SetPowerModifierOne(NewPowerModifierOne);
+	SetPowerModifierTwo(NewPowerModifierTwo);
+	UpdateMissileCapacity(NewMaxMissileCount);
+	WeaponInventory = NewWeaponInventory;
+	CurrentDataPoints = NewCurrentDataPoints;
+	UnlockAbility(PlayerSavedStats.bHasMissileLauncher, bCanUseMissiles);
+	UnlockAbility(PlayerSavedStats.bUnlockedDash, bCanPlayerDash);
+	UnlockAbility(PlayerSavedStats.bUnlockedWallrun, bCanPlayerWallrun);
+	
+}
 
