@@ -169,7 +169,7 @@ void AHuntPlayerCharacter::UpdateJumpCount(int32 IncreaseAmount)
 	CurrentJumpCount = MaxDashCount;
 }
 
-void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, bool bCanPlayerUseMissiles, bool bCanPlayerDash, bool bCanPlayerWallrun, bool bCanPlayerUseAragon, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
+void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
 {
 	StatsComponent->UpdateMaxHealth(NewMaxHealth);
 	StatsComponent->UpdateMaxAragon(NewMaxAragon);
@@ -180,12 +180,8 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 	UpdateMissileCapacity(NewMaxMissileCount);
 	WeaponInventory = NewWeaponInventory;
 	CurrentDataPoints = NewCurrentDataPoints;
-	//UnlockAbility(PlayerSavedStats.bHasMissileLauncher, bCanPlayerUseMissiles);
-	PlayerSavedStats.bHasMissileLauncher = bCanPlayerUseMissiles;
-	PlayerSavedStats.bUnlockedAragon = bCanPlayerUseAragon;
-	UnlockAbility(PlayerSavedStats.bUnlockedDash, bCanPlayerDash);
-	UnlockAbility(PlayerSavedStats.bUnlockedWallrun, bCanPlayerWallrun);
-	//UnlockAbility(PlayerSavedStats.bUnlockedAragon, bCanPlayerUseAragon);
+	PlayerSavedStats = NewPlayerSaveableStats;
+	
 	
 }
 

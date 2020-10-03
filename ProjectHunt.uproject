@@ -194,6 +194,11 @@
 			"Name": "TimeMachine",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/8f9fb22542fd4415a712dc1bbbd99628"
+		},
+		{
+			"Name": "UINavigation",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/4601ff4d12fc4ed1a7418e1585374a48"
 		}
 	],
 	"TargetPlatforms": [
