@@ -181,6 +181,7 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 	WeaponInventory = NewWeaponInventory;
 	CurrentDataPoints = NewCurrentDataPoints;
 	PlayerSavedStats = NewPlayerSaveableStats;
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 	
 	
 }
