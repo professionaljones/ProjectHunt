@@ -24,11 +24,12 @@
 				"Mac",
 				"PS4",
 				"XboxOne",
-				"Switch"
+				"Switch",
+				"Android"
 			],
 			"BlacklistPlatforms": [
-				"IOS",
-				"Android"
+				"IOS"
+				
 			]
 		}
 	]

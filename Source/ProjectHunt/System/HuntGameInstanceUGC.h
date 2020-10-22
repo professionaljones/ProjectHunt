@@ -5,13 +5,14 @@
 #include "ProjectHunt/ProjectHunt.h"
 #include "UGCBaseGameInstance.h"
 #include "ProjectHunt/Character/Player/HuntPlayerCharacter.h"
+#include "ProjectHunt/Interfaces/Game/HuntGameInstanceInterface.h"
 #include "HuntGameInstanceUGC.generated.h"
 
 /**
  *
  */
 UCLASS()
-class PROJECTHUNT_API UHuntGameInstanceUGC : public UUGCBaseGameInstance
+class PROJECTHUNT_API UHuntGameInstanceUGC : public UUGCBaseGameInstance, public IHuntGameInstanceInterface
 {
 	GENERATED_BODY()
 
