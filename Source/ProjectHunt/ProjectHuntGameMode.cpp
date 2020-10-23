@@ -32,6 +32,8 @@ void AProjectHuntGameMode::SetGameDifficulty(TEnumAsByte<EGameDifficulty> NewDif
 	{
 	case EGameDifficulty::GD_Easy:
 	{
+		/*GameDifficulty = 1;
+		SetStartingDifficulty();*/
 		break;
 	}
 	case EGameDifficulty::GD_Normal:

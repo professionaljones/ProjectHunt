@@ -21,6 +21,11 @@ class PROJECTHUNT_API AHuntPlayerController : public APlayerController, public I
 
 public:
 
+	//false: reject user input, true: allow user input
+	//This is meant to prevent players from using weapons or abilities when they shouldn't (ie cutscenes, UI, etc)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Input")
+		bool bEnablePlayerInput = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float LookXSensitivity_PC = 0.5f;
 
@@ -56,6 +61,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Replays")
 		float GetReplayPlaybackLength();
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+		void TogglePlayerInput(bool bEnable);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
 		float CurrentItemPercentage = 0.0f;

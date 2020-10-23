@@ -56,6 +56,11 @@ float AHuntPlayerController::GetReplayPlaybackLength()
 	return DemoDriver->GetDemoTotalTime();
 }
 
+void AHuntPlayerController::TogglePlayerInput(bool bEnable)
+{
+	bEnablePlayerInput = bEnable;
+}
+
 FGenericTeamId AHuntPlayerController::GetGenericTeamId() const
 {
 	return TeamId;
