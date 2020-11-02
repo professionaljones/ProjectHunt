@@ -34,4 +34,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
 		void OnTimerElapsed();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		void OnRestartFromCheckpoint();
 };
