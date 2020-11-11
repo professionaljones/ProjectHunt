@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{7CE5C442-4CC3-1289-97B0-469FDA8D346F}",
+	"EngineAssociation": "4.25",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -189,11 +189,6 @@
 			"Name": "BlockoutToolsPlugin",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/d337b97aca8947a893526964e179acfd"
-		},
-		{
-			"Name": "TimeMachine",
-			"Enabled": true,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/8f9fb22542fd4415a712dc1bbbd99628"
 		},
 		{
 			"Name": "UINavigation",
