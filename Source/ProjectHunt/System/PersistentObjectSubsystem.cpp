@@ -13,10 +13,17 @@ void UPersistentObjectSubsystem::RegisterSaveableObject(class AActor* NewSaveabl
 		{
 			//Register object to array
 			AllSaveableObjects.Add(NewSaveableObject);
+			//UE_LOG(LogTemp, Log, TEXT("Object successfully registered - %s") + NewSaveablObject->GetName()));
+			UE_LOG(LogTemp, Log, TEXT("Persistent Object Manager - The object: %s Has been successfully registered"), *NewSaveableObject->GetName());
 		}
 	}
 	else
 	{
 		//If not, ignore it.
 	}
+}
+
+void UPersistentObjectSubsystem::CheckSaveSlotStatus()
+{
+	//if()
 }

@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Object Registration")
 		void RegisterSaveableObject(class AActor* NewSaveableObject);
 
+	UFUNCTION(BlueprintCallable, Category = "Persistent Object Management")
+		void CheckSaveSlotStatus();
+
 	UPROPERTY(BlueprintReadOnly, Category = "Saveable Objects")
 		TArray<class AActor*> AllSaveableObjects;
 private:
