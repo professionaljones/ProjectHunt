@@ -1,7 +1,6 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "ProjectHuntCharacter.h"
-#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "ProjectHunt/Weapons/HuntWeapon.h"
 #include "ProjectHunt/Character/HuntStatsComponent.h"
@@ -23,11 +22,11 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	// Create a CameraComponent	
-	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
-	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+	//// Create a CameraComponent	
+	//FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	//FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
+	//FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
+	//FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
 	//Create a StatsComponent
 	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
@@ -35,14 +34,14 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	//Create a AudioComponent
 	CharacterAudioComponent = CreateDefaultSubobject<UAudioComponent>("CharacterAudioComponent");
 
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);
-	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
-	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false;
-	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+	//// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
+	//Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
+	//Mesh1P->SetOnlyOwnerSee(true);
+	//Mesh1P->SetupAttachment(FirstPersonCameraComponent);
+	//Mesh1P->bCastDynamicShadow = false;
+	//Mesh1P->CastShadow = false;
+	//Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
+	//Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	//Create stimuli source component that registers for Sight, Team, and Hearing perception
 	MyStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSourceComponent");

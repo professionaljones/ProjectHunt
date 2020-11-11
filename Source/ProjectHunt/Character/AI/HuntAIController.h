@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "AIController.h"
 #include "GenericTeamAgentInterface.h"
 #include "Perception/AIPerceptionComponent.h"

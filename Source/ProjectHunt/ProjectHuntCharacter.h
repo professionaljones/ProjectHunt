@@ -39,14 +39,7 @@ class AProjectHuntCharacter : public ACharacter,public IHuntCharacterInterface
 public:
 	AProjectHuntCharacter();
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Mesh)
-		class USkeletalMeshComponent* Mesh1P;
-
-	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FirstPersonCameraComponent;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 		class UHuntStatsComponent* StatsComponent;
 
@@ -334,10 +327,7 @@ protected:
 	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
 
 public:
-	/** Returns Mesh1P subobject **/
-	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	/** Returns FirstPersonCameraComponent subobject **/
-	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UAIPerceptionStimuliSourceComponent* MyStimuliSourceComponent;

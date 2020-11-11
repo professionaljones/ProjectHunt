@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "ProjectHunt/ProjectHuntCharacter.h"
 #include "HuntEnemyCharacter.generated.h"
 
