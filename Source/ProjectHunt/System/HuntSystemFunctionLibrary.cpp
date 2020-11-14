@@ -16,3 +16,10 @@ FString UHuntSystemFunctionLibrary::GetProjectVersion()
 	);
 	return ProjectVersion;
 }
+
+FString UHuntSystemFunctionLibrary::GetProjectName()
+{
+	FString ProjectName;
+	GConfig->GetString(TEXT("Script/Engine.GeneralProjectSettings"), TEXT("ProjectName"), ProjectName, GGameIni);
+	return ProjectName;
+}

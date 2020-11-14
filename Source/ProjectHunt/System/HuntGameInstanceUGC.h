@@ -7,6 +7,7 @@
 #include "ProjectHunt/Character/Player/HuntPlayerCharacter.h"
 #include "ProjectHunt/Interfaces/Game/HuntGameInstanceInterface.h"
 #include "ProjectHunt/Interfaces/Game/HuntGameInterface.h"
+#include "HuntSaveGame.h"
 #include "HuntGameInstanceUGC.generated.h"
 
 /**
@@ -38,5 +39,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Replays")
 		void StartReplay();
+
+	UFUNCTION(BlueprintCallable, Category = Save)
+		void AttemptToSave();
 
 };

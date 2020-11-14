@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "HuntSystemFunctionLibrary.generated.h"
+
+class UHuntSaveGame;
 
 /**
  *
@@ -18,4 +19,9 @@ public:
 	//Returns the project version set in the 'Project Settings' > 'Description' section of the editor
 	UFUNCTION(BlueprintPure, Category = "Project")
 		static FString GetProjectVersion();
+
+	//Returns the project name set in the 'Project Settings' > 'Description' section of the editor
+	UFUNCTION(BlueprintPure, Category = "Project")
+		static FString GetProjectName();
+
 };

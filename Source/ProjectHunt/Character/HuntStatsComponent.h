@@ -17,7 +17,7 @@
 */
 
 UENUM(BlueprintType)
-enum ESuitMainAbilities
+enum class ESuitMainAbilities : uint8
 {
 	MA_None UMETA(DisplayName = "Unequipped"),
 	MA_Quicksilver UMETA(DisplayName = "Quicksilver"),
@@ -31,7 +31,7 @@ enum ESuitMainAbilities
 */
 
 UENUM(BlueprintType)
-enum ESuitPowerModifiers
+enum class ESuitPowerModifiers : uint8
 {
 	PM_None UMETA(DisplayName = "Unequipped"),
 	PM_Rush UMETA(DisplayName = "Dash Rush"),
@@ -51,7 +51,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ability")
 	//The Ability in question
-	TEnumAsByte<ESuitMainAbilities> CurrentAbility;
+	ESuitMainAbilities CurrentAbility;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 	//The Ability's current level
@@ -64,6 +64,16 @@ public:
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 		float AbilityUpgradePrice;
+
+	friend FArchive& operator<<(FArchive& Ar, FPlayerMainAbilityData& PlayerMainAbilityStats)
+	{
+		Ar << PlayerMainAbilityStats.CurrentAbility;
+		Ar << PlayerMainAbilityStats.CurrentAbilityLevel;
+		Ar << PlayerMainAbilityStats.MaxAbilityLevel;
+		Ar << PlayerMainAbilityStats.AbilityUpgradePrice;
+
+		return Ar;
+	}
 };
 
 /* This struct, much like FPlayerMainAbilityData, serves to maintain info about the player's unlocked power modifiers and add new effects */
@@ -77,7 +87,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Power")
 	//The Ability in question
-	TEnumAsByte<ESuitPowerModifiers> CurrentPowerModifier;
+	ESuitPowerModifiers CurrentPowerModifier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
 	//The PM's current level
@@ -90,6 +100,16 @@ public:
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
 		float PowerUpgradeAbility;
+
+	friend FArchive& operator<<(FArchive& Ar, FPlayerPowerModifierData& PlayerPowerModifierStats)
+	{
+		Ar << PlayerPowerModifierStats.CurrentPowerModifier;
+		Ar << PlayerPowerModifierStats.CurrentPowerModifierLevel;
+		Ar << PlayerPowerModifierStats.MaxPowerModifierLevel;
+		Ar << PlayerPowerModifierStats.PowerUpgradeAbility;
+
+		return Ar;
+	}
 };
 
 /**HuntStatsComponent serves as a container for a character's stats and functions
@@ -156,15 +176,15 @@ public:
 
 	//What is the player's current power 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
-		TEnumAsByte<ESuitMainAbilities> CurrentSuitPower;
+		ESuitMainAbilities CurrentSuitPower;
 
 	//What is the player's First Power Modifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
-		TEnumAsByte<ESuitPowerModifiers> PowerModifierSlotOne;
+		ESuitPowerModifiers PowerModifierSlotOne;
 
 	//What is the player's Second Power Modifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
-		TEnumAsByte<ESuitPowerModifiers> PowerModifierSlotTwo;
+		ESuitPowerModifiers PowerModifierSlotTwo;
 
 	//The player's current Quicksilver Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")

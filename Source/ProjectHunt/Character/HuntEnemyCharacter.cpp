@@ -5,5 +5,16 @@
 
 AHuntEnemyCharacter::AHuntEnemyCharacter()
 {
-	
+	//Create a StatsComponent
+	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
+}
+
+void AHuntEnemyCharacter::CharacterTakeDamage(float DamageAmount)
+{
+	StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+}
+
+bool AHuntEnemyCharacter::IsCharacterDead()
+{
+	return StatsComponent->bIsDead;
 }

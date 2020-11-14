@@ -3,7 +3,7 @@
 #include "ProjectHuntCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "ProjectHunt/Weapons/HuntWeapon.h"
-#include "ProjectHunt/Character/HuntStatsComponent.h"
+
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -22,26 +22,8 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	//// Create a CameraComponent	
-	//FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	//FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	//FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
-	//FirstPersonCameraComponent->bUsePawnControlRotation = true;
-
-	//Create a StatsComponent
-	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
-
 	//Create a AudioComponent
 	CharacterAudioComponent = CreateDefaultSubobject<UAudioComponent>("CharacterAudioComponent");
-
-	//// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	//Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	//Mesh1P->SetOnlyOwnerSee(true);
-	//Mesh1P->SetupAttachment(FirstPersonCameraComponent);
-	//Mesh1P->bCastDynamicShadow = false;
-	//Mesh1P->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	//Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	//Create stimuli source component that registers for Sight, Team, and Hearing perception
 	MyStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSourceComponent");
@@ -249,6 +231,16 @@ void AProjectHuntCharacter::ReactToDamage_Implementation(AHuntWeapon* WeaponUsed
 
 }
 
+void AProjectHuntCharacter::CharacterTakeDamage(float DamageAmount)
+{
+
+}
+
+bool AProjectHuntCharacter::IsCharacterDead()
+{
+	return false;
+}
+
 void AProjectHuntCharacter::OnFire()
 {
 	if (CurrentWeapon)
@@ -425,7 +417,8 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 		if (this->CanBeDamaged())
 		{
 			DamageTakenModifier = DamageRankModifier - DamageDefenseModifer;
-			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+			//StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+			CharacterTakeDamage(DamageAmount);
 			if (WeaponUsed)
 			{
 				ReactToDamage(WeaponUsed);
@@ -444,7 +437,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 			}
 
 		}
-		if (StatsComponent->bIsDead)
+		if (IsCharacterDead())
 		{
 			if (DeathSounds.Num() != 0)
 			{

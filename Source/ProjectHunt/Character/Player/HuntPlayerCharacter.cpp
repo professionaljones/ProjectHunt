@@ -3,7 +3,7 @@
 
 #include "HuntPlayerCharacter.h"
 #include "Camera/CameraComponent.h"
-
+#define SAVEDATAFILENAME "SampleSavedData"
 
 AHuntPlayerCharacter::AHuntPlayerCharacter()
 {
@@ -22,17 +22,44 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	Mesh1P->CastShadow = false;
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+	PlayerStatsComponent = CreateDefaultSubobject<UPlayerStatsComponent>("PlayerStatsComponent");
 
-	StatsComponent->MaxHealth = 200;
-	StatsComponent->MaxAragon = 200;
-	StatsComponent->CurrentHealth = StatsComponent->MaxHealth;
-	StatsComponent->CurrentAragon = StatsComponent->MaxAragon;
-	StatsComponent->AragonRechargeAmount = 15.0f;
+	PlayerStatsComponent->MaxHealth = 200.0f;
+	PlayerStatsComponent->MaxAragon = 200.0f;
+	PlayerStatsComponent->CurrentHealth = PlayerStatsComponent->MaxHealth;
+	PlayerStatsComponent->CurrentAragon = PlayerStatsComponent->MaxAragon;
+	PlayerStatsComponent->AragonRechargeAmount = 15.0f;
 	MaxStyleAmount = SSS_StyleLimit;
 
 	//Create a secondary AudioComponent 
 	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
 	MovementSpeed = 1300.0f;
+}
+
+void AHuntPlayerCharacter::CharacterTakeDamage(float DamageAmount)
+{
+	PlayerStatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+	UpdatePlayerData();
+}
+
+bool AHuntPlayerCharacter::IsCharacterDead()
+{
+	return PlayerStatsComponent->bIsDead;
+}
+
+void AHuntPlayerCharacter::UpdatePlayerData()
+{
+	PlayerSavedData.SaveCurrentHealth = PlayerStatsComponent->CurrentHealth;
+	PlayerSavedData.SaveMaxHealth = PlayerStatsComponent->MaxHealth;
+	PlayerSavedData.SaveCurrentAragon = PlayerStatsComponent->CurrentAragon;
+	PlayerSavedData.SaveMaxAragon = PlayerStatsComponent->MaxAragon;
+	PlayerSavedData.SaveCurrentMissileCount = CurrentMissileCount;
+	PlayerSavedData.SaveMaxMissileCount = MaxMissileCount;
+	PlayerSavedData.SaveCurrentPlayerSuit = CurrentPlayerSuit;
+	PlayerSavedData.SaveCurrentDashCount = CurrentDashCount;
+	PlayerSavedData.SaveMaxDashCount = MaxDashCount;
+	PlayerSavedData.SaveMaxJumpCount = MaxJumpCount;
+	PlayerSavedData.SaveCurrentJumpCount = CurrentJumpCount;
 }
 
 int32 AHuntPlayerCharacter::GetJumpCount()
@@ -69,12 +96,57 @@ void AHuntPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	
+	UpdatePlayerData();
+
+}
+
+bool AHuntPlayerCharacter::SaveData()
+{
+	//Save the data to binary
+	FBufferArchive ToBinary;
+	SaveLoadData(ToBinary, PlayerStatsComponent->CurrentHealth, PlayerStatsComponent->MaxHealth, PlayerStatsComponent->CurrentAragon, PlayerStatsComponent->MaxAragon);
+
+	//No data were saved
+	if (ToBinary.Num() <= 0) return false;
+
+	//Save binaries to disk
+	bool result = FFileHelper::SaveArrayToFile(ToBinary, TEXT(SAVEDATAFILENAME));
+
+	//Empty the buffer's contents
+	ToBinary.FlushCache();
+	ToBinary.Empty();
+
+	return result;
+}
+
+bool AHuntPlayerCharacter::LoadData()
+{
+	TArray<uint8> BinaryArray;
+
+	//load disk data to binary array
+	if (!FFileHelper::LoadFileToArray(BinaryArray, TEXT(SAVEDATAFILENAME))) return false;
+
+	if (BinaryArray.Num() <= 0) return false;
+
+	//Memory reader is the archive that we're going to use in order to read the loaded data
+	FMemoryReader FromBinary = FMemoryReader(BinaryArray, true);
+	FromBinary.Seek(0);
+
+	SaveLoadData(FromBinary, PlayerStatsComponent->CurrentHealth, PlayerStatsComponent->MaxHealth, PlayerStatsComponent->CurrentAragon, PlayerStatsComponent->MaxAragon);
+
+	//Empty the buffer's contents
+	FromBinary.FlushCache();
+	BinaryArray.Empty();
+	//Close the stream
+	FromBinary.Close();
+
+	return true;
 }
 
 void AHuntPlayerCharacter::UnlockAbility(bool AbilityToToggle, bool bUnlockAbility)
 {
 	AbilityToToggle = bUnlockAbility;
+	UpdatePlayerData();
 }
 
 int32 AHuntPlayerCharacter::GetCurrentMissiles()
@@ -125,59 +197,66 @@ void AHuntPlayerCharacter::UpgradeMissileCapacity(int32 IncreaseAmount)
 {
 	MaxMissileCount = MaxMissileCount + IncreaseAmount;
 	CurrentMissileCount = MaxMissileCount;
+	UpdatePlayerData();
 }
 
 void AHuntPlayerCharacter::UpdateMissileCapacity(int32 NewMissileAmount)
 {
 	MaxMissileCount = NewMissileAmount;
 	CurrentMissileCount = MaxMissileCount;
+	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetPlayerSuit(TEnumAsByte<EPlayerSuit> NewPlayerSuit)
+void AHuntPlayerCharacter::SetPlayerSuit(EPlayerSuit NewPlayerSuit)
 {
 	switch (CurrentPlayerSuit)
 	{
 	case EPlayerSuit::Suit_Standard:
-	
+
 		DamageDefenseModifer = 0.0f;
-	
+
 	case EPlayerSuit::Suit_Version2:
-	
+
 		DamageDefenseModifer = 0.15f;
-	
+
 	case EPlayerSuit::Suit_Version3:
-	
+
 		DamageDefenseModifer = 0.30f;
-	
+
 	case EPlayerSuit::Suit_Version4:
-	
+
 		DamageDefenseModifer = 0.50f;
-	
+
 	default:
 		break;
-	
+
 	}
+	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetCurrentSuitPower(TEnumAsByte<ESuitMainAbilities> NewSuitPower)
+void AHuntPlayerCharacter::SetCurrentSuitPower(ESuitMainAbilities NewSuitPower)
 {
-	StatsComponent->CurrentSuitPower = NewSuitPower;
+	PlayerStatsComponent->CurrentSuitPower = NewSuitPower;
+	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetPowerModifierOne(TEnumAsByte<ESuitPowerModifiers> NewPowerModifier)
+void AHuntPlayerCharacter::SetPowerModifierOne(ESuitPowerModifiers NewPowerModifier)
 {
-	StatsComponent->PowerModifierSlotOne = NewPowerModifier;
+	PlayerStatsComponent->PowerModifierSlotOne = NewPowerModifier;
+	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetPowerModifierTwo(TEnumAsByte<ESuitPowerModifiers> NewPowerModifier)
+void AHuntPlayerCharacter::SetPowerModifierTwo(ESuitPowerModifiers NewPowerModifier)
 {
-	StatsComponent->PowerModifierSlotTwo = NewPowerModifier;
+	PlayerStatsComponent->PowerModifierSlotTwo = NewPowerModifier;
+	UpdatePlayerData();
 }
 
 void AHuntPlayerCharacter::UpdateDashCount(int32 IncreaseAmount)
 {
 	MaxDashCount += IncreaseAmount;
 	CurrentDashCount = MaxDashCount;
+	UpdatePlayerData();
 
 }
 
@@ -185,12 +264,13 @@ void AHuntPlayerCharacter::UpdateJumpCount(int32 IncreaseAmount)
 {
 	MaxJumpCount += IncreaseAmount;
 	CurrentJumpCount = MaxDashCount;
+	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, TEnumAsByte<EPlayerSuit> NewPlayerSuit, TEnumAsByte<ESuitMainAbilities> NewSuitPower, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierOne, TEnumAsByte<ESuitPowerModifiers> NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
+void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
 {
-	StatsComponent->UpdateMaxHealth(NewMaxHealth);
-	StatsComponent->UpdateMaxAragon(NewMaxAragon);
+	PlayerStatsComponent->UpdateMaxHealth(NewMaxHealth);
+	PlayerStatsComponent->UpdateMaxAragon(NewMaxAragon);
 	SetPlayerSuit(NewPlayerSuit);
 	SetCurrentSuitPower(NewSuitPower);
 	SetPowerModifierOne(NewPowerModifierOne);
@@ -199,8 +279,19 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 	WeaponInventory = NewWeaponInventory;
 	CurrentDataPoints = NewCurrentDataPoints;
 	PlayerSavedStats = NewPlayerSaveableStats;
+	UpdatePlayerData();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
-	
-	
+
+
+}
+
+void AHuntPlayerCharacter::SaveLoadData(FArchive& Ar, float& CurrentHealth, float& MaxHealth, float& CurrentAragon, float& MaxAragon)
+{
+	Ar << PlayerStatsComponent->CurrentHealth;
+	Ar << PlayerStatsComponent->MaxHealth;
+	Ar << PlayerStatsComponent->CurrentAragon;
+	Ar << PlayerStatsComponent->MaxAragon;
+	//Ar << PlayerLocationToSaveOrLoad = new FTransform(new Vector3(0), new Vector3(0), new Vector3(0));
+	//Ar << UGameplayStatics::GetPlayerCharacter(GetWorld(),0)->GetActorTransform();
 }
 

@@ -40,8 +40,7 @@ public:
 	AProjectHuntCharacter();
 
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
-		class UHuntStatsComponent* StatsComponent;
+	
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
@@ -253,6 +252,10 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent, Category = "Character|Stats")
 	void ReactToDamage(AHuntWeapon* WeaponUsed);
+
+	virtual void CharacterTakeDamage(float DamageAmount);
+
+	virtual bool IsCharacterDead();
 	
 
 	FTimerHandle StyleDecreaseTimer;

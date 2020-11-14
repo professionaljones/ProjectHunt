@@ -18,7 +18,7 @@
 
 //What kind of weapon is this
 UENUM(BlueprintType)
-enum EWeaponType
+enum class EWeaponType : uint8
 {
 	WT_Unequipped UMETA(DisplayName = "Unequipped"),
 	WT_Explosive UMETA(DisplayName = "Explosives"),
@@ -47,7 +47,7 @@ enum EProjectileType
 
 //What ammo does this weapon use
 UENUM(BlueprintType, meta = (Bitflags))
-enum EAmmoType
+enum class EAmmoType : uint8
 {
 	AT_None UMETA(DisplayName = "None"),
 	AT_Standard UMETA(DisplayName = "Standard"),
@@ -78,11 +78,11 @@ public:
 
 	//We use this to determine the slot the weapon should fill in the inventory
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
-		TEnumAsByte<EWeaponType> WeaponType;
+		EWeaponType WeaponType;
 
 	//This weapon's Ammo Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
-		TEnumAsByte<EAmmoType> WeaponAmmoType;
+		EAmmoType WeaponAmmoType;
 
 
 
@@ -174,6 +174,31 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
 		float WeaponChargeDelay;
 
+	friend FArchive& operator<<(FArchive& Ar, FWeaponStatsData& WeaponStatsInfo)
+	{
+		Ar << WeaponStatsInfo.WeaponType;
+		Ar << WeaponStatsInfo.WeaponAmmoType;
+		Ar << WeaponStatsInfo.WeaponDamageLevel;
+		Ar << WeaponStatsInfo.FireRateLevel;
+		Ar << WeaponStatsInfo.ChargeRateLevel;
+		Ar << WeaponStatsInfo.ChargeLimitLevel;
+		Ar << WeaponStatsInfo.MaxWeaponLevel;
+		Ar << WeaponStatsInfo.FireRate;
+		Ar << WeaponStatsInfo.ChargeRate;
+		Ar << WeaponStatsInfo.BaseDamage;
+		Ar << WeaponStatsInfo.DamageMultiplierAmount;
+		Ar << WeaponStatsInfo.DamageModifierAmount;
+		Ar << WeaponStatsInfo.TotalDamage;
+		Ar << WeaponStatsInfo.CriticalHitDamage;
+		Ar << WeaponStatsInfo.SpecialDamageMultiplier;
+		Ar << WeaponStatsInfo.CriticalHitMultiplier;
+		Ar << WeaponStatsInfo.OriginalBaseDamageAmount;
+		Ar << WeaponStatsInfo.OriginalDamageMultiplier;
+		Ar << WeaponStatsInfo.OriginalDamageModifier;
+
+		return Ar;
+	}
+
 };
 /**
  * This is for getting the data for Weapon upgrades
@@ -232,7 +257,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
 		float ChargeLimitUpgradePrice;
 
-	
+
 };
 
 UCLASS()
@@ -252,7 +277,7 @@ public:
 
 	//This weapon's Ammo Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
-		TEnumAsByte<EAmmoType> OriginalAmmoType;
+		EAmmoType OriginalAmmoType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TEnumAsByte<EProjectileState> WeaponProjectileState;
@@ -329,7 +354,7 @@ public:
 		bool bIsFiring = false;
 
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Feedback")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Feedback")
 		bool GetIsFiring();
 
 
@@ -403,7 +428,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void ResetDamage();
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Weapon")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon")
 		EAmmoType GetWeaponAmmoType();
 
 	UFUNCTION()
@@ -456,7 +481,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Data")
 		void ResetDamageModifier();
 
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UAIPerceptionStimuliSourceComponent* MyStimuliSourceComponent;
 
@@ -472,4 +497,28 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleDefaultsOnly, Category = "Weapon|SFX")
 		UAudioComponent* WeaponAltAudioComponent;
 
+
+public:
+	friend FArchive &operator<<(FArchive &Ar, AHuntWeapon& SavedWeapon)
+	{
+		Ar << SavedWeapon.WeaponStatsData.BaseDamage;
+		Ar << SavedWeapon.WeaponStatsData.DamageMultiplierAmount;
+		Ar << SavedWeapon.WeaponStatsData.DamageModifierAmount;
+		Ar << SavedWeapon.WeaponStatsData.ChargeRate;
+		Ar << SavedWeapon.WeaponStatsData.ChargeLimitLevel;
+		Ar << SavedWeapon.WeaponStatsData.ChargeRateLevel;
+		Ar << SavedWeapon.WeaponStatsData.WeaponChargeDelay;
+		Ar << SavedWeapon.WeaponStatsData.CriticalHitDamage;
+		Ar << SavedWeapon.WeaponStatsData.CriticalHitMultiplier;
+		Ar << SavedWeapon.WeaponStatsData.FireRate;
+		Ar << SavedWeapon.WeaponStatsData.MaxWeaponLevel;
+		Ar << SavedWeapon.WeaponStatsData.OriginalBaseDamageAmount;
+		Ar << SavedWeapon.WeaponStatsData.OriginalDamageModifier;
+		Ar << SavedWeapon.WeaponStatsData.OriginalDamageMultiplier;
+
+		Ar << SavedWeapon.WeaponStatsData.WeaponDamageLevel;
+
+
+		return Ar;
+	}
 };
