@@ -65,19 +65,6 @@ void AHuntWeapon::FireWeapon()
 	//Collision parameters
 	FCollisionQueryParams CollisionParameters;
 
-	//this->Execute_OnFire(this);
-
-	/*if (WeaponOwner == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
-	{
-
-		StartLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetComponentLocation();
-		EndLocation = StartLocation + (UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetForwardVector() * WeaponStatsData.WeaponDistanceRange);
-
-	}*/
-
-
-
-
 	//Create temp variable for Actor we hit
 	AActor* HitActor = SingleHit.GetActor();
 
