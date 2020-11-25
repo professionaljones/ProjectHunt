@@ -203,6 +203,21 @@
 			"Name": "RamaSaveSystem",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/6c81d0b2b68f445cb24616fa39a462c2"
+		},
+		{
+			"Name": "ProductivityTools",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/8beef99c4399462189d66689e2b48475"
+		},
+		{
+			"Name": "QuickCommands",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/d99b947e097b499985694cec86592660"
+		},
+		{
+			"Name": "MultiTask",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/9e26b2793e714ceab7cb53d9641bfa2d"
 		}
 	],
 	"TargetPlatforms": [
