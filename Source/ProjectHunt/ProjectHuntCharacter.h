@@ -172,7 +172,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
 		float SSS_StyleLimit = 2.50f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Character|Data")
 		int32 CurrentDataPoints = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")

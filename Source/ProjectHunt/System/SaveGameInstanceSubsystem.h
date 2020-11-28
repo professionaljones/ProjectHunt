@@ -17,8 +17,8 @@ class PROJECTHUNT_API USaveGameInstanceSubsystem : public UGameInstanceSubsystem
 
 protected:
 
-	UPROPERTY(EditAnywhere)
-		FPlayerSaveableStats SavedPlayerUnlockedStats;
+	/*UPROPERTY(EditAnywhere)
+		FPlayerSaveableStats SavedPlayerUnlockedStats;*/
 	UPROPERTY(EditAnywhere)
 		FPlayerMainAbilityData SavedQuicksilverAbilityStats;
 	UPROPERTY(EditAnywhere)
@@ -41,13 +41,9 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = SaveLoad)
-		bool SaveGameData();
+	
 
-	UFUNCTION(BlueprintCallable, Category = SaveLoad)
-		bool LoadGameData();
-
-	void SaveLoadData(FArchive& Ar, FPlayerSaveableStats& PlayerUnlockedStats, FPlayerMainAbilityData& QuicksilverAbilityStats, FPlayerMainAbilityData& ShowstopperAbilityStats, FPlayerMainAbilityData& OverloadAbilityStats, FPlayerPowerModifierData& DashPowerStats, FPlayerPowerModifierData& BlastPowerStats, FWeaponStatsData& SavePistolStats, FWeaponStatsData& SaveRifleStatsData, FWeaponStatsData& SaveShotgunStatsData, FPlayerStatsData& SavePlayerStats);
+	//void SaveLoadData(FArchive& Ar, FPlayerSaveableStats& PlayerUnlockedStats, FPlayerMainAbilityData& QuicksilverAbilityStats, FPlayerMainAbilityData& ShowstopperAbilityStats, FPlayerMainAbilityData& OverloadAbilityStats, FPlayerPowerModifierData& DashPowerStats, FPlayerPowerModifierData& BlastPowerStats, FWeaponStatsData& SavePistolStats, FWeaponStatsData& SaveRifleStatsData, FWeaponStatsData& SaveShotgunStatsData, FPlayerStatsData& SavePlayerStats);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Save Slots")
 		FString FirstSaveSlot = "SaveSlot01";

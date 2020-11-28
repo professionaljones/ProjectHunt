@@ -71,5 +71,21 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnPlayerPickupItem(float fItemCollectPercentage);
 
+	//Called by system when player unlocks the ability to use Aragon
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockAragon(bool bIsUnlocked);
+
+	//Called by system when player unlocks the ability to use the Missile Launcher
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockMissiles(bool bIsUnlocked);
+
+	//Called by system when player unlocks the ability to wall run
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockWallrun(bool bIsUnlocked);
+
+	//Called by system when player unlocks the ability to dash
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockDash(bool bIsUnlocked);
+
 
 };

@@ -19,39 +19,7 @@ enum class EPlayerSuit : uint8
 
 };
 
-USTRUCT(BlueprintType)
-struct FPlayerSaveableStats : public FTableRowBase
-{
-	GENERATED_BODY()
 
-		//Has the player unlocked the ability to dash?
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
-		bool bUnlockedDash = false;
-
-	//Has the player unlocked the ability to wall run?
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
-		bool bUnlockedWallrun = false;
-
-	//Has the player unlocked the ability to use the missile launcher?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
-		bool bHasMissileLauncher = false;
-
-	//Has the player unlocked the ability to use Aragon abilities?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Aragon")
-		bool bUnlockedAragon = false;
-
-public:
-	friend FArchive& operator<<(FArchive& Ar, FPlayerSaveableStats& PlayerSaveableAbilities)
-	{
-		Ar << PlayerSaveableAbilities.bUnlockedDash;
-		Ar << PlayerSaveableAbilities.bUnlockedWallrun;
-		Ar << PlayerSaveableAbilities.bHasMissileLauncher;
-		Ar << PlayerSaveableAbilities.bUnlockedAragon;
-		
-		return Ar;
-	}
-};
 
 USTRUCT(BlueprintType)
 struct FPlayerStatsData : public FTableRowBase
@@ -105,22 +73,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		int32 SaveCurrentJumpCount = 2;
 
-	friend FArchive operator<<(FArchive Ar, FPlayerStatsData& SavePlayerData)
-	{
-		Ar << SavePlayerData.SaveCurrentHealth;
-		Ar << SavePlayerData.SaveMaxHealth;
-		Ar << SavePlayerData.SaveCurrentAragon;
-		Ar << SavePlayerData.SaveMaxAragon;
-		Ar << SavePlayerData.SaveCurrentMissileCount;
-		Ar << SavePlayerData.SaveMaxMissileCount;
-		Ar << SavePlayerData.SaveCurrentPlayerSuit;
-		Ar << SavePlayerData.SaveCurrentDashCount;
-		Ar << SavePlayerData.SaveMaxDashCount;
-		Ar << SavePlayerData.SaveMaxJumpCount;
-		Ar << SavePlayerData.SaveCurrentJumpCount;
 
-		return Ar;
-	}
 
 };
 /**
@@ -170,9 +123,25 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdateWeaponSlot UpdateWeaponSlotEvent;
 
-	//This struct will hold the player's unlocked abilities (dash, wallrun, double jump, missiles, etc)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Stats")
-		FPlayerSaveableStats PlayerSavedStats;
+	/*These are abilities that the player can unlock throughout gameplay
+	These abilities will add to the player's item percentage as they impact game play*/
+
+	//Has the player unlocked the ability to dash?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
+		bool bUnlockedDash = false;
+
+	//Has the player unlocked the ability to wall run?
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
+		bool bUnlockedWallrun = false;
+
+	//Has the player unlocked the ability to use the missile launcher?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Weapons")
+		bool bHasMissileLauncher = false;
+
+	//Has the player unlocked the ability to use Aragon abilities?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Aragon")
+		bool bUnlockedAragon = false;
 	
 	//This struct will hold the player's stats (health, aragon, jump/dash counts, etc)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Stats")
@@ -286,12 +255,7 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = SaveLoad)
-		bool SaveData();
-
-	UFUNCTION(BlueprintCallable, Category = SaveLoad)
-		bool LoadData();
-
+	
 	//This will take a bool @param AbilityToToggle, and set it to @param bUnlockAbility
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void UnlockAbility(bool AbilityToToggle, bool bUnlockAbility);
@@ -352,7 +316,7 @@ public:
 		void UpdateJumpCount(int32 IncreaseAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
-		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
+		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
@@ -361,20 +325,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* SuitAudioComponent;
 
-	void SaveLoadData(FArchive& Ar, float& CurrentHealth, float& MaxHealth, float& CurrentAragon, float& MaxAragon);
+	
 
-public:
-	friend FArchive& operator<<(FArchive& Ar, AHuntPlayerCharacter& PlayerCharacterData)
-	{
-		Ar << PlayerCharacterData.PlayerSavedStats.bHasMissileLauncher;
-		Ar << PlayerCharacterData.PlayerSavedStats.bUnlockedAragon;
-		Ar << PlayerCharacterData.PlayerSavedStats.bUnlockedDash;
-		Ar << PlayerCharacterData.PlayerSavedStats.bUnlockedWallrun;
-		Ar << PlayerCharacterData.CurrentPlayerSuit;
-		//Ar << PlayerCharacterData.StatsComponent.CurrentHealth
-		
-
-
-		return Ar;
-	}
 };

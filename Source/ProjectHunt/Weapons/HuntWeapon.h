@@ -174,30 +174,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
 		float WeaponChargeDelay;
 
-	friend FArchive& operator<<(FArchive& Ar, FWeaponStatsData& WeaponStatsInfo)
-	{
-		Ar << WeaponStatsInfo.WeaponType;
-		Ar << WeaponStatsInfo.WeaponAmmoType;
-		Ar << WeaponStatsInfo.WeaponDamageLevel;
-		Ar << WeaponStatsInfo.FireRateLevel;
-		Ar << WeaponStatsInfo.ChargeRateLevel;
-		Ar << WeaponStatsInfo.ChargeLimitLevel;
-		Ar << WeaponStatsInfo.MaxWeaponLevel;
-		Ar << WeaponStatsInfo.FireRate;
-		Ar << WeaponStatsInfo.ChargeRate;
-		Ar << WeaponStatsInfo.BaseDamage;
-		Ar << WeaponStatsInfo.DamageMultiplierAmount;
-		Ar << WeaponStatsInfo.DamageModifierAmount;
-		Ar << WeaponStatsInfo.TotalDamage;
-		Ar << WeaponStatsInfo.CriticalHitDamage;
-		Ar << WeaponStatsInfo.SpecialDamageMultiplier;
-		Ar << WeaponStatsInfo.CriticalHitMultiplier;
-		Ar << WeaponStatsInfo.OriginalBaseDamageAmount;
-		Ar << WeaponStatsInfo.OriginalDamageMultiplier;
-		Ar << WeaponStatsInfo.OriginalDamageModifier;
-
-		return Ar;
-	}
 
 };
 /**
@@ -285,7 +261,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo|Projectiles")
 		TMap<TEnumAsByte<EProjectileState>, TSubclassOf<AHuntWeaponProjectile>> WeaponProjectiles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats")
 		bool bCanWeaponCharge;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
@@ -296,11 +272,11 @@ public:
 		bool bIsAutomatic;
 
 	//Empty to hold weapon charge
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Charge")
 		float CurrentWeaponCharge;
 
 	//How much to charge the weapon by
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Charge")
 		float AmountToCharge;
 
 	//What is the name of the socket that this weapon attaches to
@@ -499,26 +475,162 @@ public:
 
 
 public:
-	friend FArchive &operator<<(FArchive &Ar, AHuntWeapon& SavedWeapon)
-	{
-		Ar << SavedWeapon.WeaponStatsData.BaseDamage;
-		Ar << SavedWeapon.WeaponStatsData.DamageMultiplierAmount;
-		Ar << SavedWeapon.WeaponStatsData.DamageModifierAmount;
-		Ar << SavedWeapon.WeaponStatsData.ChargeRate;
-		Ar << SavedWeapon.WeaponStatsData.ChargeLimitLevel;
-		Ar << SavedWeapon.WeaponStatsData.ChargeRateLevel;
-		Ar << SavedWeapon.WeaponStatsData.WeaponChargeDelay;
-		Ar << SavedWeapon.WeaponStatsData.CriticalHitDamage;
-		Ar << SavedWeapon.WeaponStatsData.CriticalHitMultiplier;
-		Ar << SavedWeapon.WeaponStatsData.FireRate;
-		Ar << SavedWeapon.WeaponStatsData.MaxWeaponLevel;
-		Ar << SavedWeapon.WeaponStatsData.OriginalBaseDamageAmount;
-		Ar << SavedWeapon.WeaponStatsData.OriginalDamageModifier;
-		Ar << SavedWeapon.WeaponStatsData.OriginalDamageMultiplier;
 
-		Ar << SavedWeapon.WeaponStatsData.WeaponDamageLevel;
+	/* Weapon Stats */
+
+	//We use this to determine the slot the weapon should fill in the inventory
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
+		EWeaponType eWeaponType;
+
+	//This weapon's Ammo Type
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
+		EAmmoType eWeaponAmmoType;
+
+	/*Modifiable Weapon Stats
+	These stats will change during gameplay 
+	Being buffed/debuffed based on the player upgrading them, difficulty modifiers, etc
+	*/
+
+	//What is the current damage level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
+		int32 iWeaponDamageLevel = 1;
+
+	//What is the current fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
+		int32 iFireRateLevel = 1;
+
+	//What is the current charge rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
+		int32 iChargeRateLevel = 1;
+
+	//What is the current charge limit level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
+		int32 iChargeLimitLevel = 1;
 
 
-		return Ar;
-	}
+	//What is the maximum level of this weapon?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
+		int32 iMaxWeaponLevel = 5;
+
+	//How fast does this weapon fire - if it is automatic
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Damage")
+		float fFireRate = 0.0f;
+
+	//How fast does this weapon fire - if it is automatic
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Damage")
+		float fChargeRate = 0.0f;
+
+
+	////End Ammo
+
+	///// Damage
+
+
+	//How much damage does this weapon do, without any modifiers
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage")
+		float iBaseDamage = 0.0f;
+	//Are there any bonus to damage before Quicksilver or Overdrive? Otherwise, leave at 1
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage")
+		float iDamageMultiplierAmount = 0.0f;
+
+
+	//When in Quicksilver or Overdrive, how much should the damage be multiplied by ?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage")
+		float iDamageModifierAmount = 0.0f;
+
+	//Give us the sum/product of BaseDamage and DamageMultiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
+		float iTotalDamage = 0.0f;
+
+	//Give us the sum/product of BaseDamage and CritMultiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
+		float iCriticalHitDamage = 0.0f;
+
+	//When in Quicksilver or Overdrive, how much should the damage be multiplied by?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage|Modifiers")
+		float iSpecialDamageMultiplier = 0.0f;
+
+	//When the player hits an enemy at a weak point (IE Headshot), how much additional damage should the player deal
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage|Modifiers")
+		float iCriticalHitMultiplier = 0.0f;
+
+	//Store the original damage amount for resetting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage|Reset")
+		float iOriginalBaseDamageAmount = 0.0f;
+
+	//Store the original DamageMultiplier for resetting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Damage|Reset")
+		float iOriginalDamageMultiplier = 0.0f;
+
+	//Store the original DamageModifier for resetting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Damage|Reset")
+		float iOriginalDamageModifier = 0.0;
+
+	////End Damage
+
+
+	////Start Charge
+	//How much can this weapon charge up to
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
+		float fWeaponChargeLimit;
+
+	//How much of a delay before the weapon begins to charge
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
+		float fWeaponChargeDelay;
+
+	//End Charge
+
+	/*Weapon Upgrades
+	These values determine the weapon upgrades how much it will cost the player with in game currency*/
+
+	
+
+	//What is the new damage level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 iNextWeaponDamageLevel;
+
+	//How much additional damage gained at this level
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fDamageUpgradeAmount;
+
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fDamageUpgradePrice;
+
+	//What is the new fire rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 iNextFireRateLevel;
+
+	//How much faster can this weapon fire?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fFireRateUpgradeAmount;
+
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fFireRateUpgradePrice;
+
+	//What is the new charge rate level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 iNextChargeRateLevel;
+
+	//How much faster can charge weapons charge?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fChargeRateAmountIncrease;
+
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fChargeRateUpgradePrice;
+
+	//What is the new charge limit level of this weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		int32 iNextChargeLimitLevel;
+
+	//What is the new maximum limit for charge weapons
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fChargeLimitAmountIncrease;
+
+	//What is the price of this upgrade?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Upgrade")
+		float fChargeLimitUpgradePrice;
+
 };

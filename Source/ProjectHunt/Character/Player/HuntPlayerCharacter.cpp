@@ -3,7 +3,6 @@
 
 #include "HuntPlayerCharacter.h"
 #include "Camera/CameraComponent.h"
-#define SAVEDATAFILENAME "SampleSavedData"
 
 AHuntPlayerCharacter::AHuntPlayerCharacter()
 {
@@ -74,22 +73,22 @@ int32 AHuntPlayerCharacter::GetDashCount()
 
 bool AHuntPlayerCharacter::CanPlayerUseMissiles()
 {
-	return PlayerSavedStats.bHasMissileLauncher;
+	return bHasMissileLauncher;
 }
 
 bool AHuntPlayerCharacter::CanPlayerUseAragon()
 {
-	return PlayerSavedStats.bUnlockedAragon;
+	return bUnlockedAragon;
 }
 
 bool AHuntPlayerCharacter::CanPlayerDash()
 {
-	return PlayerSavedStats.bUnlockedDash;
+	return bUnlockedDash;
 }
 
 bool AHuntPlayerCharacter::CanPlayerWallrun()
 {
-	return PlayerSavedStats.bUnlockedWallrun;
+	return bUnlockedWallrun;
 }
 
 void AHuntPlayerCharacter::BeginPlay()
@@ -100,48 +99,7 @@ void AHuntPlayerCharacter::BeginPlay()
 
 }
 
-bool AHuntPlayerCharacter::SaveData()
-{
-	//Save the data to binary
-	FBufferArchive ToBinary;
-	SaveLoadData(ToBinary, PlayerStatsComponent->CurrentHealth, PlayerStatsComponent->MaxHealth, PlayerStatsComponent->CurrentAragon, PlayerStatsComponent->MaxAragon);
 
-	//No data were saved
-	if (ToBinary.Num() <= 0) return false;
-
-	//Save binaries to disk
-	bool result = FFileHelper::SaveArrayToFile(ToBinary, TEXT(SAVEDATAFILENAME));
-
-	//Empty the buffer's contents
-	ToBinary.FlushCache();
-	ToBinary.Empty();
-
-	return result;
-}
-
-bool AHuntPlayerCharacter::LoadData()
-{
-	TArray<uint8> BinaryArray;
-
-	//load disk data to binary array
-	if (!FFileHelper::LoadFileToArray(BinaryArray, TEXT(SAVEDATAFILENAME))) return false;
-
-	if (BinaryArray.Num() <= 0) return false;
-
-	//Memory reader is the archive that we're going to use in order to read the loaded data
-	FMemoryReader FromBinary = FMemoryReader(BinaryArray, true);
-	FromBinary.Seek(0);
-
-	SaveLoadData(FromBinary, PlayerStatsComponent->CurrentHealth, PlayerStatsComponent->MaxHealth, PlayerStatsComponent->CurrentAragon, PlayerStatsComponent->MaxAragon);
-
-	//Empty the buffer's contents
-	FromBinary.FlushCache();
-	BinaryArray.Empty();
-	//Close the stream
-	FromBinary.Close();
-
-	return true;
-}
 
 void AHuntPlayerCharacter::UnlockAbility(bool AbilityToToggle, bool bUnlockAbility)
 {
@@ -267,7 +225,7 @@ void AHuntPlayerCharacter::UpdateJumpCount(int32 IncreaseAmount)
 	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
+void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
 {
 	PlayerStatsComponent->UpdateMaxHealth(NewMaxHealth);
 	PlayerStatsComponent->UpdateMaxAragon(NewMaxAragon);
@@ -278,20 +236,11 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 	UpdateMissileCapacity(NewMaxMissileCount);
 	WeaponInventory = NewWeaponInventory;
 	CurrentDataPoints = NewCurrentDataPoints;
-	PlayerSavedStats = NewPlayerSaveableStats;
+	
 	UpdatePlayerData();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 
 
 }
 
-void AHuntPlayerCharacter::SaveLoadData(FArchive& Ar, float& CurrentHealth, float& MaxHealth, float& CurrentAragon, float& MaxAragon)
-{
-	Ar << PlayerStatsComponent->CurrentHealth;
-	Ar << PlayerStatsComponent->MaxHealth;
-	Ar << PlayerStatsComponent->CurrentAragon;
-	Ar << PlayerStatsComponent->MaxAragon;
-	//Ar << PlayerLocationToSaveOrLoad = new FTransform(new Vector3(0), new Vector3(0), new Vector3(0));
-	//Ar << UGameplayStatics::GetPlayerCharacter(GetWorld(),0)->GetActorTransform();
-}
 
