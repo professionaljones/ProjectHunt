@@ -67,5 +67,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnPlayerWeaponPickup(TSubclassOf<AHuntWeapon> NewWeapon);
 
+	//Called by system when player picks up an upgrade - add to collection percentage
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerPickupItem(float fItemCollectPercentage);
+
 
 };
