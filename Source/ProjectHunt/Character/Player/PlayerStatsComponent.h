@@ -18,7 +18,7 @@ class PROJECTHUNT_API UPlayerStatsComponent : public UHuntStatsComponent
 public:
 
 	//This is the player's current item collect percentage
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Stats")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Stats")
 		float fCurrentItemCollectionPercentage = 0.0f;
 
 	//This is the player's maximum item collect percentage

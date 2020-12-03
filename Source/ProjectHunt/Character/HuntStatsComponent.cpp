@@ -11,6 +11,13 @@ UHuntStatsComponent::UHuntStatsComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	bEditableWhenInherited = true;
 	// ...
+
+	QuicksilverStats.CurrentAbility = ESuitMainAbilities::MA_Quicksilver;
+	QuicksilverStats.CurrentAbilityLevel = 1;
+	QuicksilverStats.fAragonConsumptionAmount = 15.0f;
+	OverloadStats.CurrentAbility = ESuitMainAbilities::MA_Overload;
+	OverloadStats.CurrentAbilityLevel = 1;
+	QuicksilverStats.fAragonConsumptionAmount = 18.0f;
 }
 
 
@@ -110,6 +117,29 @@ void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
 	}
 }
 
+void UHuntStatsComponent::ConsumeAragon_Power()
+{
+	switch (CurrentSuitPower)
+	{
+	case ESuitMainAbilities::MA_Quicksilver:
+	{
+		ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
+		if (QuicksilverStats.CurrentAbilityLevel >= 2)
+		{
+			RecoverHealth(8.0f);
+		}
+		if (QuicksilverStats.CurrentAbilityLevel >= 3)
+		{
+			GetOwner()->CustomTimeDilation = fActorSlowDownIgnoredValue;
+		}
+	}
+	case ESuitMainAbilities::MA_Overload:
+	{
+		ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
+	}
+	}
+}
+
 void UHuntStatsComponent::RechargeAragon()
 {
 	CurrentAragon += AragonRechargeAmount;
@@ -138,7 +168,7 @@ void UHuntStatsComponent::RecoverHealth(float RecoverAmount)
 		CurrentHealth = MaxHealth;
 		
 	}
-	//if(this->GetOwner() == Cast<AProjectHuntCharacter>(GetOwner()))
+
 }
 
 void UHuntStatsComponent::InitStats()
@@ -156,25 +186,25 @@ void UHuntStatsComponent::ActivatePower()
 	if (!bIsAragonEmpty && !bIsDead)
 	{
 		//bIsPowerActive = !bIsPowerActive;
-		switch (CurrentSuitPower)
+		if (bIsPowerActive)
 		{
-		case ESuitMainAbilities::MA_Quicksilver:
-		{
-			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), fSlowDownValue);
-			ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
-			if (QuicksilverStats.CurrentAbilityLevel >= 2)
+			switch (CurrentSuitPower)
 			{
-				RecoverHealth(8.0f);
-			}
-			if (QuicksilverStats.CurrentAbilityLevel >= 3)
+			case ESuitMainAbilities::MA_Quicksilver:
 			{
-				GetOwner()->CustomTimeDilation = fActorSlowDownIgnoredValue;
+				UGameplayStatics::SetGlobalTimeDilation(GetWorld(), fSlowDownValue);
+				GetOwner()->CustomTimeDilation = fSlowDownValue;
+				break;
+				//ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
+				
 			}
-		}
-		case ESuitMainAbilities::MA_Overload:
-		{
-			ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
-			GetOwner()->CustomTimeDilation = fActorSpeedUpValue;
+			case ESuitMainAbilities::MA_Overload:
+			{
+				//ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
+				GetOwner()->CustomTimeDilation = fActorSpeedUpValue;
+				break;
+			}
+
 		}
 		}
 	}
@@ -188,7 +218,19 @@ void UHuntStatsComponent::DeactivatePower()
 	if (CurrentAragon < MaxAragon || bIsAragonEmpty)
 	{
 		bIsRecharging = true;
-		RechargeAragon();
+		//RechargeAragon();
+	}
+
+	switch (CurrentSuitPower)
+	{
+	case ESuitMainAbilities::MA_Quicksilver:
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	}
+	case ESuitMainAbilities::MA_Overload:
+	{
+		GetOwner()->CustomTimeDilation = 1.0f;
+	}
 	}
 }
 

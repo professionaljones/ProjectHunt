@@ -66,6 +66,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnActivateAragonPower(ESuitMainAbilities PowerInUse);
+		UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnDeactivateAragonPower(ESuitMainAbilities PowerInUse);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnTakeFireDamage();

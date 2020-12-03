@@ -244,6 +244,10 @@ public:
 	//This function will decrease the @param ConsumeAmount to the owner's Current Aragon
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void ConsumeAragon(float ConsumeAmount);
+	
+	//This function will decrease the @param ConsumeAmount to the owner's Current Aragon - for timers
+	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
+		void ConsumeAragon_Power();
 
 	//This function will add to the owner's Current Aragon - for timer
 	UFUNCTION(BlueprintCallable, Category = "Stats|Aragon")
@@ -288,13 +292,13 @@ public:
 	public:
 
 		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-			float fSlowDownValue;
+			float fSlowDownValue = 0.65f;
 
 		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-			float fActorSlowDownIgnoredValue;
+			float fActorSlowDownIgnoredValue = 1.10f;
 
 		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-			float fActorSpeedUpValue;
+			float fActorSpeedUpValue = 1.50f;
 
 
 };

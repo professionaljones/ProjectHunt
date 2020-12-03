@@ -22,8 +22,8 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 	PlayerStatsComponent = CreateDefaultSubobject<UPlayerStatsComponent>("PlayerStatsComponent");
-	PlayerStatsComponent->RegisterComponent();
-	this->AddInstanceComponent(PlayerStatsComponent);
+	//PlayerStatsComponent->RegisterComponent();
+	////this->AddInstanceComponent(PlayerStatsComponent);
 
 	PlayerStatsComponent->MaxHealth = 200.0f;
 	PlayerStatsComponent->MaxAragon = 200.0f;
@@ -34,7 +34,14 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 
 	//Create a secondary AudioComponent 
 	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
-	MovementSpeed = 1300.0f;
+	//SuitAudioComponent = 
+	MovementSpeed = 900.0f;
+
+	GetCharacterMovement()->MaxAcceleration = 4096.0f;
+	GetCharacterMovement()->BrakingFrictionFactor = 1.0f;
+	GetCharacterMovement()->JumpZVelocity = 600.0f;
+	GetCharacterMovement()->BrakingDecelerationFalling = 1024.0f;
+	GetCharacterMovement()->AirControl = PlayerAirControl;
 }
 
 void AHuntPlayerCharacter::CharacterTakeDamage(float DamageAmount)
@@ -51,35 +58,55 @@ bool AHuntPlayerCharacter::IsCharacterDead()
 void AHuntPlayerCharacter::OnActivatePower()
 {
 	PlayerStatsComponent->ActivatePower();
-	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+	
 }
 
 void AHuntPlayerCharacter::OnRechargePower()
 {
 	PlayerStatsComponent->RechargeAragon();
-	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+	
 }
 
 void AHuntPlayerCharacter::CharacterActivatePower()
 {
 	PlayerActivatePower();
+	IHuntCharacterInterface::Execute_OnActivateAragonPower(this, PlayerStatsComponent->CurrentSuitPower);
 }
 
 void AHuntPlayerCharacter::CharacterDeactivatePower()
 {
 	PlayerDeactivatePower();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+	//IHuntCharacterInterface::Execute_OnDeactivateAragonPower(this, PlayerStatsComponent->CurrentSuitPower);
 }
 
 void AHuntPlayerCharacter::CharacterRechargeAragon()
 {
 	OnRechargePower();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+}
+
+void AHuntPlayerCharacter::CharacterUseAragon()
+{
+	PlayerStatsComponent->ConsumeAragon_Power();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 }
 
 void AHuntPlayerCharacter::PlayerActivatePower()
 {
-	PlayerStatsComponent->bIsPowerActive = !PlayerStatsComponent->bIsPowerActive;
-	GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterActivatePower, 1.0f, true);
+	if (bUnlockedAragon)
+	{
+		PlayerStatsComponent->bIsPowerActive = true;
+		OnActivatePower();
+		GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterUseAragon, 1.0f, true);
+		if (GetWorldTimerManager().IsTimerActive(PlayerRechargeAragonHandle) || PlayerStatsComponent->bIsRecharging)
+		{
+			GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+			PlayerStatsComponent->bIsRecharging = false;
+		}
+		//GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterActivatePower, 1.0f, true);
+	}
+	
 }
 
 void AHuntPlayerCharacter::PlayerDeactivatePower()
@@ -87,6 +114,7 @@ void AHuntPlayerCharacter::PlayerDeactivatePower()
 	PlayerStatsComponent->bIsPowerActive = !PlayerStatsComponent->bIsPowerActive;
 	GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
 	PlayerStatsComponent->DeactivatePower();
+	PlayerRechargeAragon();
 }
 
 void AHuntPlayerCharacter::PlayerRechargeAragon()
@@ -298,4 +326,12 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 
 }
 
+void AHuntPlayerCharacter::SetPlayerAbilities(bool bEnableDash, bool bEnableWallrun, bool bEnableAragon, bool bEnableMissiles)
+{
+	IHuntPlayerInterface::Execute_OnPlayerUnlockDash(this, bEnableDash);
+	IHuntPlayerInterface::Execute_OnPlayerUnlockWallrun(this, bEnableWallrun);
+	IHuntPlayerInterface::Execute_OnPlayerUnlockAragon(this, bEnableMissiles);
+	IHuntPlayerInterface::Execute_OnPlayerUnlockMissiles(this, bEnableMissiles);
+	
+}
 

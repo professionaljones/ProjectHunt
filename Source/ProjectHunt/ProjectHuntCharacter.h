@@ -81,13 +81,13 @@ public:
 		float CurrentRushRecharge = 0.0f;
 
 	//How fast should the dash recharge increment by
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Dash")
-		float DashRechargeAmount = 0.01f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dash")
+		float DashRechargeAmount = 0.04f;
 
 
 	//How long until the dash count is incremented
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dash")
-		float DashRechargeLimit = 3.0f;
+		float DashRechargeLimit = 1.0f;
 
 	//Value to modify to control dash recharging - zero-filled on start
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Movement|Dash")
@@ -265,6 +265,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Aragon")
 	virtual void CharacterRechargeAragon();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+		virtual void CharacterUseAragon();
 	
 
 	FTimerHandle StyleDecreaseTimer;

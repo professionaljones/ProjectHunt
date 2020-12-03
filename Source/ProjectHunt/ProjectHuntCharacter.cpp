@@ -243,7 +243,7 @@ bool AProjectHuntCharacter::IsCharacterDead()
 
 void AProjectHuntCharacter::CharacterActivatePower()
 {
-
+	
 }
 
 void AProjectHuntCharacter::CharacterDeactivatePower()
@@ -252,6 +252,11 @@ void AProjectHuntCharacter::CharacterDeactivatePower()
 }
 
 void AProjectHuntCharacter::CharacterRechargeAragon()
+{
+
+}
+
+void AProjectHuntCharacter::CharacterUseAragon()
 {
 
 }

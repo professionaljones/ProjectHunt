@@ -115,6 +115,7 @@ public:
 	virtual void CharacterActivatePower() override;
 	virtual void CharacterDeactivatePower() override;
 	virtual void CharacterRechargeAragon() override;
+	virtual void CharacterUseAragon() override;
 
 	UFUNCTION(BlueprintCallable)
 		void PlayerActivatePower();
@@ -129,6 +130,8 @@ public:
 	FTimerHandle PlayerRechargeAragonHandle;
 
 public:
+
+	
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 		void UpdatePlayerData();
@@ -217,15 +220,15 @@ public:
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		int32 MaxDashCount = 2;
+		int32 MaxDashCount = 3;
 
 	//How many dashes has the character executed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		int32 CurrentDashCount = 2;
+		int32 CurrentDashCount = 0;
 
-	//Multiplier of character Velocity for dashing - prototyping
+	//Multiplier of character Velocity for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		float DashVelocityMod = 100.0f;
+		float DashVelocityMod = 20.0f;
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
@@ -233,16 +236,17 @@ public:
 
 	//How many jumps can the character execute
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		int32 CurrentJumpCount = 2;
+		int32 CurrentJumpCount = 0;
+
+	//How much control should the player have while in the air (max of 1.0f)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
+		float PlayerAirControl = 0.58f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		float PlayerAirControl = 0.16f;
+		float JumpBlastLimit = 3.50f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		float JumpBlastLimit = 2.50f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		float JumpBlastChargeModifer = 0.01f;
+		float JumpBlastChargeModifer = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		float CurrentJumpBlastChargeAmount = 2.50f;
@@ -336,6 +340,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
 		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
+		void SetPlayerAbilities(bool bEnableDash, bool bEnableWallrun, bool bEnableAragon, bool bEnableMissiles);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
