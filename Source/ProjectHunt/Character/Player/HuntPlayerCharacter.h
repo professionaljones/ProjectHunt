@@ -35,7 +35,7 @@ public:
 	//This is the player's maximum health amount
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Health")
 		float SaveMaxHealth;
-	
+
 	//This is the player's current aragon amount
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Aragon")
 		float SaveCurrentAragon;
@@ -55,7 +55,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Suit")
 		EPlayerSuit SaveCurrentPlayerSuit;
 
-	
+
 
 	//How many dashes has the character executed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
@@ -103,11 +103,30 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 		class UPlayerStatsComponent* PlayerStatsComponent;
 
 	virtual void CharacterTakeDamage(float DamageAmount) override;
 	virtual bool IsCharacterDead() override;
+
+	void OnActivatePower();
+	void OnRechargePower();
+
+	virtual void CharacterActivatePower() override;
+	virtual void CharacterDeactivatePower() override;
+	virtual void CharacterRechargeAragon() override;
+
+	UFUNCTION(BlueprintCallable)
+		void PlayerActivatePower();
+
+	UFUNCTION(BlueprintCallable)
+		void PlayerDeactivatePower();
+
+	UFUNCTION(BlueprintCallable)
+		void PlayerRechargeAragon();
+
+	FTimerHandle PlayerActivePowerHandle;
+	FTimerHandle PlayerRechargeAragonHandle;
 
 public:
 
@@ -142,7 +161,7 @@ public:
 	//Has the player unlocked the ability to use Aragon abilities?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Aragon")
 		bool bUnlockedAragon = false;
-	
+
 	//This struct will hold the player's stats (health, aragon, jump/dash counts, etc)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Stats")
 		FPlayerStatsData PlayerSavedData;
@@ -160,10 +179,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Inventory")
 		class AHuntWeapon* PistolSlot;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Inventory")
 		class AHuntWeapon* RifleSlot;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Inventory")
 		class AHuntWeapon* ShotgunSlot;
 
@@ -184,7 +203,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
 		float UI_MaxMissileCount = 0.0f;
 
-	
+
 
 	//This is the player's maximum missile count
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
@@ -251,11 +270,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	
+
 
 public:
 
-	
+
 	//This will take a bool @param AbilityToToggle, and set it to @param bUnlockAbility
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
 		void UnlockAbility(bool AbilityToToggle, bool bUnlockAbility);
@@ -325,6 +344,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* SuitAudioComponent;
 
-	
+
 
 };

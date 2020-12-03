@@ -241,6 +241,21 @@ bool AProjectHuntCharacter::IsCharacterDead()
 	return false;
 }
 
+void AProjectHuntCharacter::CharacterActivatePower()
+{
+
+}
+
+void AProjectHuntCharacter::CharacterDeactivatePower()
+{
+
+}
+
+void AProjectHuntCharacter::CharacterRechargeAragon()
+{
+
+}
+
 void AProjectHuntCharacter::OnFire()
 {
 	if (CurrentWeapon)

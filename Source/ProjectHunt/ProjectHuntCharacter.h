@@ -256,6 +256,15 @@ public:
 	virtual void CharacterTakeDamage(float DamageAmount);
 
 	virtual bool IsCharacterDead();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+	virtual void CharacterActivatePower();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+	virtual void CharacterDeactivatePower();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+	virtual void CharacterRechargeAragon();
 	
 
 	FTimerHandle StyleDecreaseTimer;

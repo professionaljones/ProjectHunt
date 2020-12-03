@@ -23,6 +23,11 @@ void UPersistentObjectSubsystem::RegisterSaveableObject(class AActor* NewSaveabl
 	}
 }
 
+void UPersistentObjectSubsystem::RegisterCham(class AActor* NewChamReference)
+{
+
+}
+
 void UPersistentObjectSubsystem::CheckSaveSlotStatus()
 {
 	//if()

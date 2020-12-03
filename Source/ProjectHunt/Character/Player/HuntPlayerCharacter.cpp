@@ -22,6 +22,8 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 	PlayerStatsComponent = CreateDefaultSubobject<UPlayerStatsComponent>("PlayerStatsComponent");
+	PlayerStatsComponent->RegisterComponent();
+	this->AddInstanceComponent(PlayerStatsComponent);
 
 	PlayerStatsComponent->MaxHealth = 200.0f;
 	PlayerStatsComponent->MaxAragon = 200.0f;
@@ -38,12 +40,65 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 void AHuntPlayerCharacter::CharacterTakeDamage(float DamageAmount)
 {
 	PlayerStatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
-	UpdatePlayerData();
+	//UpdatePlayerData();
 }
 
 bool AHuntPlayerCharacter::IsCharacterDead()
 {
 	return PlayerStatsComponent->bIsDead;
+}
+
+void AHuntPlayerCharacter::OnActivatePower()
+{
+	PlayerStatsComponent->ActivatePower();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+}
+
+void AHuntPlayerCharacter::OnRechargePower()
+{
+	PlayerStatsComponent->RechargeAragon();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+}
+
+void AHuntPlayerCharacter::CharacterActivatePower()
+{
+	PlayerActivatePower();
+}
+
+void AHuntPlayerCharacter::CharacterDeactivatePower()
+{
+	PlayerDeactivatePower();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+}
+
+void AHuntPlayerCharacter::CharacterRechargeAragon()
+{
+	OnRechargePower();
+}
+
+void AHuntPlayerCharacter::PlayerActivatePower()
+{
+	PlayerStatsComponent->bIsPowerActive = !PlayerStatsComponent->bIsPowerActive;
+	GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterActivatePower, 1.0f, true);
+}
+
+void AHuntPlayerCharacter::PlayerDeactivatePower()
+{
+	PlayerStatsComponent->bIsPowerActive = !PlayerStatsComponent->bIsPowerActive;
+	GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
+	PlayerStatsComponent->DeactivatePower();
+}
+
+void AHuntPlayerCharacter::PlayerRechargeAragon()
+{
+	if (PlayerStatsComponent->bIsAragonEmpty || PlayerStatsComponent->CurrentAragon < PlayerStatsComponent->MaxAragon)
+	{
+		GetWorldTimerManager().SetTimer(PlayerRechargeAragonHandle,this, &AHuntPlayerCharacter::CharacterRechargeAragon, 1.0f, true);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+	}
 }
 
 void AHuntPlayerCharacter::UpdatePlayerData()
@@ -94,8 +149,8 @@ bool AHuntPlayerCharacter::CanPlayerWallrun()
 void AHuntPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	UpdatePlayerData();
+	//MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//UpdatePlayerData();
 
 }
 

@@ -21,6 +21,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Stats")
 		float fCurrentItemCollectionPercentage = 0.0f;
 
+	//This is the player's maximum item collect percentage
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Stats")
+		float fMaxItemCollectionPercentage = 100.0f;
+
+	UFUNCTION(BlueprintPure,BlueprintCallable, Category = "Player|Stats")
+		float GetPlayerItemCollectionRate();
+	UFUNCTION(BlueprintPure, BlueprintCallable, Category = "Player|Stats")
+		FText GetPlayerItemCollectionRateAsText();
+
 protected:
 
 	//This is the player's minimum health amount at the start of the game

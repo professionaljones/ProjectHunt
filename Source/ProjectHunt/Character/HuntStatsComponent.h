@@ -57,6 +57,10 @@ public:
 	//The Ability's current level
 	int32 CurrentAbilityLevel = 1;
 
+	//The Ability's Aragon usage amount - how much per second does it take for this power to remain active?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+		float fAragonConsumptionAmount = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 	//The Ability's Max level
 	int32 MaxAbilityLevel = 3;
@@ -64,16 +68,6 @@ public:
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 		float AbilityUpgradePrice;
-
-	friend FArchive& operator<<(FArchive& Ar, FPlayerMainAbilityData& PlayerMainAbilityStats)
-	{
-		Ar << PlayerMainAbilityStats.CurrentAbility;
-		Ar << PlayerMainAbilityStats.CurrentAbilityLevel;
-		Ar << PlayerMainAbilityStats.MaxAbilityLevel;
-		Ar << PlayerMainAbilityStats.AbilityUpgradePrice;
-
-		return Ar;
-	}
 };
 
 /* This struct, much like FPlayerMainAbilityData, serves to maintain info about the player's unlocked power modifiers and add new effects */
@@ -100,16 +94,6 @@ public:
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
 		float PowerUpgradeAbility;
-
-	friend FArchive& operator<<(FArchive& Ar, FPlayerPowerModifierData& PlayerPowerModifierStats)
-	{
-		Ar << PlayerPowerModifierStats.CurrentPowerModifier;
-		Ar << PlayerPowerModifierStats.CurrentPowerModifierLevel;
-		Ar << PlayerPowerModifierStats.MaxPowerModifierLevel;
-		Ar << PlayerPowerModifierStats.PowerUpgradeAbility;
-
-		return Ar;
-	}
 };
 
 /**HuntStatsComponent serves as a container for a character's stats and functions
@@ -147,6 +131,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
 		float MaxAragon = 0.0f;
 
+	//How much Aragon does the owner start with
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
+		bool bIsPowerActive = false;
+
 	//By how many points does the owner's Current Aragon recharge
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
 		float AragonRechargeAmount = 0.0f;
@@ -168,8 +156,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Aragon")
 		float UI_MaxAragon = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Enemy")
-		bool bWasScanned = false;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Data")
 		FString CharacterName;
@@ -187,23 +174,23 @@ public:
 		ESuitPowerModifiers PowerModifierSlotTwo;
 
 	//The player's current Quicksilver Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerMainAbilityData QuicksilverStats;
 	
 	//The player's current Showstopper Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerMainAbilityData ShowstopperStats;
 	
 	//The player's current Overload Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerMainAbilityData OverloadStats;
 
 	//The player's current Dash Rush Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerPowerModifierData DashRushStats;
 
 	//The player's current Overload Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerPowerModifierData JumpBlastStats;
 
 	//This will track what abilities the player should have unlocked
@@ -270,6 +257,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
 		void RecoverHealth(float RecoverAmount);
 
+	//This function will set Current values to Max values - ideally upon creation
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void InitStats();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+		void ActivatePower();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+		void DeactivatePower();
+
 	//Is the owner's Current Health less than or equal to 0?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		bool bIsDead = false;
@@ -287,6 +284,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		UDataTable* PowerModifierDataTable;
+
+	public:
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+			float fSlowDownValue;
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+			float fActorSlowDownIgnoredValue;
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+			float fActorSpeedUpValue;
 
 
 };
