@@ -58,13 +58,13 @@ bool AHuntPlayerCharacter::IsCharacterDead()
 void AHuntPlayerCharacter::OnActivatePower()
 {
 	PlayerStatsComponent->ActivatePower();
-	
+
 }
 
 void AHuntPlayerCharacter::OnRechargePower()
 {
 	PlayerStatsComponent->RechargeAragon();
-	
+
 }
 
 void AHuntPlayerCharacter::CharacterActivatePower()
@@ -75,20 +75,27 @@ void AHuntPlayerCharacter::CharacterActivatePower()
 
 void AHuntPlayerCharacter::CharacterDeactivatePower()
 {
-	PlayerDeactivatePower();
+	PlayerStatsComponent->DeactivatePower();
+	//PlayerStatsComponent->bIsPowerActive = false;
+	GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
+	PlayerRechargeAragon();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 	//IHuntCharacterInterface::Execute_OnDeactivateAragonPower(this, PlayerStatsComponent->CurrentSuitPower);
 }
 
 void AHuntPlayerCharacter::CharacterRechargeAragon()
 {
-	OnRechargePower();
+	PlayerStatsComponent->RechargeAragon();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 }
 
 void AHuntPlayerCharacter::CharacterUseAragon()
 {
 	PlayerStatsComponent->ConsumeAragon_Power();
+	//else
+	//{
+	//	CharacterDeactivatePower();
+	//}
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 }
 
@@ -99,34 +106,35 @@ void AHuntPlayerCharacter::PlayerActivatePower()
 		PlayerStatsComponent->bIsPowerActive = true;
 		OnActivatePower();
 		GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterUseAragon, 1.0f, true);
-		if (GetWorldTimerManager().IsTimerActive(PlayerRechargeAragonHandle) || PlayerStatsComponent->bIsRecharging)
+		/*if (GetWorldTimerManager().IsTimerActive(PlayerRechargeAragonHandle) || PlayerStatsComponent->bIsRecharging)
 		{
 			GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
 			PlayerStatsComponent->bIsRecharging = false;
-		}
+		}*/
 		//GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterActivatePower, 1.0f, true);
 	}
-	
-}
 
-void AHuntPlayerCharacter::PlayerDeactivatePower()
-{
-	PlayerStatsComponent->bIsPowerActive = !PlayerStatsComponent->bIsPowerActive;
-	GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
-	PlayerStatsComponent->DeactivatePower();
-	PlayerRechargeAragon();
 }
 
 void AHuntPlayerCharacter::PlayerRechargeAragon()
 {
-	if (PlayerStatsComponent->bIsAragonEmpty || PlayerStatsComponent->CurrentAragon < PlayerStatsComponent->MaxAragon)
+	if (!PlayerStatsComponent->bIsPowerActive)
 	{
-		GetWorldTimerManager().SetTimer(PlayerRechargeAragonHandle,this, &AHuntPlayerCharacter::CharacterRechargeAragon, 1.0f, true);
+		if (PlayerStatsComponent->bIsAragonEmpty || PlayerStatsComponent->CurrentAragon < PlayerStatsComponent->MaxAragon)
+		{
+			GetWorldTimerManager().SetTimer(PlayerRechargeAragonHandle, this, &AHuntPlayerCharacter::CharacterRechargeAragon, 1.0f, true);
+		}
+		else
+		{
+			GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+		}
+		if (PlayerActivePowerHandle.IsValid())
+		{
+			GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
+		}
 	}
-	else
-	{
-		GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
-	}
+	
+	
 }
 
 void AHuntPlayerCharacter::UpdatePlayerData()
@@ -250,24 +258,47 @@ void AHuntPlayerCharacter::UpdateMissileCapacity(int32 NewMissileAmount)
 
 void AHuntPlayerCharacter::SetPlayerSuit(EPlayerSuit NewPlayerSuit)
 {
+	CurrentPlayerSuit = NewPlayerSuit;
 	switch (CurrentPlayerSuit)
 	{
 	case EPlayerSuit::Suit_Standard:
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-1.0f);
+		PlayerStatsComponent->ModifyFireResistance(-2.0f);
+		PlayerStatsComponent->ModifyIceResistance(-1.50f);
+		PlayerStatsComponent->ModifyShockResistance(-2.25f);
+		PlayerStatsComponent->ModifyAragonResistance(-3.0f);
+		break;
+	}
 
-		DamageDefenseModifer = 0.0f;
 
 	case EPlayerSuit::Suit_Version2:
-
-		DamageDefenseModifer = 0.15f;
-
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-0.75f);
+		PlayerStatsComponent->ModifyFireResistance(-1.75f);
+		PlayerStatsComponent->ModifyIceResistance(-1.25f);
+		PlayerStatsComponent->ModifyShockResistance(-2.0f);
+		PlayerStatsComponent->ModifyAragonResistance(-3.0f);
+		break;
+	}
 	case EPlayerSuit::Suit_Version3:
 
-		DamageDefenseModifer = 0.30f;
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-0.65f);
+		PlayerStatsComponent->ModifyFireResistance(-1.0f);
+		PlayerStatsComponent->ModifyIceResistance(-0.75f);
+		PlayerStatsComponent->ModifyShockResistance(-1.50f);
+		PlayerStatsComponent->ModifyAragonResistance(-2.50f);
+	}
 
 	case EPlayerSuit::Suit_Version4:
-
-		DamageDefenseModifer = 0.50f;
-
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-0.50f);
+		PlayerStatsComponent->ModifyFireResistance(-1.25f);
+		PlayerStatsComponent->ModifyIceResistance(-1.0f);
+		PlayerStatsComponent->ModifyShockResistance(-1.50f);
+		PlayerStatsComponent->ModifyAragonResistance(-2.0f);
+	}
 	default:
 		break;
 
@@ -319,7 +350,7 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 	UpdateMissileCapacity(NewMaxMissileCount);
 	WeaponInventory = NewWeaponInventory;
 	CurrentDataPoints = NewCurrentDataPoints;
-	
+
 	UpdatePlayerData();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 
@@ -332,6 +363,6 @@ void AHuntPlayerCharacter::SetPlayerAbilities(bool bEnableDash, bool bEnableWall
 	IHuntPlayerInterface::Execute_OnPlayerUnlockWallrun(this, bEnableWallrun);
 	IHuntPlayerInterface::Execute_OnPlayerUnlockAragon(this, bEnableMissiles);
 	IHuntPlayerInterface::Execute_OnPlayerUnlockMissiles(this, bEnableMissiles);
-	
+
 }
 

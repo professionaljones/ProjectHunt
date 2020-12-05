@@ -27,6 +27,53 @@ AHuntWeapon::AHuntWeapon()
 
 }
 
+void AHuntWeapon::DelayWeaponFire()
+{
+	/*if (DelayFireHandle.IsValid())
+	{
+		if (GetWorldTimerManager().GetTimerRemaining(DelayFireHandle) != 0)
+		{
+			bCanFire = false;
+		}
+		else
+		{
+			bCanFire = true;
+			GetWorldTimerManager().ClearTimer(DelayFireHandle);
+		}
+	}*/
+	bCanFire = false;
+	if (GetWorldTimerManager().GetTimerRemaining(DelayFireHandle) <= 0)
+	{
+		bCanFire = true;
+		GetWorldTimerManager().ClearTimer(DelayFireHandle);
+	}
+}
+
+EAmmoType AHuntWeapon::GetAmmoType()
+{
+	return WeaponStatsData.WeaponAmmoType;
+}
+
+bool AHuntWeapon::GetWeaponAmmoType(const TEnumAsByte<EWeaponAmmoType::Type> InFlag) const
+{
+	if (WeaponAmmoFlags != 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+void AHuntWeapon::SetWeaponAmmoType(const TEnumAsByte<EWeaponAmmoType::Type> InFlag, const bool bSet)
+{
+	if (WeaponAmmoFlags <= 0)
+	{
+		WeaponAmmoFlags = InFlag;
+		
+	}
+	
+	
+}
+
 bool AHuntWeapon::GetIsFiring()
 {
 	return bIsFiring;
@@ -54,78 +101,86 @@ void AHuntWeapon::Tick(float DeltaTime)
 
 void AHuntWeapon::FireWeapon()
 {
-	if (!bIsCharging)
+	if (bCanFire)
 	{
-		if (WeaponProjectileState != EProjectileState::Projectile_Normal)
+		if (!bIsCharging)
 		{
-			WeaponProjectileState = EProjectileState::Projectile_Normal;
+			if (WeaponProjectileState != EProjectileState::Projectile_Normal)
+			{
+				WeaponProjectileState = EProjectileState::Projectile_Normal;
+			}
 		}
+
+		//Collision parameters
+		FCollisionQueryParams CollisionParameters;
+
+		//this->Execute_OnFire(this);
+
+		/*if (WeaponOwner == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
+		{
+
+			StartLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetComponentLocation();
+			EndLocation = StartLocation + (UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetForwardVector() * WeaponStatsData.WeaponDistanceRange);
+
+		}*/
+
+
+
+
+		//Create temp variable for Actor we hit
+		AActor* HitActor = SingleHit.GetActor();
+
+		//Length of the ray in Unreal units
+		//float WeaponRange = WeaponStatsData.WeaponDistanceRange;
+
+		//Play Fire SFX
+		if (WeaponFireSound != NULL)
+		{
+			WeaponAudioComponent->SetSound(WeaponFireSound);
+			WeaponAudioComponent->Play();
+		}
+		if (WeaponFireVFX != NULL)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
+		}
+
+		SpawnWeaponProjectile();
+		CalculateDamage();
+		bIsFiring = true;
+		IHuntWeaponInterface::Execute_OnWeaponFire(this);
 	}
-
-	//Collision parameters
-	FCollisionQueryParams CollisionParameters;
-
-	//this->Execute_OnFire(this);
-
-	/*if (WeaponOwner == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
-	{
-
-		StartLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetComponentLocation();
-		EndLocation = StartLocation + (UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetRootComponent()->GetForwardVector() * WeaponStatsData.WeaponDistanceRange);
-
-	}*/
-
-
-
-
-	//Create temp variable for Actor we hit
-	AActor* HitActor = SingleHit.GetActor();
-
-	//Length of the ray in Unreal units
-	//float WeaponRange = WeaponStatsData.WeaponDistanceRange;
-
-	//Play Fire SFX
-	if (WeaponFireSound != NULL)
-	{
-		WeaponAudioComponent->SetSound(WeaponFireSound);
-		WeaponAudioComponent->Play();
-	}
-	if (WeaponFireVFX != NULL)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
-	}
-
-	SpawnWeaponProjectile();
-	CalculateDamage();
-	bIsFiring = true;
-	IHuntWeaponInterface::Execute_OnWeaponFire(this);
+	
 	
 
 }
 
 void AHuntWeapon::FireCharge()
 {
-	if (bIsCharging)
+	if (bCanFire)
 	{
-		if (WeaponProjectileState != EProjectileState::Projectile_Charge)
+		if (bIsCharging)
 		{
-			WeaponProjectileState = EProjectileState::Projectile_Charge;
+			if (WeaponProjectileState != EProjectileState::Projectile_Charge)
+			{
+				WeaponProjectileState = EProjectileState::Projectile_Charge;
+			}
 		}
-	}
 
-	//Play Fire SFX
-	if (WeaponChargeFireSound != NULL)
-	{
-		WeaponAudioComponent->SetSound(WeaponChargeFireSound);
-		WeaponAudioComponent->Play();
+		//Play Fire SFX
+		if (WeaponChargeFireSound != NULL)
+		{
+			WeaponAudioComponent->SetSound(WeaponChargeFireSound);
+			WeaponAudioComponent->Play();
+		}
+		if (WeaponFireVFX != NULL)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
+		}
+		CalculateDamage();
+		bIsFiring = true;
+		IHuntWeaponInterface::Execute_OnWeaponFire(this);
 	}
-	if (WeaponFireVFX != NULL)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
-	}
-	CalculateDamage();
-	bIsFiring = true;
-	IHuntWeaponInterface::Execute_OnWeaponFire(this);
+	
 }
 
 void AHuntWeapon::ResetCharge()
@@ -157,10 +212,6 @@ void AHuntWeapon::ResetDamage()
 	CalculateDamage();
 }
 
-EAmmoType AHuntWeapon::GetWeaponAmmoType()
-{
-	return WeaponStatsData.WeaponAmmoType;
-}
 
 void AHuntWeapon::SpawnWeaponProjectile()
 {
@@ -212,7 +263,7 @@ void AHuntWeapon::StartFire()
 		}
 		if (WeaponStatsData.FireRate > 0.0f)
 		{
-			GetWorldTimerManager().SetTimer(AutoFireTimer, this, &AHuntWeapon::FireWeapon, WeaponStatsData.FireRate, true);
+			GetWorldTimerManager().SetTimer(AutoFireTimer, this, &AHuntWeapon::DelayWeaponFire, WeaponStatsData.FireRate, false);
 		}
 		FireWeapon();
 	}
@@ -257,7 +308,7 @@ void AHuntWeapon::Charge()
 {
 	bIsCharging = true;
 	CurrentWeaponCharge = CurrentWeaponCharge + AmountToCharge;
-	WeaponStatsData.DamageModifierAmount = CurrentWeaponCharge;
+	WeaponStatsData.DamageModifierAmount = CurrentWeaponCharge * WeaponStatsData.BaseDamage;
 	if (CurrentWeaponCharge > 0.0f)
 	{
 		if (WeaponProjectileState != EProjectileState::Projectile_Charge)

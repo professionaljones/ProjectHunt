@@ -190,7 +190,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		float Cached_GamepadSensitivityY = 0.0f;
 
-
+	UFUNCTION(BlueprintCallable, Category = "Character")
+		float CalculateWeaponDamage(int32 DamageTypeBitmask);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 MaxDataPoints = 99999999;

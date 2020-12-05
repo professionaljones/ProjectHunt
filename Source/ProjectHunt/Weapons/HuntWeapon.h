@@ -45,16 +45,36 @@ enum EProjectileType
 };
 
 
+UENUM(BlueprintType, Meta = (Bitflags))
+namespace EWeaponAmmoType
+{
+	enum Type
+	{
+		WAT_Standard,
+		WAT_Fire,
+		WAT_Ice,
+		WAT_Shock,
+		WAT_Aragon,
+		WAT_Light,
+		WAT_Omega,
+
+		WAT_MAX
+	};
+}
+
 //What ammo does this weapon use
-UENUM(BlueprintType, meta = (Bitflags))
+UENUM(BlueprintType, Meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EAmmoType : uint8
 {
-	AT_None UMETA(DisplayName = "None"),
-	AT_Standard UMETA(DisplayName = "Standard"),
-	AT_Fire UMETA(DisplayName = "Incendiary"),
-	AT_Ice UMETA(DisplayName = "Ice"),
-	AT_Shock UMETA(DisplayName = "Shock"),
-	AT_Aragon UMETA(DisplayName = "Aragon")
+	AT_None = 0,
+	AT_Standard = 1,
+	AT_Fire = 2,
+	AT_Ice = 3,
+	AT_Shock = 4,
+	AT_Aragon = 5,
+	AT_Light = 6,
+	AT_Ultma = 7,
+
 };
 
 //What form of projectile should spawn when we fire
@@ -107,11 +127,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon|Stats|Level")
 		int32 MaxWeaponLevel = 5;
 
-	//How fast does this weapon fire - if it is automatic
+	//How fast does this weapon fire - delay the next shot by this value
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 		float FireRate;
 
-	//How fast does this weapon fire - if it is automatic
+	//How fast does this weapon charge - if it can charge
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 		float ChargeRate;
 
@@ -173,6 +193,14 @@ public:
 	//How much of a delay before the weapon begins to charge
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Charge")
 		float WeaponChargeDelay;
+
+	//Can the player use the weapon's alternative attack
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon")
+		bool bHasUnlockedAlt = false;
+
+	//Can the player use the weapon's charged alternative attack
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Weapon")
+		bool bHasUnlockedChargedAlt = false;
 
 
 };
@@ -245,15 +273,41 @@ public:
 	// Sets default values for this actor's properties
 	AHuntWeapon();
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = Weapon)
+	FTimerHandle DelayFireHandle;
+
+	UFUNCTION(Category = "Weapon", BlueprintCallable)
+		void DelayWeaponFire();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Weapon)
+		bool bCanFire = true;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class AHuntWeaponProjectile* ProjectileToSpawn = NULL;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TEnumAsByte<EProjectileType> WeaponProjectile;
 
-	//This weapon's Ammo Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
-		EAmmoType OriginalAmmoType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		EAmmoType CurrentAmmoType;
+
+	
+	// Determines how damage is applied to damaged actor
+	UPROPERTY(Category = "Ammo", EditAnywhere, BlueprintReadWrite, Meta = (Bitmask, BitmaskEnum = "EWeaponAmmoType"))
+		int32 WeaponAmmoFlags = -1;
+
+	UFUNCTION(Category = "Ammo", BlueprintCallable, BlueprintPure)
+	EAmmoType GetAmmoType();
+
+	// Returns true if weapon ammo flag is set
+	UFUNCTION(Category = "Input", BlueprintCallable)
+		bool GetWeaponAmmoType(const TEnumAsByte<EWeaponAmmoType::Type> InFlag) const;
+
+	// Sets specified weapon ammo flag
+	UFUNCTION(Category = "Input", BlueprintCallable)
+		void SetWeaponAmmoType(const TEnumAsByte<EWeaponAmmoType::Type> InFlag, const bool bSet);
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TEnumAsByte<EProjectileState> WeaponProjectileState;
@@ -404,8 +458,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void ResetDamage();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon")
-		EAmmoType GetWeaponAmmoType();
+	/*UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon")
+		EAmmoType GetWeaponAmmoType();*/
 
 	UFUNCTION()
 		void SpawnWeaponProjectile();
@@ -482,9 +536,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Data")
 		EWeaponType eWeaponType;
 
-	//This weapon's Ammo Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
-		EAmmoType eWeaponAmmoType;
+	////This weapon's Ammo Type
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo|Type")
+	//	EAmmoType eWeaponAmmoType;
 
 	/*Modifiable Weapon Stats
 	These stats will change during gameplay 

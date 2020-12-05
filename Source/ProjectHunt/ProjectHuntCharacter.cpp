@@ -3,7 +3,7 @@
 #include "ProjectHuntCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "ProjectHunt/Weapons/HuntWeapon.h"
-
+#include "ProjectHunt/Weapons/HuntDamageType.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -89,7 +89,57 @@ void AProjectHuntCharacter::UpdateMovementSpeed(float NewMovementSpeed)
 void AProjectHuntCharacter::UpdateMovementSpeedModifier(float NewMovementModifier)
 {
 	MovementSpeedModifier = NewMovementModifier;
+
+}
+
+float AProjectHuntCharacter::CalculateWeaponDamage(int32 DamageTypeBitmask)
+{
+	TSubclassOf<UHuntStatsComponent> Statcomponent;
+	class UHuntStatsComponent* SC;
+	SC = this->FindComponentByClass<UHuntStatsComponent>();
 	
+	switch (DamageTypeBitmask)
+	{
+	case 0:
+	{
+		break;
+	}
+	case 1:
+	{
+		return SC->StandardAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 2:
+	{
+		return SC->FireAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 3:
+	{
+		return SC->IceAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 4:
+	{
+		return SC->ShockAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 5:
+	{
+		return SC->AragonAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 6:
+	{
+
+	}
+	default:
+	{
+		return 0.0f;
+	}
+	}
+
+	return 0.0f;
 }
 
 int32 AProjectHuntCharacter::GetDataPoints()
@@ -243,7 +293,7 @@ bool AProjectHuntCharacter::IsCharacterDead()
 
 void AProjectHuntCharacter::CharacterActivatePower()
 {
-	
+
 }
 
 void AProjectHuntCharacter::CharacterDeactivatePower()
@@ -430,15 +480,22 @@ bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
 	AHuntWeapon* WeaponUsed = Cast<AHuntWeapon>(DamageCauser);
+	//int32 DamageTakenAmmoType = WeaponUsed->WeaponAmmoFlags;
+	UHuntDamageType* TakenDamageType = Cast<UHuntDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject());
 
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (DamageAmount > 0.0f)
 	{
 		if (this->CanBeDamaged())
 		{
+			if (TakenDamageType)
+			{
+				SetDamageDefenseModifer(CalculateWeaponDamage(TakenDamageType->iWeaponAmmoBitmask));
+			}
+			
 			DamageTakenModifier = DamageRankModifier - DamageDefenseModifer;
 			//StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
-			CharacterTakeDamage(DamageAmount);
+			CharacterTakeDamage(DamageAmount * DamageTakenModifier);
 			if (WeaponUsed)
 			{
 				ReactToDamage(WeaponUsed);

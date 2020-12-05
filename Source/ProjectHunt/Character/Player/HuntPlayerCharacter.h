@@ -121,17 +121,18 @@ public:
 		void PlayerActivatePower();
 
 	UFUNCTION(BlueprintCallable)
-		void PlayerDeactivatePower();
-
-	UFUNCTION(BlueprintCallable)
 		void PlayerRechargeAragon();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FTimerHandle PlayerActivePowerHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTimerHandle PlayerRechargeAragonHandle;
 
 public:
 
-	
+	//Is the player trying to aim or lock on to a target?
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = Weapon)
+	bool bIsAiming = false;
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 		void UpdatePlayerData();
@@ -148,12 +149,15 @@ public:
 	/*These are abilities that the player can unlock throughout gameplay
 	These abilities will add to the player's item percentage as they impact game play*/
 
+	//Has the player unlocked the ability to charge their weapon(s)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
+		bool bCanChargeWeapon = false;
+
 	//Has the player unlocked the ability to dash?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
 		bool bUnlockedDash = false;
 
 	//Has the player unlocked the ability to wall run?
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
 		bool bUnlockedWallrun = false;
 

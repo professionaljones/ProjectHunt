@@ -119,25 +119,39 @@ void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
 
 void UHuntStatsComponent::ConsumeAragon_Power()
 {
-	switch (CurrentSuitPower)
+	if (bIsPowerActive)
 	{
-	case ESuitMainAbilities::MA_Quicksilver:
-	{
-		ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
-		if (QuicksilverStats.CurrentAbilityLevel >= 2)
+		switch (CurrentSuitPower)
 		{
-			RecoverHealth(8.0f);
-		}
-		if (QuicksilverStats.CurrentAbilityLevel >= 3)
+		case ESuitMainAbilities::MA_Quicksilver:
 		{
-			GetOwner()->CustomTimeDilation = fActorSlowDownIgnoredValue;
+			//bIsPowerActive = true;
+			ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
+			if (QuicksilverStats.CurrentAbilityLevel >= 2)
+			{
+				RecoverHealth(8.0f);
+			}
+			if (QuicksilverStats.CurrentAbilityLevel >= 3)
+			{
+				GetOwner()->CustomTimeDilation = fActorSlowDownIgnoredValue;
+			}
+			break;
+		}
+		case ESuitMainAbilities::MA_Overload:
+		{
+			//bIsPowerActive = true;
+			ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
+			break;
+		}
+		default:
+			break;
 		}
 	}
-	case ESuitMainAbilities::MA_Overload:
+	else
 	{
-		ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
+		DeactivatePower();
 	}
-	}
+	
 }
 
 void UHuntStatsComponent::RechargeAragon()
@@ -148,6 +162,36 @@ void UHuntStatsComponent::RechargeAragon()
 		CurrentAragon = MaxAragon;
 		bIsRecharging = false;
 	}
+}
+
+void UHuntStatsComponent::ModifyStandardResistance(float NewResistAmount)
+{
+	StandardAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyFireResistance(float NewResistAmount)
+{
+	FireAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyIceResistance(float NewResistAmount)
+{
+	IceAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyShockResistance(float NewResistAmount)
+{
+	ShockAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyAragonResistance(float NewResistAmount)
+{
+	AragonRechargeAmount = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyExplosiveResistance(float NewResistAmount)
+{
+
 }
 
 void UHuntStatsComponent::DamageHealth(float DecreaseAmount)

@@ -28,6 +28,10 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent,Category = "Event Response|Weapon")
 		void OnWeaponFire();
 
+	//This is used on a per weapon basis to spawn a unique projectile
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Weapon")
+		void OnWeaponFireUnique();
+
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Weapon")
 		void OnWeaponAltFire();
 
