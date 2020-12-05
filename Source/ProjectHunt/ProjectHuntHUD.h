@@ -2,7 +2,7 @@
 
 #pragma once 
 
-#include "CoreMinimal.h"
+#include "ProjectHunt/ProjectHunt.h"
 #include "GameFramework/HUD.h"
 #include "ProjectHuntHUD.generated.h"
 
@@ -16,6 +16,9 @@ public:
 
 	/** Primary draw call for the HUD */
 	virtual void DrawHUD() override;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "HUD|Settings")
+		bool bShowCrosshair = false;
 
 private:
 	/** Crosshair asset pointer */

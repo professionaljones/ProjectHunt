@@ -13,6 +13,12 @@ static FAutoConsoleCommand DumpPlayersCommand(
 	FConsoleCommandDelegate::CreateStatic(UInputMappingManager::DumpPlayers),
 	ECVF_Default);
 
+static TAutoConsoleVariable<int32> CVarDebugMode(
+	TEXT("AutoSettings.Input.Debug"),
+	0,
+	TEXT("Dump all input mappings whenever they are modified"),
+	ECVF_RenderThreadSafe);
+
 UInputMappingManager* UInputMappingManager::Singleton = nullptr;
 
 UInputMappingManager::UInputMappingManager()
@@ -40,9 +46,9 @@ FPlayerInputMappings UInputMappingManager::GetPlayerInputMappingsStatic(APlayerC
 	return Get()->FindPlayerInputMappings(Player);
 }
 
-void UInputMappingManager::SetPlayerInputPresetStatic(APlayerController * Player, FInputMappingPreset Preset, bool bIsCustomized)
+void UInputMappingManager::SetPlayerInputPresetStatic(APlayerController * Player, FInputMappingPreset Preset)
 {
-	Get()->SetPlayerInputPreset(Player, Preset, bIsCustomized);
+	Get()->SetPlayerInputPreset(Player, Preset);
 }
 
 void UInputMappingManager::SetPlayerInputPresetByTag(APlayerController* Player, FGameplayTag PresetTag)
@@ -94,6 +100,60 @@ FInputAxisKeyMapping UInputMappingManager::GetPlayerAxisMappingStatic(APlayerCon
 	return Get()->GetPlayerAxisMapping(Player, AxisName, Scale, MappingGroup, FGameplayTag(), true);
 }
 
+void DumpLayout(FInputMappingLayout& Layout)
+{
+	UE_LOG(LogAutoSettingsInput, Display, TEXT("        Mapping Groups:"));
+	if (Layout.GetMappingGroups().Num() == 0)
+	{
+		UE_LOG(LogAutoSettingsInput, Display, TEXT("            NONE"));
+	}
+	for (int MappingGroupIndex = 0; MappingGroupIndex < Layout.GetMappingGroups().Num(); MappingGroupIndex++)
+	{
+		FInputMappingGroup& MappingGroup = Layout.GetMappingGroups()[MappingGroupIndex];
+		UE_LOG(LogAutoSettingsInput, Display, TEXT("            %i:"), MappingGroupIndex);
+		
+		UE_LOG(LogAutoSettingsInput, Display, TEXT("                Actions:"));
+		if (MappingGroup.ActionMappings.Num() == 0)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    NONE"));
+		}
+		for (int ActionIndex = 0; ActionIndex < MappingGroup.ActionMappings.Num(); ActionIndex++)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    %i: %s"), ActionIndex, *MappingGroup.ActionMappings[ActionIndex].ToDebugString());
+		}
+		
+		UE_LOG(LogAutoSettingsInput, Display, TEXT("                Axes:"));
+		if (MappingGroup.AxisMappings.Num() == 0)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    NONE"));
+		}
+		for (int AxisIndex = 0; AxisIndex < MappingGroup.AxisMappings.Num(); AxisIndex++)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    %i: %s"), AxisIndex, *MappingGroup.AxisMappings[AxisIndex].ToDebugString());
+		}
+		
+		UE_LOG(LogAutoSettingsInput, Display, TEXT("                Unbound Actions:"));
+		if (MappingGroup.UnboundActionMappings.Num() == 0)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    NONE"));
+		}
+		for (int ActionIndex = 0; ActionIndex < MappingGroup.UnboundActionMappings.Num(); ActionIndex++)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    %i: %s"), ActionIndex, *MappingGroup.UnboundActionMappings[ActionIndex].ToDebugString());
+		}
+		
+		UE_LOG(LogAutoSettingsInput, Display, TEXT("                Unbound Axes:"));
+		if (MappingGroup.UnboundAxisMappings.Num() == 0)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    NONE"));
+		}
+		for (int AxisIndex = 0; AxisIndex < MappingGroup.UnboundAxisMappings.Num(); AxisIndex++)
+		{
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("                    %i: %s"), AxisIndex, *MappingGroup.UnboundAxisMappings[AxisIndex].ToDebugString());
+		}
+	}
+}
+
 void UInputMappingManager::DumpPlayers()
 {
 	UE_LOG(LogAutoSettingsInput, Display, TEXT("----- DumpPlayers -----"));
@@ -110,36 +170,13 @@ void UInputMappingManager::DumpPlayers()
 			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Implements IAutoSettingsPlayer: %i"), (int32)PC->Implements<UAutoSettingsPlayer>());
 			FPlayerInputMappings InputMappings = Instance->FindPlayerInputMappings(PC);
 			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Player ID (if applicable): %s"), InputMappings.PlayerId.IsEmpty() ? TEXT("EMPTY") : *InputMappings.PlayerId);
-			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Custom Mappings: %i"), (int32)InputMappings.Custom);
-			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Preset Tag: %s"), *InputMappings.Preset.PresetTag.ToString());
-			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Mapping Groups:"));
-			if (InputMappings.Preset.MappingGroups.Num() == 0)
-			{
-				UE_LOG(LogAutoSettingsInput, Display, TEXT("        NONE"));
-			}
-			for (int MappingGroupIndex = 0; MappingGroupIndex < InputMappings.Preset.MappingGroups.Num(); MappingGroupIndex++)
-			{
-				FInputMappingGroup& MappingGroup = InputMappings.Preset.MappingGroups[MappingGroupIndex];
-				UE_LOG(LogAutoSettingsInput, Display, TEXT("        %i:"), MappingGroupIndex);
-				UE_LOG(LogAutoSettingsInput, Display, TEXT("            Actions:"));
-				if (MappingGroup.ActionMappings.Num() == 0)
-				{
-					UE_LOG(LogAutoSettingsInput, Display, TEXT("                NONE"));
-				}
-				for (int ActionIndex = 0; ActionIndex < MappingGroup.ActionMappings.Num(); ActionIndex++)
-				{
-					UE_LOG(LogAutoSettingsInput, Display, TEXT("                %i: %s"), ActionIndex, *MappingGroup.ActionMappings[ActionIndex].ToDebugString());
-				}
-				UE_LOG(LogAutoSettingsInput, Display, TEXT("            Axes:"));
-				if (MappingGroup.AxisMappings.Num() == 0)
-				{
-					UE_LOG(LogAutoSettingsInput, Display, TEXT("                NONE"));
-				}
-				for (int AxisIndex = 0; AxisIndex < MappingGroup.AxisMappings.Num(); AxisIndex++)
-				{
-					UE_LOG(LogAutoSettingsInput, Display, TEXT("                %i: %s"), AxisIndex, *MappingGroup.AxisMappings[AxisIndex].ToDebugString());
-				}
-			}
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Key Group: %s"), *InputMappings.PlayerKeyGroup.ToString());
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Base Preset Tag: %s"), *InputMappings.BasePresetTag.ToString());
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Custom Mappings: %i"), (int32)InputMappings.MappingOverrides.GetTotalNumInputDefinitions());
+			DumpLayout(InputMappings.MappingOverrides);
+			FInputMappingLayout MergedLayout = InputMappings.BuildMergedMappingLayout();
+			UE_LOG(LogAutoSettingsInput, Display, TEXT("    Merged Mappings: %i"), (int32)MergedLayout.GetTotalNumInputDefinitions());
+			DumpLayout(MergedLayout);
 		}
 		else
 		{
@@ -151,6 +188,11 @@ void UInputMappingManager::DumpPlayers()
 
 void UInputMappingManager::SetPlayerKeyGroup(APlayerController* Player, FGameplayTag KeyGroup)
 {
+	if(!ensure(IsValid(Player) && IsValid(Player->GetLocalPlayer())))
+	{
+		return;
+	}
+	
 	FPlayerInputMappings InputMappings = FindPlayerInputMappings(Player);
 
 	if(InputMappings.PlayerKeyGroup == KeyGroup)
@@ -171,34 +213,58 @@ void UInputMappingManager::AddPlayerActionOverride(APlayerController * Player, c
 {
 	UE_LOG(LogAutoSettingsInput, Log, TEXT("InputMappingManager: Adding action override: %s"), *NewMapping.ActionName.ToString());
 
-	FPlayerInputMappings InputOverride = FindPlayerInputMappings(Player);
+	FPlayerInputMappings PlayerInputMappings = FindPlayerInputMappings(Player);
 
-	InputOverride.Custom = true;
+	// Resolve current final merged layout and calculate mappings that would be unbound from it
+	FInputMappingLayout MergedLayout = PlayerInputMappings.BuildMergedMappingLayout();
+	const FInputMappingLayout UnboundMappings = MergedLayout.ReplaceAction(NewMapping, MappingGroup, bAnyKeyGroup);
 
-	InputOverride.Preset.ReplaceAction(NewMapping, MappingGroup, bAnyKeyGroup);
+	// Store new mapping and any resulting unbound mappings in the mapping overrides
+	PlayerInputMappings.MappingOverrides.MergeUnboundMappings(UnboundMappings);
+	PlayerInputMappings.MappingOverrides.ReplaceAction(NewMapping, MappingGroup, bAnyKeyGroup);
 
-	InputOverride.Preset.Apply(Player);
+	PlayerInputMappings.MappingOverrides.RemoveMappingsSharedWith(PlayerInputMappings.GetBasePresetMappings());
 
-	SavePlayerInputMappings(Player, InputOverride);
+	// Resolve and apply new final merged layout
+	PlayerInputMappings.Apply(Player);
+
+	SavePlayerInputMappings(Player, PlayerInputMappings);
 
 	OnMappingsChanged.Broadcast(Player);
+
+	if (CVarDebugMode->GetBool())
+	{
+		DumpPlayers();
+	}
 }
 
 void UInputMappingManager::AddPlayerAxisOverride(APlayerController* Player, const FInputAxisKeyMapping& NewMapping, int32 MappingGroup, bool bAnyKeyGroup)
 {
 	UE_LOG(LogAutoSettingsInput, Log, TEXT("InputMappingManager: Adding axis override: %s, Scale: %f"), *NewMapping.AxisName.ToString(), NewMapping.Scale);
 
-	FPlayerInputMappings InputOverride = FindPlayerInputMappings(Player);
+	FPlayerInputMappings PlayerInputMappings = FindPlayerInputMappings(Player);
 
-	InputOverride.Custom = true;
+	// Resolve current final merged layout and calculate mappings that would be unbound from it
+	FInputMappingLayout MergedLayout = PlayerInputMappings.BuildMergedMappingLayout();
+	const FInputMappingLayout UnboundMappings = MergedLayout.ReplaceAxis(NewMapping, MappingGroup, bAnyKeyGroup);
 
-	InputOverride.Preset.ReplaceAxis(NewMapping, MappingGroup, bAnyKeyGroup);
+	// Store new mapping and any resulting unbound mappings in the mapping overrides
+	PlayerInputMappings.MappingOverrides.MergeUnboundMappings(UnboundMappings);
+	PlayerInputMappings.MappingOverrides.ReplaceAxis(NewMapping, MappingGroup, bAnyKeyGroup);
 
-	InputOverride.Preset.Apply(Player);
+	PlayerInputMappings.MappingOverrides.RemoveMappingsSharedWith(PlayerInputMappings.GetBasePresetMappings());
+	
+	// Resolve and apply new final merged layout
+	PlayerInputMappings.Apply(Player);
 
-	SavePlayerInputMappings(Player, InputOverride);
+	SavePlayerInputMappings(Player, PlayerInputMappings);
 
 	OnMappingsChanged.Broadcast(Player);
+
+	if(CVarDebugMode->GetBool())
+	{
+		DumpPlayers();
+	}
 }
 
 FInputActionKeyMapping UInputMappingManager::GetPlayerActionMapping(APlayerController* Player, FName ActionName, int32 MappingGroup, FGameplayTag KeyGroup, bool bUsePlayerKeyGroup) const
@@ -208,18 +274,16 @@ FInputActionKeyMapping UInputMappingManager::GetPlayerActionMapping(APlayerContr
 	{
 		InputOverride = FindPlayerInputMappings(Player);
 	}
-	else
-	{
-		InputOverride.Preset = GetDefaultInputPresets()[0];
-	}
 
 	if (bUsePlayerKeyGroup)
 		KeyGroup = InputOverride.PlayerKeyGroup;
 
+	FInputMappingLayout MergedMappingLayout = InputOverride.BuildMergedMappingLayout();
+
 	// Use the first mapping group with the specified key group
 	if (MappingGroup == -1)
 	{
-		for (FInputMappingGroup& MappingGroupObj : InputOverride.Preset.MappingGroups)
+		for (FInputMappingGroup& MappingGroupObj : MergedMappingLayout.GetMappingGroups())
 		{
 			FInputActionKeyMapping Mapping = MappingGroupObj.GetAction(ActionName, KeyGroup);
 			if (Mapping.Key.IsValid())
@@ -228,8 +292,8 @@ FInputActionKeyMapping UInputMappingManager::GetPlayerActionMapping(APlayerContr
 		return FInputActionKeyMapping();
 	}
 
-	if (InputOverride.Preset.MappingGroups.IsValidIndex(MappingGroup))
-		return InputOverride.Preset.MappingGroups[MappingGroup].GetAction(ActionName, KeyGroup);
+	if (MergedMappingLayout.GetMappingGroups().IsValidIndex(MappingGroup))
+		return MergedMappingLayout.GetMappingGroups()[MappingGroup].GetAction(ActionName, KeyGroup);
 	else
 		return FInputActionKeyMapping();
 }
@@ -241,18 +305,16 @@ FInputAxisKeyMapping UInputMappingManager::GetPlayerAxisMapping(APlayerControlle
 	{
 		InputOverride = FindPlayerInputMappings(Player);
 	} 
-	else
-	{
-		InputOverride.Preset = GetDefaultInputPresets()[0];
-	}
 
 	if (bUsePlayerKeyGroup)
 		KeyGroup = InputOverride.PlayerKeyGroup;
 
+	FInputMappingLayout MergedMappingLayout = InputOverride.BuildMergedMappingLayout();
+
 	// Use the first mapping group with the specified key group
 	if (MappingGroup == -1)
 	{
-		for (FInputMappingGroup& MappingGroupObj : InputOverride.Preset.MappingGroups)
+		for (FInputMappingGroup& MappingGroupObj : MergedMappingLayout.GetMappingGroups())
 		{
 			FInputAxisKeyMapping Mapping = MappingGroupObj.GetAxis(AxisName, Scale, KeyGroup);
 			if (Mapping.Key.IsValid())
@@ -261,13 +323,13 @@ FInputAxisKeyMapping UInputMappingManager::GetPlayerAxisMapping(APlayerControlle
 		return FInputAxisKeyMapping();
 	}
 
-	if (InputOverride.Preset.MappingGroups.IsValidIndex(MappingGroup))
-		return InputOverride.Preset.MappingGroups[MappingGroup].GetAxis(AxisName, Scale, KeyGroup);
+	if (MergedMappingLayout.GetMappingGroups().IsValidIndex(MappingGroup))
+		return MergedMappingLayout.GetMappingGroups()[MappingGroup].GetAxis(AxisName, Scale, KeyGroup);
 	else
 		return FInputAxisKeyMapping();
 }
 
-void UInputMappingManager::SetPlayerInputPreset(APlayerController * Player, FInputMappingPreset Preset, bool bIsCustomized)
+void UInputMappingManager::SetPlayerInputPreset(APlayerController * Player, FInputMappingPreset Preset)
 {
 	const FString PresetTag = Preset.PresetTag.IsValid() ? Preset.PresetTag.ToString() : "Invalid";
 	UE_LOG(LogAutoSettingsInput, Log, TEXT("Setting input preset for '%s', tag: %s"), *Player->GetHumanReadableName(), *PresetTag);
@@ -276,9 +338,9 @@ void UInputMappingManager::SetPlayerInputPreset(APlayerController * Player, FInp
 		RegisterPlayerController(Player);
 
 	FPlayerInputMappings InputOverride = FindPlayerInputMappings(Player);
-	InputOverride.Preset = Preset;
-	InputOverride.Preset.Apply(Player);
-	InputOverride.Custom = bIsCustomized;
+	InputOverride.BasePresetTag = Preset.PresetTag;
+	InputOverride.MappingOverrides = FInputMappingLayout();
+	InputOverride.Apply(Player);
 
 	SavePlayerInputMappings(Player, InputOverride);
 
@@ -292,7 +354,7 @@ void UInputMappingManager::SetPlayerInputPreset(APlayerController* Player, FGame
 	FInputMappingPreset* FoundPreset = Presets.FindByPredicate([PresetTag](FInputMappingPreset Preset) { return Preset.PresetTag == PresetTag; });
 	if (FoundPreset)
 	{
-		SetPlayerInputPreset(Player, *FoundPreset, false);
+		SetPlayerInputPreset(Player, *FoundPreset);
 	}
 }
 
@@ -324,6 +386,18 @@ void UInputMappingManager::Tick(float DeltaTime)
 		}
 	}
 
+}
+
+void UInputMappingManager::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	// Migrate deprecated properties
+
+	for(FPlayerInputMappings& PlayerInput : PlayerInputOverrides)
+	{
+		PlayerInput.MigrateDeprecatedProperties();
+	}
 }
 
 UWorld* UInputMappingManager::GetGameWorld() const
@@ -359,23 +433,13 @@ void UInputMappingManager::RegisterPlayerController(APlayerController* Player)
 	// First find existing mappings (from config, or old PlayerControllers for the same player) or default
 	FPlayerInputMappings InputOverride = FindPlayerInputMappings(Player);
 
-	// Update preset if using one
-	if (!InputOverride.Custom)
-	{
-		for (FInputMappingPreset Preset : GetDefault<UAutoSettingsConfig>()->GetInputPresets())
-		{
-			if (Preset.PresetTag == InputOverride.Preset.PresetTag)
-			{
-				InputOverride.Preset = Preset;
-				break;
-			}
-		}
-	}
+	// Migrate deprecated properties - this needs to happen both when loading from config or from custom saves
+	InputOverride.MigrateDeprecatedProperties();
 
 	SavePlayerInputMappings(Player, InputOverride);
 
 	// Replace player mappings
-	InputOverride.Preset.Apply(Player);
+	InputOverride.Apply(Player);
 	RegisteredPlayerControllers.AddUnique(Player);
 
 	Player->OnDestroyed.AddUniqueDynamic(this, &ThisClass::OnRegisteredPlayerControllerDestroyed);
@@ -412,18 +476,6 @@ FPlayerInputMappings UInputMappingManager::FindPlayerInputMappings(APlayerContro
 		{
 			UE_LOG(LogAutoSettingsInput, Verbose, TEXT("Found existing input mappings"));
 			return PlayerInputMapping;
-		}
-		else
-		{
-			// Backwards compatibility for old mappings with stored PlayerIndex
-			FString PlayerIndexString = FString::FromInt(PlayerInputMapping.PlayerIndex);
-			if (PlayerIdString == PlayerIndexString)
-			{
-				UE_LOG(LogAutoSettingsInput, Verbose, TEXT("Found existing input mappings based on old player index"));
-				// Update to new string format
-				PlayerInputMapping.PlayerId = PlayerIndexString;
-				return PlayerInputMapping;
-			}
 		}
 	}
 

@@ -2,67 +2,12 @@
 
 #pragma once
 
+#include "PlayerInputMappings.h"
 #include "Misc/AutoSettingsConfig.h"
 #include "Tickable.h"
 #include "InputMappingManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMappingsChangedEvent, APlayerController*, Player);
-
-// Holds saved input mappings for a specific player, as well as if they are custom or from a preset
-// Used to save and load input mapping information
-USTRUCT(BlueprintType)
-struct FPlayerInputMappings
-{
-	GENERATED_USTRUCT_BODY()
-	
-	// String to identify the player that owns these mappings
-	// Preferably the Unique Net ID of the player, but can fall back to a Controller ID
-	UPROPERTY()
-	FString PlayerId;
-	
-	// Deprecated, PlayerId should be used instead
-	// Only exists for backwards compatibility
-	UPROPERTY()
-	int32 PlayerIndex;
-
-	// True if the mapping holds player-specific overrides, false if using an unmodified preset
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping")
-	bool Custom;
-
-	// Mapping preset which may or may not have been modified by player-specific overrides
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping")
-	FInputMappingPreset Preset;
-
-	// Key group used to retrieve active mappings
-	// Useful for globally switching prompts between key groups when for example input device is changed
-	// See UInputMappingManager::SetPlayerKeyGroupStatic
-	UPROPERTY()
-	FGameplayTag PlayerKeyGroup;
-
-	FPlayerInputMappings() : PlayerIndex(-1), Custom(false)
-	{}
-
-	FPlayerInputMappings(FString PlayerId, bool Custom, FInputMappingPreset Preset)
-		: PlayerId(PlayerId),
-		PlayerIndex(-1),
-		Custom(Custom),
-		Preset(Preset)
-	{
-	}
-
-	bool operator==(const FPlayerInputMappings& Other) const
-	{
-		return (PlayerId == Other.PlayerId
-			&& Custom == Other.Custom
-			&& Preset == Other.Preset
-			&& PlayerKeyGroup == Other.PlayerKeyGroup);
-	}
-
-	bool operator!=(const FPlayerInputMappings& Other) const
-	{
-		return !(*this == Other);
-	}
-};
 
 /**
  * Manages input mapping for players
@@ -94,7 +39,7 @@ public:
 	// Set a player's input mapping preset
 	// Static version
 	UFUNCTION(BlueprintCallable, Category = "Input Mapping", DisplayName = "Set Player Input Preset")
-	static void SetPlayerInputPresetStatic(APlayerController* Player, FInputMappingPreset Preset, bool bIsCustomized = false);
+	static void SetPlayerInputPresetStatic(APlayerController* Player, FInputMappingPreset Preset);
 
 	// Set a player's input mapping preset by tag
 	// Presets and tags are defined in project settings (AutoSettings page)
@@ -118,6 +63,8 @@ public:
 	static void AddPlayerAxisOverrideStatic(APlayerController* Player, const FInputAxisKeyMapping& NewMapping, int32 MappingGroup, bool bAnyKeyGroup = false);
 
 	// Initialize a player's input overrides manually
+	// This is what sets the saved input mappings on the Player Controller itself
+	// If Auto Initialize Player Input Overrides is true in project settings, this is called automatically
 	UFUNCTION(BlueprintCallable, Category = "Input Mapping", DisplayName = "Initialize Player Input Overrides")
 	static bool InitializePlayerInputOverridesStatic(APlayerController* Player);
 
@@ -153,7 +100,7 @@ public:
 	FInputAxisKeyMapping GetPlayerAxisMapping(APlayerController* Player, FName AxisName, float Scale, int32 MappingGroup, FGameplayTag KeyGroup, bool bUsePlayerKeyGroup = true) const;
 
 	// Set a player's input mapping preset
-	void SetPlayerInputPreset(APlayerController* Player, FInputMappingPreset Preset, bool bIsCustomized = false);
+	void SetPlayerInputPreset(APlayerController* Player, FInputMappingPreset Preset);
 
 	// Set a player's input mapping preset by tag
 	// Presets and tags are defined in project settings (AutoSettings page)
@@ -167,6 +114,8 @@ protected:
 	bool IsTickable() const override { return !this->HasAnyFlags(RF_ClassDefaultObject); }
 
 	TStatId GetStatId() const override { return TStatId(); }
+
+	virtual void PostInitProperties() override;
 
 private:
 	static UInputMappingManager* Singleton;

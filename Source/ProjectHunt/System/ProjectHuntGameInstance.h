@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2020 Brandon Jones. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "HuntSaveGame.h"
 #include "ProjectHunt/Character/Player/HuntPlayerCharacter.h"
 #include "ProjectHuntGameInstance.generated.h"
 
@@ -19,21 +18,24 @@ class PROJECTHUNT_API UProjectHuntGameInstance : public UGameInstance
 
 public:
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
-	//	class AHuntPlayerCharacter* PlayerReference;
+	UProjectHuntGameInstance();
 
-	////Use this function to seemlessly save data, ideally for auto saves
-	//UFUNCTION(BlueprintCallable, Category = "Save/Load")
-	//	void AsyncSaveGame();
 
-	////Use this function to save data, ideally for menu saves
-	//UFUNCTION(BlueprintCallable, Category = "Save/Load")
-	//	void SyncSaveGame();
+	//Name for the recorded replay
+	UPROPERTY(EditDefaultsOnly, Category = "Replays")
+		FString RecordingName;
 
-	//UFUNCTION(BlueprintCallable, Category = "Save/Load")
-	//	void SavePlayerData();
-	//
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save Data")
-	//class UHuntSaveGame* SaveGameInstance;
+	//Name for the recorded replay for UI
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Replays")
+		FString friendlyRecordingName;
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StartRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StopRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StartReplay();
 
 };

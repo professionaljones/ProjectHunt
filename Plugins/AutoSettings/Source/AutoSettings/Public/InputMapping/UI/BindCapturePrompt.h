@@ -68,10 +68,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Bind Capture Prompt")
 	void Cancel();
 
-	// Close and cancel listening
-	UE_DEPRECATED(1.5, "Use Cancel instead")
-	void Close();
-
 	// Returns the key group used for this prompt
 	UFUNCTION(BlueprintPure, Category = "Bind Capture Prompt")
 	FGameplayTag GetKeyGroup() const { return KeyGroup; }

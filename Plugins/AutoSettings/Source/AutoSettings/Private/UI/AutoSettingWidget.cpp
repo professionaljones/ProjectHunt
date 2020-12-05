@@ -17,20 +17,19 @@ UAutoSettingWidget::UAutoSettingWidget(const FObjectInitializer& ObjectInitializ
 
 void UAutoSettingWidget::Apply()
 {
-	ApplyInternal(false);
+	ApplyInternal();
 }
 
 void UAutoSettingWidget::Save()
 {
 	if (HasUnappliedChange())
 	{
-		ApplyInternal(true);
+		ApplyInternal();
 	}
 
 	// The value we are applying is destined for the config, so process the outgoing value using the config instead of the CVar
 	const FString FinalConfigValue = ProcessOutgoingValue(CurrentValue, true);
 
-	UE_LOG(LogAutoSettings, Log, TEXT("Saving setting %s with value %s"), *CVarName.ToString(), *FinalConfigValue);
 	USettingsManager::Get()->SaveSetting(FAutoSettingData(CVarName, FinalConfigValue, SettingTags), false);
 	bHasUnsavedChange = false;
 }
@@ -128,7 +127,7 @@ void UAutoSettingWidget::ApplySettingValue(FString Value, bool bSaveIfPossible)
 
 	if (bAutoApply || bShouldSave)
 	{
-		ApplyInternal(bShouldSave);
+		ApplyInternal();
 	}
 	else
 	{
@@ -146,7 +145,7 @@ void UAutoSettingWidget::ApplySettingValue(FString Value, bool bSaveIfPossible)
 
 }
 
-void UAutoSettingWidget::ApplyInternal(bool bPendingSave)
+void UAutoSettingWidget::ApplyInternal()
 {
 	// Make sure the old value is saved so we can revert to it if canceled
 	if (!USettingsManager::Get()->HasConfigValue(CVarName))
@@ -160,9 +159,7 @@ void UAutoSettingWidget::ApplyInternal(bool bPendingSave)
 	// The value we are applying is destined for the CVar, so process the outgoing value using the CVar
 	const FString FinalCVarValue = ProcessOutgoingValue(CurrentValue, false);
 
-	UE_LOG(LogAutoSettings, Log, TEXT("Applying setting %s with value %s"), *CVarName.ToString(), *FinalCVarValue);
-
-	UConsoleUtils::SetStringCVar(CVarName, FinalCVarValue);
+	USettingsManager::Get()->ApplySetting(FAutoSettingData(CVarName, FinalCVarValue));
 	bHasUnappliedChange = false;
 }
 

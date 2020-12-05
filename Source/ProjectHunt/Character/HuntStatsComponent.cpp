@@ -11,6 +11,13 @@ UHuntStatsComponent::UHuntStatsComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	bEditableWhenInherited = true;
 	// ...
+
+	QuicksilverStats.CurrentAbility = ESuitMainAbilities::MA_Quicksilver;
+	QuicksilverStats.CurrentAbilityLevel = 1;
+	QuicksilverStats.fAragonConsumptionAmount = 15.0f;
+	OverloadStats.CurrentAbility = ESuitMainAbilities::MA_Overload;
+	OverloadStats.CurrentAbilityLevel = 1;
+	QuicksilverStats.fAragonConsumptionAmount = 18.0f;
 }
 
 
@@ -19,7 +26,7 @@ void UHuntStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentHealth = MaxHealth;
+	//CurrentHealth = MaxHealth;
 	
 }
 
@@ -30,6 +37,12 @@ void UHuntStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+
+ESuitMainAbilities UHuntStatsComponent::GetCurrentPower()
+{
+	return CurrentSuitPower;
 }
 
 float UHuntStatsComponent::GetCurrentHealth()
@@ -44,6 +57,11 @@ float UHuntStatsComponent::GetMaxHealth()
 	return UI_MaxHealth;
 }
 
+float UHuntStatsComponent::GetHealthPercentage()
+{
+	return CurrentHealth / MaxHealth;
+}
+
 float UHuntStatsComponent::GetCurrentAragon()
 {
 	UI_CurrentAragon = CurrentAragon;
@@ -54,6 +72,11 @@ float UHuntStatsComponent::GetMaxAragon()
 {
 	UI_MaxAragon = MaxAragon;
 	return UI_MaxAragon;
+}
+
+float UHuntStatsComponent::GetAragonPercentage()
+{
+	return CurrentAragon / MaxAragon;
 }
 
 void UHuntStatsComponent::UpgradeHealthStats(float IncreaseAmount)
@@ -68,12 +91,24 @@ void UHuntStatsComponent::UpgradeAragonStats(float IncreaseAmount)
 	CurrentAragon = MaxAragon;
 }
 
+void UHuntStatsComponent::UpdateMaxHealth(float NewHealthAmount)
+{
+	MaxHealth = NewHealthAmount;
+	CurrentHealth = MaxHealth;
+}
+
+void UHuntStatsComponent::UpdateMaxAragon(float NewAragonAmount)
+{
+	MaxAragon = NewAragonAmount;
+	CurrentAragon = MaxAragon;
+}
+
 void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
 {
 	CurrentAragon -= ConsumeAmount;
-	if (CurrentAragon <= MaxAragon)
+	if (bIsAragonEmpty)
 	{
-		bIsRecharging = true;
+		bIsAragonEmpty = false;
 	}
 	if (CurrentAragon <= 0)
 	{
@@ -82,14 +117,89 @@ void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
 	}
 }
 
+void UHuntStatsComponent::ConsumeAragon_Power()
+{
+	if (bIsPowerActive)
+	{
+		switch (CurrentSuitPower)
+		{
+		case ESuitMainAbilities::MA_Quicksilver:
+		{
+			//bIsPowerActive = true;
+			ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
+			if (QuicksilverStats.CurrentAbilityLevel >= 2)
+			{
+				RecoverHealth(8.0f);
+			}
+			if (QuicksilverStats.CurrentAbilityLevel >= 3)
+			{
+				GetOwner()->CustomTimeDilation = fActorSlowDownIgnoredValue;
+			}
+			break;
+		}
+		case ESuitMainAbilities::MA_Overload:
+		{
+			//bIsPowerActive = true;
+			ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	else
+	{
+		DeactivatePower();
+	}
+	
+}
+
 void UHuntStatsComponent::RechargeAragon()
 {
-	CurrentAragon += AragonRechargeAmount;
+	if (!bIsRecharging)
+	{
+		bIsRecharging = true;
+		
+	}
+	if (bIsRecharging)
+	{
+		CurrentAragon += AragonRechargeAmount;
+	}
 	if (CurrentAragon >= MaxAragon)
 	{
 		CurrentAragon = MaxAragon;
 		bIsRecharging = false;
 	}
+}
+
+void UHuntStatsComponent::ModifyStandardResistance(float NewResistAmount)
+{
+	StandardAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyFireResistance(float NewResistAmount)
+{
+	FireAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyIceResistance(float NewResistAmount)
+{
+	IceAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyShockResistance(float NewResistAmount)
+{
+	ShockAmmoDefense = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyAragonResistance(float NewResistAmount)
+{
+	AragonRechargeAmount = NewResistAmount;
+}
+
+void UHuntStatsComponent::ModifyExplosiveResistance(float NewResistAmount)
+{
+
 }
 
 void UHuntStatsComponent::DamageHealth(float DecreaseAmount)
@@ -109,6 +219,70 @@ void UHuntStatsComponent::RecoverHealth(float RecoverAmount)
 	{
 		CurrentHealth = MaxHealth;
 		
+	}
+
+}
+
+void UHuntStatsComponent::InitStats()
+{
+	CurrentHealth = MaxHealth;
+
+	if (MaxAragon != 0)
+	{
+		CurrentAragon = MaxAragon;
+	}
+}
+
+void UHuntStatsComponent::ActivatePower()
+{
+	if (!bIsAragonEmpty && !bIsDead)
+	{
+		//bIsPowerActive = !bIsPowerActive;
+		if (bIsPowerActive)
+		{
+			switch (CurrentSuitPower)
+			{
+			case ESuitMainAbilities::MA_Quicksilver:
+			{
+				UGameplayStatics::SetGlobalTimeDilation(GetWorld(), fSlowDownValue);
+				GetOwner()->CustomTimeDilation = fSlowDownValue;
+				break;
+				//ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
+				
+			}
+			case ESuitMainAbilities::MA_Overload:
+			{
+				//ConsumeAragon(OverloadStats.fAragonConsumptionAmount);
+				GetOwner()->CustomTimeDilation = fActorSpeedUpValue;
+				break;
+			}
+
+		}
+		}
+	}
+	
+}
+
+void UHuntStatsComponent::DeactivatePower()
+{
+	bIsPowerActive = false;
+
+	if (CurrentAragon < MaxAragon || bIsAragonEmpty)
+	{
+		bIsRecharging = true;
+		//RechargeAragon();
+	}
+
+	switch (CurrentSuitPower)
+	{
+	case ESuitMainAbilities::MA_Quicksilver:
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	}
+	case ESuitMainAbilities::MA_Overload:
+	{
+		GetOwner()->CustomTimeDilation = 1.0f;
+	}
 	}
 }
 

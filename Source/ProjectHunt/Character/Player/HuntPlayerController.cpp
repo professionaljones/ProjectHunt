@@ -1,11 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2020 Brandon Jones. All Rights Reserved.
 
 
 #include "HuntPlayerController.h"
 
+
 AHuntPlayerController::AHuntPlayerController()
 {
-
+	TeamId = 18;
 }
 
 float AHuntPlayerController::GetLookXSensitivity_PC()
@@ -27,3 +28,41 @@ float AHuntPlayerController::GetLookYSensitivity_Gamepad()
 {
 	return LookYSensitivity_GP;
 }
+
+void AHuntPlayerController::RestartReplayRecording()
+{
+	DemoDriver = GetWorld()->DemoNetDriver;
+	DemoDriver->GotoTimeInSeconds(0.0f);
+
+}
+
+
+void AHuntPlayerController::SeekReplayRecording(float NewPosition)
+{
+	DemoDriver = GetWorld()->DemoNetDriver;
+	DemoDriver->GotoTimeInSeconds(NewPosition);
+
+}
+
+float AHuntPlayerController::GetReplayPlaybackPosition()
+{
+	DemoDriver = GetWorld()->DemoNetDriver;
+	return DemoDriver->GetDemoCurrentTime();
+}
+
+float AHuntPlayerController::GetReplayPlaybackLength()
+{
+	DemoDriver = GetWorld()->DemoNetDriver;
+	return DemoDriver->GetDemoTotalTime();
+}
+
+void AHuntPlayerController::TogglePlayerInput(bool bEnable)
+{
+	bEnablePlayerInput = bEnable;
+}
+
+FGenericTeamId AHuntPlayerController::GetGenericTeamId() const
+{
+	return TeamId;
+}
+

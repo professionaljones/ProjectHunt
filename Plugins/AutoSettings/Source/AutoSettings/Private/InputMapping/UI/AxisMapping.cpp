@@ -23,11 +23,11 @@ void UAxisMapping::BindChord(FInputChord InChord)
 {
 	FKey Key = InChord.Key;
 
-	FKeyScale AnalogKeyScale = GetDefault<UAutoSettingsConfig>()->GetAnalogKey(Key);
-	const bool UseAnalogKey = AnalogKeyScale.Key.IsValid();
+	FKeyScale AxisKeyScale = GetDefault<UAutoSettingsConfig>()->GetAxisKey(Key);
+	const bool bUseAxisKey = AxisKeyScale.Key.IsValid();
 
-	const FKey FinalKey = UseAnalogKey ? AnalogKeyScale.Key : Key;
-	const float FinalScale = UseAnalogKey ? AnalogKeyScale.Scale * Scale : Scale;
+	const FKey FinalKey = bUseAxisKey ? AxisKeyScale.Key : Key;
+	const float FinalScale = bUseAxisKey ? AxisKeyScale.Scale * Scale : Scale;
 
 	const FInputAxisKeyMapping NewMapping = FInputAxisKeyMapping(AxisName, FinalKey, FinalScale);
 

@@ -6,13 +6,29 @@ USliderSetting::USliderSetting(const FObjectInitializer& ObjectInitializer) : UA
 {
 }
 
+float USliderSetting::ClampRawValue(float RawValue) const
+{
+	const bool bLeftMin = LeftValue < RightValue;
+	return FMath::Clamp(RawValue, bLeftMin ? LeftValue : RightValue,  bLeftMin ? RightValue : LeftValue);
+}
+
+float USliderSetting::RawValueToNormalized(float RawValue) const
+{
+	return FMath::GetMappedRangeValueUnclamped(FVector2D(LeftValue, RightValue), FVector2D(0.0f, 1.0f), RawValue);
+}
+
+float USliderSetting::NormalizedValueToRaw(float NormalizedValue) const
+{
+	return FMath::GetMappedRangeValueUnclamped(FVector2D(0.0f, 1.0f), FVector2D(LeftValue, RightValue), NormalizedValue);
+}
+
 void USliderSetting::UpdateSelection_Implementation(const FString& Value)
 {
 	Super::UpdateSelection_Implementation(Value);
 
 	const float RawValue = FCString::Atof(*Value);
 
-	const float NormalizedValue = FMath::GetMappedRangeValueUnclamped(FVector2D(LeftValue, RightValue), FVector2D(0.0f, 1.0f), RawValue);
+	const float NormalizedValue = RawValueToNormalized(RawValue);
 
 	UpdateSliderValue(NormalizedValue, RawValue);
 
@@ -26,7 +42,7 @@ void USliderSetting::UpdateSliderValue_Implementation(float NormalizedValue, flo
 
 void USliderSetting::SliderValueUpdated(float NormalizedValue)
 {
-	const float RawValue = FMath::GetMappedRangeValueUnclamped(FVector2D(0.0f, 1.0f), FVector2D(LeftValue, RightValue), NormalizedValue);
+	const float RawValue = NormalizedValueToRaw(NormalizedValue);
 
 	ApplySettingValue(FString::SanitizeFloat(RawValue), ShouldSaveCurrentValue());
 

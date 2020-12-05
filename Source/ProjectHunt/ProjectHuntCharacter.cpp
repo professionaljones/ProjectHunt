@@ -1,10 +1,9 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "ProjectHuntCharacter.h"
-#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "ProjectHunt/Weapons/HuntWeapon.h"
-#include "ProjectHunt/Character/HuntStatsComponent.h"
+#include "ProjectHunt/Weapons/HuntDamageType.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -23,31 +22,11 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	// Create a CameraComponent	
-	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
-	FirstPersonCameraComponent->bUsePawnControlRotation = true;
-
-	//Create a StatsComponent
-	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
-
 	//Create a AudioComponent
 	CharacterAudioComponent = CreateDefaultSubobject<UAudioComponent>("CharacterAudioComponent");
 
-	//Create a secondary AudioComponent 
-	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
-
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);
-	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
-	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false;
-	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
-
-
+	//Create stimuli source component that registers for Sight, Team, and Hearing perception
+	MyStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSourceComponent");
 
 }
 
@@ -56,8 +35,8 @@ void AProjectHuntCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	StartStyleModTimer();
-	//MaxStyleAmount = SSS_StyleLimit;
-	
+	//UpdateMovementSpeed(MovementSpeed);
+
 
 }
 
@@ -70,13 +49,13 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	check(PlayerInputComponent);
 
 	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	/*PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);*/
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AProjectHuntCharacter::OnFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AProjectHuntCharacter::OnFireEnd);
-	
+
 
 
 	// Enable touchscreen input
@@ -94,6 +73,102 @@ void AProjectHuntCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("TurnRate", this, &AProjectHuntCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &AProjectHuntCharacter::LookUpAtCamera);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectHuntCharacter::LookUpAtRate);
+}
+
+float AProjectHuntCharacter::GetMovementSpeed()
+{
+	return MovementSpeed;
+}
+
+void AProjectHuntCharacter::UpdateMovementSpeed(float NewMovementSpeed)
+{
+	MovementSpeed = NewMovementSpeed;
+	//this->CharacterMovement->MaxWalkSpeed = MovementSpeed * MovementSpeedModifier;
+}
+
+void AProjectHuntCharacter::UpdateMovementSpeedModifier(float NewMovementModifier)
+{
+	MovementSpeedModifier = NewMovementModifier;
+
+}
+
+float AProjectHuntCharacter::CalculateWeaponDamage(int32 DamageTypeBitmask)
+{
+	TSubclassOf<UHuntStatsComponent> Statcomponent;
+	class UHuntStatsComponent* SC;
+	SC = this->FindComponentByClass<UHuntStatsComponent>();
+	
+	switch (DamageTypeBitmask)
+	{
+	case 0:
+	{
+		break;
+	}
+	case 1:
+	{
+		return SC->StandardAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 2:
+	{
+		return SC->FireAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 3:
+	{
+		return SC->IceAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 4:
+	{
+		return SC->ShockAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 5:
+	{
+		return SC->AragonAmmoDefense + DamageRankModifier;
+		break;
+	}
+	case 6:
+	{
+
+	}
+	default:
+	{
+		return 0.0f;
+	}
+	}
+
+	return 0.0f;
+}
+
+int32 AProjectHuntCharacter::GetDataPoints()
+{
+	UI_CurrentDataPoints = CurrentDataPoints;
+	return UI_CurrentDataPoints;
+}
+
+int AProjectHuntCharacter::GetArenaPointsToAdd()
+{
+	return ArenaPointsToAdd;
+}
+
+void AProjectHuntCharacter::ModifyDataPoints(int32 NewDataPoints)
+{
+	CurrentDataPoints += NewDataPoints;
+	if (CurrentDataPoints >= MaxDataPoints)
+	{
+		CurrentDataPoints = MaxDataPoints;
+	}
+}
+
+void AProjectHuntCharacter::UpdateDataPoints(int32 NewDataPoints)
+{
+	CurrentDataPoints = NewDataPoints;
+	if (CurrentDataPoints >= MaxDataPoints)
+	{
+		CurrentDataPoints = MaxDataPoints;
+	}
 }
 
 void AProjectHuntCharacter::ModifyStyle(float StyleModAmount)
@@ -123,23 +198,23 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 		if (StylePercentage <= D_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Dull;
-		
+
 		}
 		if (StylePercentage > C_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Crazy;
-			
+
 		}
 		if (StylePercentage > B_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Blast;
-			
+
 		}
 
 		if (StylePercentage > A_StyleLimit)
 		{
 			PlayerStyle = ECharacterStyleRank::SR_Alright;
-			
+
 		}
 		if (StylePercentage > S_StyleLimit)
 		{
@@ -159,7 +234,7 @@ void AProjectHuntCharacter::UpdateStylePercentage()
 		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
 		CurrentStyleAmount = 0.0f;
 	}
-	
+
 }
 
 void AProjectHuntCharacter::StartStyleModTimer()
@@ -170,14 +245,14 @@ void AProjectHuntCharacter::StartStyleModTimer()
 		{
 			GetWorldTimerManager().SetTimer(StyleDecreaseTimer, this, &AProjectHuntCharacter::DecreaseStyle, 1.0f, true);
 		}
-		
+
 	}
 	if (CurrentStyleAmount < 0.0f)
 	{
 		GetWorldTimerManager().PauseTimer(StyleDecreaseTimer);
 		CurrentStyleAmount = 0.0f;
 	}
-	
+
 }
 
 float AProjectHuntCharacter::GetStylePercentage()
@@ -188,6 +263,52 @@ float AProjectHuntCharacter::GetStylePercentage()
 float AProjectHuntCharacter::GetCurrentStyleAmount()
 {
 	return CurrentStyleAmount;
+}
+
+AHuntWeapon* AProjectHuntCharacter::GetCurrentWeapon()
+{
+	return CurrentWeapon;
+}
+
+void AProjectHuntCharacter::SetDamageDefenseModifer(float NewDefenseMod)
+{
+	DamageDefenseModifer = NewDefenseMod;
+}
+
+
+void AProjectHuntCharacter::ReactToDamage_Implementation(AHuntWeapon* WeaponUsed)
+{
+
+}
+
+void AProjectHuntCharacter::CharacterTakeDamage(float DamageAmount)
+{
+
+}
+
+bool AProjectHuntCharacter::IsCharacterDead()
+{
+	return false;
+}
+
+void AProjectHuntCharacter::CharacterActivatePower()
+{
+
+}
+
+void AProjectHuntCharacter::CharacterDeactivatePower()
+{
+
+}
+
+void AProjectHuntCharacter::CharacterRechargeAragon()
+{
+
+}
+
+void AProjectHuntCharacter::CharacterUseAragon()
+{
+
 }
 
 void AProjectHuntCharacter::OnFire()
@@ -205,7 +326,7 @@ void AProjectHuntCharacter::OnFireEnd()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->EndFire();
-		
+
 		//CurrentWeaponCharge = 0.f;
 	}
 }
@@ -277,8 +398,12 @@ void AProjectHuntCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// add movement in that direction
-		AddMovementInput(GetActorForwardVector(), Value);
+		if (bEnableMovementInput)
+		{
+			// add movement in that direction
+			AddMovementInput(GetActorForwardVector(), Value);
+		}
+
 	}
 }
 
@@ -286,36 +411,55 @@ void AProjectHuntCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// add movement in that direction
-		AddMovementInput(GetActorRightVector(), Value);
+		if (bEnableMovementInput)
+		{
+			// add movement in that direction
+			AddMovementInput(GetActorRightVector(), Value);
+		}
+
 	}
 }
 
 void AProjectHuntCharacter::TurnCharacter(float Rate)
 {
-	float NewTurn = Rate * MyPlayerController->GetLookXSensitivity_PC();
-	AddControllerYawInput(NewTurn * GetWorld()->GetDeltaSeconds());
+	float NewTurn = Rate * Cached_MouseSensitivityX;
+	if (bEnableLookInput)
+	{
+		AddControllerYawInput(NewTurn * GetWorld()->GetDeltaSeconds());
+	}
+
 }
 
 void AProjectHuntCharacter::LookUpAtCamera(float Rate)
 {
-	float NewLookUp = Rate * MyPlayerController->GetLookYSensitivity_PC();
-	AddControllerYawInput(NewLookUp * GetWorld()->GetDeltaSeconds());
+	float NewLookUp = Rate * Cached_MouseSensitivityY;
+	if (bEnableLookInput)
+	{
+		AddControllerYawInput(NewLookUp * GetWorld()->GetDeltaSeconds());
+	}
+
 }
 
 void AProjectHuntCharacter::TurnAtRate(float Rate)
 {
-	BaseTurnRate =  MyPlayerController->GetLookXSensitivity_Gamepad();
-	
+	//BaseTurnRate =  MyPlayerController->GetLookXSensitivity_Gamepad();
+	BaseTurnRate = Cached_GamepadSensitivityX;
 	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	if (bEnableLookInput)
+	{
+		AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 void AProjectHuntCharacter::LookUpAtRate(float Rate)
 {
-	BaseLookUpRate = MyPlayerController->GetLookYSensitivity_Gamepad();
+	BaseLookUpRate = Cached_GamepadSensitivityY;
 	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	if (bEnableLookInput)
+	{
+		AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	}
+
 }
 
 bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
@@ -335,17 +479,31 @@ bool AProjectHuntCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 
 float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
-	
+	AHuntWeapon* WeaponUsed = Cast<AHuntWeapon>(DamageCauser);
+	//int32 DamageTakenAmmoType = WeaponUsed->WeaponAmmoFlags;
+	UHuntDamageType* TakenDamageType = Cast<UHuntDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject());
+
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (DamageAmount > 0.0f)
 	{
 		if (this->CanBeDamaged())
 		{
-			//StatsComponent->CurrentHealth -= (DamageAmount * DamageTakenModifier);
-			StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+			if (TakenDamageType)
+			{
+				SetDamageDefenseModifer(CalculateWeaponDamage(TakenDamageType->iWeaponAmmoBitmask));
+			}
+			
+			DamageTakenModifier = DamageRankModifier - DamageDefenseModifer;
+			//StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+			CharacterTakeDamage(DamageAmount * DamageTakenModifier);
+			if (WeaponUsed)
+			{
+				ReactToDamage(WeaponUsed);
+			}
+			ReactToDamage(nullptr);
 			DecreaseStyle();
 		}
-		
+
 		if (DamageSounds.Num() != 0)
 		{
 			int RandomDamageSoundIndex = UKismetMathLibrary::RandomIntegerInRange(0, DamageSounds.Num());
@@ -356,7 +514,7 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 			}
 
 		}
-		if (StatsComponent->bIsDead)
+		if (IsCharacterDead())
 		{
 			if (DeathSounds.Num() != 0)
 			{
@@ -368,9 +526,11 @@ float AProjectHuntCharacter::TakeDamage(float DamageAmount, struct FDamageEvent 
 				}
 
 			}
-			SetLifeSpan(3.0f);
+			IHuntCharacterInterface::Execute_OnCharacterDeath(this);
 		}
 	}
 
 	return ActualDamage;
 }
+
+

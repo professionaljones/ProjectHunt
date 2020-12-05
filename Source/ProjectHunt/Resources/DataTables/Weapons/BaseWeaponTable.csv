@@ -1,0 +1,5 @@
+---,WeaponType,WeaponAmmoType,WeaponDamageLevel,FireRateLevel,ChargeRateLevel,ChargeLimitLevel,MaxWeaponLevel,FireRate,ChargeRate,BaseDamage,DamageMultiplierAmount,DamageModifierAmount,TotalDamage,CriticalHitDamage,SpecialDamageMultiplier,CriticalHitMultiplier,OriginalBaseDamageAmount,OriginalDamageMultiplier,OriginalDamageModifier,WeaponChargeLimit,WeaponChargeDelay
+HSC Driver,WT_Pistol,AT_Standard,1,1,1,1,5,0,0.1,12,1,0,0,0,2,3,0,0,0,1,1
+HSC Ranger,WT_Rifle,AT_Fire,1,1,1,1,5,0.22,0,9,1,0,0,0,1.5,2.5,0,0,0,0,5
+HSC Hailstorm,WT_Shotgun,AT_Ice,1,1,1,1,5,0,0.25,12,1,0,0,0,1.25,1.75,0,0,0,2,2
+Burner,WT_Pistol,AT_Shock,1,1,1,1,5,0,0.25,15,1,0,0,0,2,2,0,0,0,3,1

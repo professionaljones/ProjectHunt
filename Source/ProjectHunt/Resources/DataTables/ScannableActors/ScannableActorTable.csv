@@ -1,0 +1,5 @@
+,DescriptionString_1,DescriptionString_2,DescriptionString_3
+TestEnemy,This is a testing enemy.,"In the finished game, this won't be here.",Feel free to experiment!
+Standard Enemy,This is a regular enemy,"This, along with variants will be seen in the finished game",Expect more soon!
+Standard Charger,This is a Device Charger.,You can use <Standard>Standard</> weapons to charge the device.,The device will light up with charged.
+Fire Charger,This is a Device Charger.,You can use <Fire>Fire</> weapons to charge the device.,The device will light up with charged.

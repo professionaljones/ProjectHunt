@@ -19,11 +19,6 @@ void UBindCapturePrompt::Cancel()
 	ClosePrompt(true);
 }
 
-void UBindCapturePrompt::Close()
-{
-	Cancel();
-}
-
 void UBindCapturePrompt::NativeConstruct()
 {
 	Super::NativeConstruct();

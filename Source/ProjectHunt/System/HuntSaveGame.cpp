@@ -2,6 +2,10 @@
 
 
 #include "HuntSaveGame.h"
+#include "Serialization/MemoryReader.h"
+#include "HAL/FileManager.h"
+#include "Serialization/MemoryWriter.h"
+#include "Engine/World.h"
 
 UHuntSaveGame::UHuntSaveGame()
 {
@@ -12,12 +16,4 @@ UHuntSaveGame::UHuntSaveGame()
 
 
 
-float UHuntSaveGame::GetPlayerCurrentHealth()
-{
-	return SavedCurrentPlayerAragon;
-}
 
-float UHuntSaveGame::GetPlayerMaxHealth()
-{
-	return SavedMaxPlayerHealth;
-}

@@ -4,19 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Engine/DemoNetDriver.h"
+#include "GenericTeamAgentInterface.h"
+#include "HuntPlayerInterface.h"
 #include "HuntPlayerController.generated.h"
 
 /**
  *
  */
 UCLASS()
-class PROJECTHUNT_API AHuntPlayerController : public APlayerController
+class PROJECTHUNT_API AHuntPlayerController : public APlayerController, public IHuntPlayerInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 	AHuntPlayerController();
 
 public:
+
+	//false: reject user input, true: allow user input
+	//This is meant to prevent players from using weapons or abilities when they shouldn't (ie cutscenes, UI, etc)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Input")
+		bool bEnablePlayerInput = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float LookXSensitivity_PC = 0.5f;
@@ -42,11 +50,41 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 		float GetLookYSensitivity_Gamepad();
 
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void RestartReplayRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void SeekReplayRecording(float NewPosition);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Replays")
+		float GetReplayPlaybackPosition();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Replays")
+		float GetReplayPlaybackLength();
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+		void TogglePlayerInput(bool bEnable);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+		float CurrentItemPercentage = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+		float MaxItemPercentage = 1.0f;
+
+	UDemoNetDriver* DemoDriver;
+
+	// Implement The Generic Team Interface 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
+		FGenericTeamId TeamId;
+
+	FGenericTeamId GetGenericTeamId() const;
+
 protected:
 
 	/*UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category = "cheats")
 	class UWidgetBlueprint* ConsoleWBP;*/
 
+	
 
 
 };
