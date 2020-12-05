@@ -85,6 +85,10 @@ void AHuntPlayerCharacter::CharacterDeactivatePower()
 
 void AHuntPlayerCharacter::CharacterRechargeAragon()
 {
+	if (PlayerStatsComponent->CurrentAragon >= PlayerStatsComponent->MaxAragon)
+	{
+		GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+	}
 	PlayerStatsComponent->RechargeAragon();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 }
@@ -92,15 +96,16 @@ void AHuntPlayerCharacter::CharacterRechargeAragon()
 void AHuntPlayerCharacter::CharacterUseAragon()
 {
 	PlayerStatsComponent->ConsumeAragon_Power();
-	//else
-	//{
-	//	CharacterDeactivatePower();
-	//}
+
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 }
 
 void AHuntPlayerCharacter::PlayerActivatePower()
 {
+	if (PlayerRechargeAragonHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+	}
 	if (bUnlockedAragon)
 	{
 		PlayerStatsComponent->bIsPowerActive = true;
@@ -120,13 +125,9 @@ void AHuntPlayerCharacter::PlayerRechargeAragon()
 {
 	if (!PlayerStatsComponent->bIsPowerActive)
 	{
-		if (PlayerStatsComponent->bIsAragonEmpty || PlayerStatsComponent->CurrentAragon < PlayerStatsComponent->MaxAragon)
+		if (PlayerStatsComponent->bIsAragonEmpty || PlayerStatsComponent->bIsRecharging)
 		{
 			GetWorldTimerManager().SetTimer(PlayerRechargeAragonHandle, this, &AHuntPlayerCharacter::CharacterRechargeAragon, 1.0f, true);
-		}
-		else
-		{
-			GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
 		}
 		if (PlayerActivePowerHandle.IsValid())
 		{

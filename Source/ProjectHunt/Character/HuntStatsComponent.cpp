@@ -106,9 +106,9 @@ void UHuntStatsComponent::UpdateMaxAragon(float NewAragonAmount)
 void UHuntStatsComponent::ConsumeAragon(float ConsumeAmount)
 {
 	CurrentAragon -= ConsumeAmount;
-	if (CurrentAragon <= MaxAragon)
+	if (bIsAragonEmpty)
 	{
-		bIsRecharging = true;
+		bIsAragonEmpty = false;
 	}
 	if (CurrentAragon <= 0)
 	{
@@ -156,7 +156,15 @@ void UHuntStatsComponent::ConsumeAragon_Power()
 
 void UHuntStatsComponent::RechargeAragon()
 {
-	CurrentAragon += AragonRechargeAmount;
+	if (!bIsRecharging)
+	{
+		bIsRecharging = true;
+		
+	}
+	if (bIsRecharging)
+	{
+		CurrentAragon += AragonRechargeAmount;
+	}
 	if (CurrentAragon >= MaxAragon)
 	{
 		CurrentAragon = MaxAragon;
