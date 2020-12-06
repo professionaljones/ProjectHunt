@@ -88,6 +88,7 @@ void AHuntWeapon::BeginPlay()
 	ActorsToIgnore.Add(WeaponOwner);
 	WeaponStatsData.OriginalDamageModifier = WeaponStatsData.DamageModifierAmount;
 	WeaponStatsData.OriginalDamageMultiplier = WeaponStatsData.DamageMultiplierAmount;
+	WeaponStatsData.OriginalChargeDamageModifier = WeaponStatsData.ChargeDamageModifierAmount;
 	CalculateCritDamage();
 
 }
@@ -183,6 +184,38 @@ void AHuntWeapon::FireCharge()
 	
 }
 
+void AHuntWeapon::FireUnique()
+{
+	if (bCanFire)
+	{
+		if (bCanWeaponFireUnique)
+		{
+			if (WeaponProjectileState != EProjectileState::Projectile_Charge)
+			{
+				WeaponProjectileState = EProjectileState::Projectile_Charge;
+			}
+		}
+	}
+	//Play Fire SFX
+	if (WeaponChargeFireSound != NULL)
+	{
+		WeaponAudioComponent->SetSound(WeaponChargeFireSound);
+		if (bCanFire)
+		{
+			WeaponAudioComponent->Play();
+		}
+		
+	}
+	if (WeaponFireVFX != NULL)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponFireVFX, WeaponMeshFP->GetSocketTransform(WeaponMuzzlePoint), true, EPSCPoolMethod::AutoRelease, true);
+	}
+	WeaponStatsData.DamageModifierAmount = WeaponStatsData.DamageMultiplierAmount * WeaponStatsData.ChargeDamageModifierAmount;
+	CalculateDamage();
+	bIsFiring = true;
+	IHuntWeaponInterface::Execute_OnWeaponFireUnique(this);
+}
+
 void AHuntWeapon::ResetCharge()
 {
 	CurrentWeaponCharge = 0.0f;
@@ -255,6 +288,22 @@ void AHuntWeapon::StartFire()
 		FireWeapon();
 		StartCharge();
 	}
+	else if (bCanWeaponFireUnique)
+	{
+		if (WeaponOwner->GetClass()->ImplementsInterface(UHuntPlayerInterface::StaticClass()))
+		{
+			if (IHuntPlayerInterface::Execute_GetPlayerAimStatus(WeaponOwner))
+			{
+				FireUnique();
+			}
+			else
+			{
+				FireWeapon();
+			}
+		}
+		
+		
+	}
 	else
 	{
 		if (WeaponProjectileState != EProjectileState::Projectile_Normal)
@@ -308,7 +357,7 @@ void AHuntWeapon::Charge()
 {
 	bIsCharging = true;
 	CurrentWeaponCharge = CurrentWeaponCharge + AmountToCharge;
-	WeaponStatsData.DamageModifierAmount = CurrentWeaponCharge * WeaponStatsData.BaseDamage;
+	WeaponStatsData.DamageModifierAmount = CurrentWeaponCharge * WeaponStatsData.ChargeDamageModifierAmount;
 	if (CurrentWeaponCharge > 0.0f)
 	{
 		if (WeaponProjectileState != EProjectileState::Projectile_Charge)

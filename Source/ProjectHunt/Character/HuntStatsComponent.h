@@ -96,6 +96,8 @@ public:
 		float PowerUpgradeAbility;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
 /**HuntStatsComponent serves as a container for a character's stats and functions
 for adding, reducing and changing the overall values **/
 UCLASS(Blueprintable, BlueprintType,ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -107,6 +109,8 @@ public:
 	// Sets default values for this component's properties
 	UHuntStatsComponent();
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Stats")
+		FOnDeath OnDeathDelegate;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

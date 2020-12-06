@@ -149,9 +149,13 @@ public:
 		float DamageMultiplierAmount = 0.0f;
 
 
-	//When in Quicksilver or Overdrive, how much should the damage be multiplied by ?
+	//How much damage should we add to the multiplier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
 		float DamageModifierAmount = 0.0f;
+
+	//How much damage should we add to the multiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
+		float ChargeDamageModifierAmount = 2.0f;
 
 	//Give us the sum/product of BaseDamage and DamageMultiplier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage")
@@ -170,16 +174,20 @@ public:
 		float CriticalHitMultiplier = 0.0f;
 
 	//Store the original damage amount for resetting
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage|Reset")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Reset")
 		float OriginalBaseDamageAmount = 0.0f;
 
 	//Store the original DamageMultiplier for resetting
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Damage|Reset")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Reset")
 		float OriginalDamageMultiplier = 0.0f;
 
 	//Store the original DamageModifier for resetting
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Reset")
 		float OriginalDamageModifier = 0.0;
+
+	//Store the original ChargeDamageModifier for resetting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage|Reset")
+		float OriginalChargeDamageModifier = 0.0f;
 
 	////End Damage
 
@@ -318,6 +326,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats")
 		bool bCanWeaponCharge;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats")
+		bool bCanWeaponFireUnique;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
 		bool bIsCharging;
 
@@ -434,13 +445,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Called when the player/AI want to fire the weapon
+	//Called when the player/AI want to fire the weapon - standard projectile
 	UFUNCTION()
 		void FireWeapon();
 
-	//Called when the player/AI want to fire the weapon
+	//Called when the player/AI want to fire the weapon - charge projectile
 	UFUNCTION()
 		void FireCharge();
+
+	//Called when the player/AI want to fire the weapon - unique projectile
+	UFUNCTION()
+		void FireUnique();
 
 	//Called when the player/AI needs to reset damage and charge
 	UFUNCTION(BlueprintCallable, Category = "Weapon")

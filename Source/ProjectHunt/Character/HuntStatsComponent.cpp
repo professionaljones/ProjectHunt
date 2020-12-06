@@ -209,6 +209,7 @@ void UHuntStatsComponent::DamageHealth(float DecreaseAmount)
 	{
 		CurrentHealth = 0.0f;
 		bIsDead = true;
+		OnDeathDelegate.Broadcast();
 	}
 }
 

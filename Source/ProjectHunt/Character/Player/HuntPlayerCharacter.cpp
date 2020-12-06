@@ -47,7 +47,11 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 void AHuntPlayerCharacter::CharacterTakeDamage(float DamageAmount)
 {
 	PlayerStatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
-	//UpdatePlayerData();
+	if (PlayerStatsComponent->bIsDead)
+	{
+		PlayerStatsComponent->OnDeathDelegate.Broadcast();
+	}
+	
 }
 
 bool AHuntPlayerCharacter::IsCharacterDead()

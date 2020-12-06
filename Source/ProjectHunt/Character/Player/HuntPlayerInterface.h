@@ -87,5 +87,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnPlayerUnlockDash(bool bIsUnlocked);
 
+	//Get the player's aiming status
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		bool GetPlayerAimStatus();
 
 };
