@@ -16,6 +16,7 @@ class AUTOSETTINGS_API UAutoSettingWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	
 
 	UAutoSettingWidget(const FObjectInitializer& ObjectInitializer);
 

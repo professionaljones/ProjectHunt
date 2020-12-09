@@ -7,6 +7,9 @@ AHuntEnemyCharacter::AHuntEnemyCharacter()
 {
 	//Create a StatsComponent
 	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
+
+	//Create a CharacterStateComponent
+	CharacterStateComponent = CreateDefaultSubobject<UHuntCharacterStateComponent>("CharacterStateComponent");
 }
 
 void AHuntEnemyCharacter::CharacterTakeDamage(float DamageAmount)
