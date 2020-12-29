@@ -36,4 +36,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
 		void OnRestartFromCheckpoint();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		void AddEnemyToArray(AActor* NewEnemy);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Game")
+		TArray<AActor*> GetCurrentEnemiesInLevel();
 };

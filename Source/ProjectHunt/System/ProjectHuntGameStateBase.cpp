@@ -25,4 +25,8 @@ FTimespan AProjectHuntGameStateBase::GetCurrentPlayTime()
 	return CurrentPlayTime;
 }
 
+TArray<AActor*> AProjectHuntGameStateBase::GetCurrentEnemies()
+{
+	return CurrentEnemies;
+}
 

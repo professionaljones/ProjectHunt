@@ -92,4 +92,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		bool GetPlayerAimStatus();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void ActivateSuitPower(ESuitMainAbilities CurrentAbility);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void DeactivateSuitPower(ESuitMainAbilities CurrentAbility);
+
 };

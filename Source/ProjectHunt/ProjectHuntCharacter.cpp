@@ -30,6 +30,11 @@ AProjectHuntCharacter::AProjectHuntCharacter()
 
 }
 
+TArray<FTransform> AProjectHuntCharacter::GetCachedTransforms()
+{
+	return CachedTransforms;
+}
+
 void AProjectHuntCharacter::BeginPlay()
 {
 	// Call the base class  

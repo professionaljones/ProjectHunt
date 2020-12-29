@@ -94,6 +94,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Difficulty")
 		TArray<TEnumAsByte<EGameModifiers>> ModifiersList;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game")
+	TArray<AActor*> GetCurrentEnemies();
 
+protected:
+
+	//List of enemies currently in the level
+	//We will check every second or so to update this list
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
+	TArray<class AActor*> CurrentEnemies;
 
 };

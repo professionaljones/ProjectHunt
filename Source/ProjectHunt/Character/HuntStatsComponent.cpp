@@ -2,6 +2,7 @@
 
 
 #include "HuntStatsComponent.h"
+#include "ProjectHunt/ProjectHuntCharacter.h"
 
 // Sets default values for this component's properties
 UHuntStatsComponent::UHuntStatsComponent()
@@ -236,6 +237,7 @@ void UHuntStatsComponent::InitStats()
 
 void UHuntStatsComponent::ActivatePower()
 {
+	AProjectHuntCharacter* localCharacter = Cast<AProjectHuntCharacter>(GetOwner());
 	if (!bIsAragonEmpty && !bIsDead)
 	{
 		//bIsPowerActive = !bIsPowerActive;
@@ -250,6 +252,14 @@ void UHuntStatsComponent::ActivatePower()
 				break;
 				//ConsumeAragon(QuicksilverStats.fAragonConsumptionAmount);
 				
+			}
+			case ESuitMainAbilities::MA_Showstopper:
+			{
+				if (localCharacter->GetClass()->ImplementsInterface(UHuntPlayerInterface::StaticClass()))
+				{
+					IHuntPlayerInterface::Execute_ActivateSuitPower(localCharacter, CurrentSuitPower);
+					break;
+				}
 			}
 			case ESuitMainAbilities::MA_Overload:
 			{
@@ -266,6 +276,7 @@ void UHuntStatsComponent::ActivatePower()
 
 void UHuntStatsComponent::DeactivatePower()
 {
+	AProjectHuntCharacter* localCharacter = Cast<AProjectHuntCharacter>(GetOwner());
 	bIsPowerActive = false;
 
 	if (CurrentAragon < MaxAragon || bIsAragonEmpty)
@@ -279,10 +290,21 @@ void UHuntStatsComponent::DeactivatePower()
 	case ESuitMainAbilities::MA_Quicksilver:
 	{
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+		GetOwner()->CustomTimeDilation = 1.0f;
+		break;
+	}
+	case ESuitMainAbilities::MA_Showstopper:
+	{
+		if (localCharacter->GetClass()->ImplementsInterface(UHuntPlayerInterface::StaticClass()))
+		{
+			IHuntPlayerInterface::Execute_DeactivateSuitPower(localCharacter, CurrentSuitPower);
+			break;
+		}
 	}
 	case ESuitMainAbilities::MA_Overload:
 	{
 		GetOwner()->CustomTimeDilation = 1.0f;
+		break;
 	}
 	}
 }

@@ -51,7 +51,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* CharacterAudioComponent;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	FTransform CurrentTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	TArray<FTransform> CachedTransforms;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	TArray<FTransform> GetCachedTransforms();
 
 
 protected:
