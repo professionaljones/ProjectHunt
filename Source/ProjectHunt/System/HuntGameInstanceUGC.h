@@ -13,6 +13,7 @@
 /**
  *
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSyncStaticData);
 UCLASS()
 class PROJECTHUNT_API UHuntGameInstanceUGC : public UUGCBaseGameInstance, public IHuntGameInstanceInterface, public IHuntGameInterface
 {
@@ -42,5 +43,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Save)
 		void AttemptToSave();
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Static Data")
+		FSyncStaticData OnSyncStaticData;
 
 };

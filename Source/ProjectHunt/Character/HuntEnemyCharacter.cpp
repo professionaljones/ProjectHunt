@@ -7,11 +7,18 @@ AHuntEnemyCharacter::AHuntEnemyCharacter()
 {
 	//Create a StatsComponent
 	StatsComponent = CreateDefaultSubobject<UHuntStatsComponent>("StatsComponent");
+
+	//Create a CharacterStateComponent
+	CharacterStateComponent = CreateDefaultSubobject<UHuntCharacterStateComponent>("CharacterStateComponent");
 }
 
 void AHuntEnemyCharacter::CharacterTakeDamage(float DamageAmount)
 {
 	StatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
+	if (StatsComponent->bIsDead)
+	{
+		StatsComponent->OnDeathDelegate.Broadcast();
+	}
 }
 
 bool AHuntEnemyCharacter::IsCharacterDead()

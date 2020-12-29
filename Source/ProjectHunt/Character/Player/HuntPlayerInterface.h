@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "ProjectHunt/Weapons/HuntWeapon.h"
 #include "HuntPlayerInterface.generated.h"
 
 // This class does not need to be modified.
@@ -67,5 +68,28 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
 		void OnPlayerWeaponPickup(TSubclassOf<AHuntWeapon> NewWeapon);
 
+	//Called by system when player picks up an upgrade - add to collection percentage
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerPickupItem(float fItemCollectPercentage);
+
+	//Called by system when player unlocks the ability to use Aragon
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockAragon(bool bIsUnlocked);
+
+	//Called by system when player unlocks the ability to use the Missile Launcher
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockMissiles(bool bIsUnlocked);
+
+	//Called by system when player unlocks the ability to wall run
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockWallrun(bool bIsUnlocked);
+
+	//Called by system when player unlocks the ability to dash
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		void OnPlayerUnlockDash(bool bIsUnlocked);
+
+	//Get the player's aiming status
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Player")
+		bool GetPlayerAimStatus();
 
 };

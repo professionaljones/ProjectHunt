@@ -19,39 +19,7 @@ enum class EPlayerSuit : uint8
 
 };
 
-USTRUCT(BlueprintType)
-struct FPlayerSaveableStats : public FTableRowBase
-{
-	GENERATED_BODY()
 
-		//Has the player unlocked the ability to dash?
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
-		bool bUnlockedDash = false;
-
-	//Has the player unlocked the ability to wall run?
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Movement")
-		bool bUnlockedWallrun = false;
-
-	//Has the player unlocked the ability to use the missile launcher?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Weapons")
-		bool bHasMissileLauncher = false;
-
-	//Has the player unlocked the ability to use Aragon abilities?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Player|Aragon")
-		bool bUnlockedAragon = false;
-
-public:
-	friend FArchive& operator<<(FArchive& Ar, FPlayerSaveableStats& PlayerSaveableAbilities)
-	{
-		Ar << PlayerSaveableAbilities.bUnlockedDash;
-		Ar << PlayerSaveableAbilities.bUnlockedWallrun;
-		Ar << PlayerSaveableAbilities.bHasMissileLauncher;
-		Ar << PlayerSaveableAbilities.bUnlockedAragon;
-		
-		return Ar;
-	}
-};
 
 USTRUCT(BlueprintType)
 struct FPlayerStatsData : public FTableRowBase
@@ -67,7 +35,7 @@ public:
 	//This is the player's maximum health amount
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Health")
 		float SaveMaxHealth;
-	
+
 	//This is the player's current aragon amount
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Aragon")
 		float SaveCurrentAragon;
@@ -87,7 +55,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Player|Suit")
 		EPlayerSuit SaveCurrentPlayerSuit;
 
-	
+
 
 	//How many dashes has the character executed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
@@ -105,22 +73,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		int32 SaveCurrentJumpCount = 2;
 
-	friend FArchive operator<<(FArchive Ar, FPlayerStatsData& SavePlayerData)
-	{
-		Ar << SavePlayerData.SaveCurrentHealth;
-		Ar << SavePlayerData.SaveMaxHealth;
-		Ar << SavePlayerData.SaveCurrentAragon;
-		Ar << SavePlayerData.SaveMaxAragon;
-		Ar << SavePlayerData.SaveCurrentMissileCount;
-		Ar << SavePlayerData.SaveMaxMissileCount;
-		Ar << SavePlayerData.SaveCurrentPlayerSuit;
-		Ar << SavePlayerData.SaveCurrentDashCount;
-		Ar << SavePlayerData.SaveMaxDashCount;
-		Ar << SavePlayerData.SaveMaxJumpCount;
-		Ar << SavePlayerData.SaveCurrentJumpCount;
 
-		return Ar;
-	}
 
 };
 /**
@@ -150,13 +103,36 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 		class UPlayerStatsComponent* PlayerStatsComponent;
 
 	virtual void CharacterTakeDamage(float DamageAmount) override;
 	virtual bool IsCharacterDead() override;
 
+	void OnActivatePower();
+	void OnRechargePower();
+
+	virtual void CharacterActivatePower() override;
+	virtual void CharacterDeactivatePower() override;
+	virtual void CharacterRechargeAragon() override;
+	virtual void CharacterUseAragon() override;
+
+	UFUNCTION(BlueprintCallable)
+		void PlayerActivatePower();
+
+	UFUNCTION(BlueprintCallable)
+		void PlayerRechargeAragon();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FTimerHandle PlayerActivePowerHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTimerHandle PlayerRechargeAragonHandle;
+
 public:
+
+	//Is the player trying to aim or lock on to a target?
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = Weapon)
+	bool bIsAiming = false;
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 		void UpdatePlayerData();
@@ -170,10 +146,29 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player|Data")
 		FUpdateWeaponSlot UpdateWeaponSlotEvent;
 
-	//This struct will hold the player's unlocked abilities (dash, wallrun, double jump, missiles, etc)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Stats")
-		FPlayerSaveableStats PlayerSavedStats;
-	
+	/*These are abilities that the player can unlock throughout gameplay
+	These abilities will add to the player's item percentage as they impact game play*/
+
+	//Has the player unlocked the ability to charge their weapon(s)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
+		bool bCanChargeWeapon = false;
+
+	//Has the player unlocked the ability to dash?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
+		bool bUnlockedDash = false;
+
+	//Has the player unlocked the ability to wall run?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Movement")
+		bool bUnlockedWallrun = false;
+
+	//Has the player unlocked the ability to use the missile launcher?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Weapons")
+		bool bHasMissileLauncher = false;
+
+	//Has the player unlocked the ability to use Aragon abilities?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Unlockables|Aragon")
+		bool bUnlockedAragon = false;
+
 	//This struct will hold the player's stats (health, aragon, jump/dash counts, etc)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Stats")
 		FPlayerStatsData PlayerSavedData;
@@ -191,10 +186,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Inventory")
 		class AHuntWeapon* PistolSlot;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Inventory")
 		class AHuntWeapon* RifleSlot;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Inventory")
 		class AHuntWeapon* ShotgunSlot;
 
@@ -215,9 +210,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
 		float UI_MaxMissileCount = 0.0f;
 
-	//This is the player's maximum health amount
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
-		float MaxHealthLimit = 1500.0f;
+
 
 	//This is the player's maximum missile count
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapons")
@@ -231,15 +224,15 @@ public:
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		int32 MaxDashCount = 2;
+		int32 MaxDashCount = 3;
 
 	//How many dashes has the character executed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		int32 CurrentDashCount = 2;
+		int32 CurrentDashCount = 0;
 
-	//Multiplier of character Velocity for dashing - prototyping
+	//Multiplier of character Velocity for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dashing")
-		float DashVelocityMod = 100.0f;
+		float DashVelocityMod = 20.0f;
 
 	//What is the max number of limits for dashing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
@@ -247,16 +240,17 @@ public:
 
 	//How many jumps can the character execute
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		int32 CurrentJumpCount = 2;
+		int32 CurrentJumpCount = 0;
+
+	//How much control should the player have while in the air (max of 1.0f)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
+		float PlayerAirControl = 0.58f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		float PlayerAirControl = 0.16f;
+		float JumpBlastLimit = 3.50f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		float JumpBlastLimit = 2.50f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
-		float JumpBlastChargeModifer = 0.01f;
+		float JumpBlastChargeModifer = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Jumping")
 		float CurrentJumpBlastChargeAmount = 2.50f;
@@ -284,15 +278,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	
+
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = SaveLoad)
-		bool SaveData();
-
-	UFUNCTION(BlueprintCallable, Category = SaveLoad)
-		bool LoadData();
 
 	//This will take a bool @param AbilityToToggle, and set it to @param bUnlockAbility
 	UFUNCTION(BlueprintCallable, Category = "Player|Data")
@@ -354,7 +343,10 @@ public:
 		void UpdateJumpCount(int32 IncreaseAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
-		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
+		void SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints);
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Initialization")
+		void SetPlayerAbilities(bool bEnableDash, bool bEnableWallrun, bool bEnableAragon, bool bEnableMissiles);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = "true"))
@@ -363,20 +355,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class UAudioComponent* SuitAudioComponent;
 
-	void SaveLoadData(FArchive& Ar, float& CurrentHealth, float& MaxHealth, float& CurrentAragon, float& MaxAragon);
-
-public:
-	friend FArchive& operator<<(FArchive& Ar, AHuntPlayerCharacter& PlayerCharacterData)
-	{
-		Ar << PlayerCharacterData.PlayerSavedStats.bHasMissileLauncher;
-		Ar << PlayerCharacterData.PlayerSavedStats.bUnlockedAragon;
-		Ar << PlayerCharacterData.PlayerSavedStats.bUnlockedDash;
-		Ar << PlayerCharacterData.PlayerSavedStats.bUnlockedWallrun;
-		Ar << PlayerCharacterData.CurrentPlayerSuit;
-		//Ar << PlayerCharacterData.StatsComponent.CurrentHealth
-		
 
 
-		return Ar;
-	}
 };

@@ -4,6 +4,7 @@
 
 #include "ProjectHunt/ProjectHuntCharacter.h"
 #include "ProjectHunt/Character/HuntStatsComponent.h"
+#include "ProjectHunt/Components/HuntCharacterStateComponent.h"
 #include "HuntEnemyCharacter.generated.h"
 
 /**
@@ -19,6 +20,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 		class UHuntStatsComponent* StatsComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
+		class UHuntCharacterStateComponent* CharacterStateComponent;
 
 	virtual void CharacterTakeDamage(float DamageAmount) override;
 	virtual bool IsCharacterDead() override;

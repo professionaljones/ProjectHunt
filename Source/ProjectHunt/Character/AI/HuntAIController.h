@@ -24,6 +24,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
 		FGenericTeamId TeamId;
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UAIPerceptionSystem* MyAIPerceptionSystem;*/
+
 };

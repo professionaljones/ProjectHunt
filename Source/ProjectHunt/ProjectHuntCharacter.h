@@ -81,13 +81,13 @@ public:
 		float CurrentRushRecharge = 0.0f;
 
 	//How fast should the dash recharge increment by
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Dash")
-		float DashRechargeAmount = 0.01f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dash")
+		float DashRechargeAmount = 0.04f;
 
 
 	//How long until the dash count is incremented
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Movement|Dash")
-		float DashRechargeLimit = 3.0f;
+		float DashRechargeLimit = 1.0f;
 
 	//Value to modify to control dash recharging - zero-filled on start
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = "Movement|Dash")
@@ -172,7 +172,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Style")
 		float SSS_StyleLimit = 2.50f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Character|Data")
 		int32 CurrentDataPoints = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
@@ -190,7 +190,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		float Cached_GamepadSensitivityY = 0.0f;
 
-
+	UFUNCTION(BlueprintCallable, Category = "Character")
+		float CalculateWeaponDamage(int32 DamageTypeBitmask);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Data")
 		int32 MaxDataPoints = 99999999;
@@ -256,6 +257,18 @@ public:
 	virtual void CharacterTakeDamage(float DamageAmount);
 
 	virtual bool IsCharacterDead();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+	virtual void CharacterActivatePower();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+	virtual void CharacterDeactivatePower();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+	virtual void CharacterRechargeAragon();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+		virtual void CharacterUseAragon();
 	
 
 	FTimerHandle StyleDecreaseTimer;

@@ -3,7 +3,6 @@
 
 #include "HuntPlayerCharacter.h"
 #include "Camera/CameraComponent.h"
-#define SAVEDATAFILENAME "SampleSavedData"
 
 AHuntPlayerCharacter::AHuntPlayerCharacter()
 {
@@ -23,6 +22,8 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 	PlayerStatsComponent = CreateDefaultSubobject<UPlayerStatsComponent>("PlayerStatsComponent");
+	//PlayerStatsComponent->RegisterComponent();
+	////this->AddInstanceComponent(PlayerStatsComponent);
 
 	PlayerStatsComponent->MaxHealth = 200.0f;
 	PlayerStatsComponent->MaxAragon = 200.0f;
@@ -33,18 +34,112 @@ AHuntPlayerCharacter::AHuntPlayerCharacter()
 
 	//Create a secondary AudioComponent 
 	SuitAudioComponent = CreateDefaultSubobject<UAudioComponent>("SuitAudioComponent");
-	MovementSpeed = 1300.0f;
+	//SuitAudioComponent = 
+	MovementSpeed = 900.0f;
+
+	GetCharacterMovement()->MaxAcceleration = 4096.0f;
+	GetCharacterMovement()->BrakingFrictionFactor = 1.0f;
+	GetCharacterMovement()->JumpZVelocity = 600.0f;
+	GetCharacterMovement()->BrakingDecelerationFalling = 1024.0f;
+	GetCharacterMovement()->AirControl = PlayerAirControl;
 }
 
 void AHuntPlayerCharacter::CharacterTakeDamage(float DamageAmount)
 {
 	PlayerStatsComponent->DamageHealth(DamageAmount * DamageTakenModifier);
-	UpdatePlayerData();
+	if (PlayerStatsComponent->bIsDead)
+	{
+		PlayerStatsComponent->OnDeathDelegate.Broadcast();
+	}
+	
 }
 
 bool AHuntPlayerCharacter::IsCharacterDead()
 {
 	return PlayerStatsComponent->bIsDead;
+}
+
+void AHuntPlayerCharacter::OnActivatePower()
+{
+	PlayerStatsComponent->ActivatePower();
+
+}
+
+void AHuntPlayerCharacter::OnRechargePower()
+{
+	PlayerStatsComponent->RechargeAragon();
+
+}
+
+void AHuntPlayerCharacter::CharacterActivatePower()
+{
+	PlayerActivatePower();
+	IHuntCharacterInterface::Execute_OnActivateAragonPower(this, PlayerStatsComponent->CurrentSuitPower);
+}
+
+void AHuntPlayerCharacter::CharacterDeactivatePower()
+{
+	PlayerStatsComponent->DeactivatePower();
+	//PlayerStatsComponent->bIsPowerActive = false;
+	GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
+	PlayerRechargeAragon();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+	//IHuntCharacterInterface::Execute_OnDeactivateAragonPower(this, PlayerStatsComponent->CurrentSuitPower);
+}
+
+void AHuntPlayerCharacter::CharacterRechargeAragon()
+{
+	if (PlayerStatsComponent->CurrentAragon >= PlayerStatsComponent->MaxAragon)
+	{
+		GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+	}
+	PlayerStatsComponent->RechargeAragon();
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+}
+
+void AHuntPlayerCharacter::CharacterUseAragon()
+{
+	PlayerStatsComponent->ConsumeAragon_Power();
+
+	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
+}
+
+void AHuntPlayerCharacter::PlayerActivatePower()
+{
+	if (PlayerRechargeAragonHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+	}
+	if (bUnlockedAragon)
+	{
+		PlayerStatsComponent->bIsPowerActive = true;
+		OnActivatePower();
+		GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterUseAragon, 1.0f, true);
+		/*if (GetWorldTimerManager().IsTimerActive(PlayerRechargeAragonHandle) || PlayerStatsComponent->bIsRecharging)
+		{
+			GetWorldTimerManager().ClearTimer(PlayerRechargeAragonHandle);
+			PlayerStatsComponent->bIsRecharging = false;
+		}*/
+		//GetWorldTimerManager().SetTimer(PlayerActivePowerHandle, this, &AHuntPlayerCharacter::CharacterActivatePower, 1.0f, true);
+	}
+
+}
+
+void AHuntPlayerCharacter::PlayerRechargeAragon()
+{
+	if (!PlayerStatsComponent->bIsPowerActive)
+	{
+		if (PlayerStatsComponent->bIsAragonEmpty || PlayerStatsComponent->bIsRecharging)
+		{
+			GetWorldTimerManager().SetTimer(PlayerRechargeAragonHandle, this, &AHuntPlayerCharacter::CharacterRechargeAragon, 1.0f, true);
+		}
+		if (PlayerActivePowerHandle.IsValid())
+		{
+			GetWorldTimerManager().ClearTimer(PlayerActivePowerHandle);
+		}
+	}
+	
+	
 }
 
 void AHuntPlayerCharacter::UpdatePlayerData()
@@ -74,74 +169,33 @@ int32 AHuntPlayerCharacter::GetDashCount()
 
 bool AHuntPlayerCharacter::CanPlayerUseMissiles()
 {
-	return PlayerSavedStats.bHasMissileLauncher;
+	return bHasMissileLauncher;
 }
 
 bool AHuntPlayerCharacter::CanPlayerUseAragon()
 {
-	return PlayerSavedStats.bUnlockedAragon;
+	return bUnlockedAragon;
 }
 
 bool AHuntPlayerCharacter::CanPlayerDash()
 {
-	return PlayerSavedStats.bUnlockedDash;
+	return bUnlockedDash;
 }
 
 bool AHuntPlayerCharacter::CanPlayerWallrun()
 {
-	return PlayerSavedStats.bUnlockedWallrun;
+	return bUnlockedWallrun;
 }
 
 void AHuntPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	UpdatePlayerData();
+	//MyPlayerController = Cast<AHuntPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	//UpdatePlayerData();
 
 }
 
-bool AHuntPlayerCharacter::SaveData()
-{
-	//Save the data to binary
-	FBufferArchive ToBinary;
-	SaveLoadData(ToBinary, PlayerStatsComponent->CurrentHealth, PlayerStatsComponent->MaxHealth, PlayerStatsComponent->CurrentAragon, PlayerStatsComponent->MaxAragon);
 
-	//No data were saved
-	if (ToBinary.Num() <= 0) return false;
-
-	//Save binaries to disk
-	bool result = FFileHelper::SaveArrayToFile(ToBinary, TEXT(SAVEDATAFILENAME));
-
-	//Empty the buffer's contents
-	ToBinary.FlushCache();
-	ToBinary.Empty();
-
-	return result;
-}
-
-bool AHuntPlayerCharacter::LoadData()
-{
-	TArray<uint8> BinaryArray;
-
-	//load disk data to binary array
-	if (!FFileHelper::LoadFileToArray(BinaryArray, TEXT(SAVEDATAFILENAME))) return false;
-
-	if (BinaryArray.Num() <= 0) return false;
-
-	//Memory reader is the archive that we're going to use in order to read the loaded data
-	FMemoryReader FromBinary = FMemoryReader(BinaryArray, true);
-	FromBinary.Seek(0);
-
-	SaveLoadData(FromBinary, PlayerStatsComponent->CurrentHealth, PlayerStatsComponent->MaxHealth, PlayerStatsComponent->CurrentAragon, PlayerStatsComponent->MaxAragon);
-
-	//Empty the buffer's contents
-	FromBinary.FlushCache();
-	BinaryArray.Empty();
-	//Close the stream
-	FromBinary.Close();
-
-	return true;
-}
 
 void AHuntPlayerCharacter::UnlockAbility(bool AbilityToToggle, bool bUnlockAbility)
 {
@@ -209,24 +263,47 @@ void AHuntPlayerCharacter::UpdateMissileCapacity(int32 NewMissileAmount)
 
 void AHuntPlayerCharacter::SetPlayerSuit(EPlayerSuit NewPlayerSuit)
 {
+	CurrentPlayerSuit = NewPlayerSuit;
 	switch (CurrentPlayerSuit)
 	{
 	case EPlayerSuit::Suit_Standard:
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-1.0f);
+		PlayerStatsComponent->ModifyFireResistance(-2.0f);
+		PlayerStatsComponent->ModifyIceResistance(-1.50f);
+		PlayerStatsComponent->ModifyShockResistance(-2.25f);
+		PlayerStatsComponent->ModifyAragonResistance(-3.0f);
+		break;
+	}
 
-		DamageDefenseModifer = 0.0f;
 
 	case EPlayerSuit::Suit_Version2:
-
-		DamageDefenseModifer = 0.15f;
-
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-0.75f);
+		PlayerStatsComponent->ModifyFireResistance(-1.75f);
+		PlayerStatsComponent->ModifyIceResistance(-1.25f);
+		PlayerStatsComponent->ModifyShockResistance(-2.0f);
+		PlayerStatsComponent->ModifyAragonResistance(-3.0f);
+		break;
+	}
 	case EPlayerSuit::Suit_Version3:
 
-		DamageDefenseModifer = 0.30f;
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-0.65f);
+		PlayerStatsComponent->ModifyFireResistance(-1.0f);
+		PlayerStatsComponent->ModifyIceResistance(-0.75f);
+		PlayerStatsComponent->ModifyShockResistance(-1.50f);
+		PlayerStatsComponent->ModifyAragonResistance(-2.50f);
+	}
 
 	case EPlayerSuit::Suit_Version4:
-
-		DamageDefenseModifer = 0.50f;
-
+	{
+		PlayerStatsComponent->ModifyStandardResistance(-0.50f);
+		PlayerStatsComponent->ModifyFireResistance(-1.25f);
+		PlayerStatsComponent->ModifyIceResistance(-1.0f);
+		PlayerStatsComponent->ModifyShockResistance(-1.50f);
+		PlayerStatsComponent->ModifyAragonResistance(-2.0f);
+	}
 	default:
 		break;
 
@@ -267,7 +344,7 @@ void AHuntPlayerCharacter::UpdateJumpCount(int32 IncreaseAmount)
 	UpdatePlayerData();
 }
 
-void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, FPlayerSaveableStats NewPlayerSaveableStats, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
+void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon, EPlayerSuit NewPlayerSuit, ESuitMainAbilities NewSuitPower, ESuitPowerModifiers NewPowerModifierOne, ESuitPowerModifiers NewPowerModifierTwo, int32 NewMaxMissileCount, TMap<int32, AHuntWeapon*> NewWeaponInventory, int32 NewCurrentDataPoints)
 {
 	PlayerStatsComponent->UpdateMaxHealth(NewMaxHealth);
 	PlayerStatsComponent->UpdateMaxAragon(NewMaxAragon);
@@ -278,20 +355,19 @@ void AHuntPlayerCharacter::SetPlayerStats(float NewMaxHealth, float NewMaxAragon
 	UpdateMissileCapacity(NewMaxMissileCount);
 	WeaponInventory = NewWeaponInventory;
 	CurrentDataPoints = NewCurrentDataPoints;
-	PlayerSavedStats = NewPlayerSaveableStats;
+
 	UpdatePlayerData();
 	IHuntCharacterInterface::Execute_UpdateStatsUI(this);
 
 
 }
 
-void AHuntPlayerCharacter::SaveLoadData(FArchive& Ar, float& CurrentHealth, float& MaxHealth, float& CurrentAragon, float& MaxAragon)
+void AHuntPlayerCharacter::SetPlayerAbilities(bool bEnableDash, bool bEnableWallrun, bool bEnableAragon, bool bEnableMissiles)
 {
-	Ar << PlayerStatsComponent->CurrentHealth;
-	Ar << PlayerStatsComponent->MaxHealth;
-	Ar << PlayerStatsComponent->CurrentAragon;
-	Ar << PlayerStatsComponent->MaxAragon;
-	//Ar << PlayerLocationToSaveOrLoad = new FTransform(new Vector3(0), new Vector3(0), new Vector3(0));
-	//Ar << UGameplayStatics::GetPlayerCharacter(GetWorld(),0)->GetActorTransform();
+	IHuntPlayerInterface::Execute_OnPlayerUnlockDash(this, bEnableDash);
+	IHuntPlayerInterface::Execute_OnPlayerUnlockWallrun(this, bEnableWallrun);
+	IHuntPlayerInterface::Execute_OnPlayerUnlockAragon(this, bEnableMissiles);
+	IHuntPlayerInterface::Execute_OnPlayerUnlockMissiles(this, bEnableMissiles);
+
 }
 

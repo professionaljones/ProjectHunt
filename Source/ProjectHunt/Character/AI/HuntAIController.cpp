@@ -36,3 +36,4 @@ ETeamAttitude::Type AHuntAIController::GetTeamAttitudeTowards(const AActor& Othe
 
 	return ETeamAttitude::Neutral;
 }
+

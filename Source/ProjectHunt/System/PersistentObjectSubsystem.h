@@ -24,11 +24,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Object Registration")
 		void RegisterSaveableObject(class AActor* NewSaveableObject);
 
+	UFUNCTION(BlueprintCallable, Category = "Object Registration")
+		void RegisterCham(class AActor* NewChamReference);
+
 	UFUNCTION(BlueprintCallable, Category = "Persistent Object Management")
 		void CheckSaveSlotStatus();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Saveable Objects")
 		TArray<class AActor*> AllSaveableObjects;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Saveable Objects")
+	AActor* ChamReference;
 private:
 
 	

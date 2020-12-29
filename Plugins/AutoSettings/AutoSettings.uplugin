@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 26,
-	"VersionName": "1.13",
+	"Version": 27,
+	"VersionName": "1.14",
 	"FriendlyName": "Auto Settings",
 	"Description": "Game options and input binding toolkit",
 	"Category": "Settings",
@@ -20,8 +20,7 @@
 			"LoadingPhase": "PreDefault",
 			"WhitelistPlatforms": [
 				"Win64",
-				"Win32",
-				"Android"
+				"Win32"
 			]
 		}
 	]

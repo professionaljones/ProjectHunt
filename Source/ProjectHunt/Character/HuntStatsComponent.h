@@ -19,10 +19,10 @@
 UENUM(BlueprintType)
 enum class ESuitMainAbilities : uint8
 {
-	MA_None UMETA(DisplayName = "Unequipped"),
-	MA_Quicksilver UMETA(DisplayName = "Quicksilver"),
-	MA_Showstopper UMETA(DisplayName = "Showstopper"),
-	MA_Overload UMETA(DisplayName = "Overload")
+	MA_None = 0 UMETA(DisplayName = "Unequipped"),
+	MA_Quicksilver = 1 UMETA(DisplayName = "Quicksilver"),
+	MA_Showstopper = 2 UMETA(DisplayName = "Showstopper"),
+	MA_Overload = 3 UMETA(DisplayName = "Overload")
 };
 
 /*These are the modifiers to the player's base abilities (jumping, dashing, etc) that add new effects when using them
@@ -57,6 +57,10 @@ public:
 	//The Ability's current level
 	int32 CurrentAbilityLevel = 1;
 
+	//The Ability's Aragon usage amount - how much per second does it take for this power to remain active?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+		float fAragonConsumptionAmount = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 	//The Ability's Max level
 	int32 MaxAbilityLevel = 3;
@@ -64,16 +68,6 @@ public:
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 		float AbilityUpgradePrice;
-
-	friend FArchive& operator<<(FArchive& Ar, FPlayerMainAbilityData& PlayerMainAbilityStats)
-	{
-		Ar << PlayerMainAbilityStats.CurrentAbility;
-		Ar << PlayerMainAbilityStats.CurrentAbilityLevel;
-		Ar << PlayerMainAbilityStats.MaxAbilityLevel;
-		Ar << PlayerMainAbilityStats.AbilityUpgradePrice;
-
-		return Ar;
-	}
 };
 
 /* This struct, much like FPlayerMainAbilityData, serves to maintain info about the player's unlocked power modifiers and add new effects */
@@ -100,17 +94,9 @@ public:
 	//What is the price of this upgrade?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
 		float PowerUpgradeAbility;
-
-	friend FArchive& operator<<(FArchive& Ar, FPlayerPowerModifierData& PlayerPowerModifierStats)
-	{
-		Ar << PlayerPowerModifierStats.CurrentPowerModifier;
-		Ar << PlayerPowerModifierStats.CurrentPowerModifierLevel;
-		Ar << PlayerPowerModifierStats.MaxPowerModifierLevel;
-		Ar << PlayerPowerModifierStats.PowerUpgradeAbility;
-
-		return Ar;
-	}
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 /**HuntStatsComponent serves as a container for a character's stats and functions
 for adding, reducing and changing the overall values **/
@@ -123,6 +109,8 @@ public:
 	// Sets default values for this component's properties
 	UHuntStatsComponent();
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Stats")
+		FOnDeath OnDeathDelegate;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -147,9 +135,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
 		float MaxAragon = 0.0f;
 
+	//How much Aragon does the owner start with
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
+		bool bIsPowerActive = false;
+
 	//By how many points does the owner's Current Aragon recharge
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
-		float AragonRechargeAmount = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Aragon")
+		float AragonRechargeAmount = 10.0f;
 
 
 	//This is what the UI will report the owner's Max Health is
@@ -168,42 +160,56 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats|Aragon")
 		float UI_MaxAragon = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Enemy")
-		bool bWasScanned = false;
+	//How much damage (1 = 100%, 0 = 0%) can we ignore of Standard damage?
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, SaveGame, Category = "Defenses")
+		float StandardAmmoDefense = -1.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats|Data")
-		FString CharacterName;
+	//How much damage (1 = 100%, 0 = 0%) can we ignore of Fire damage?
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Defenses")
+		float FireAmmoDefense = -2.0f;
+
+	//How much damage (1 = 100%, 0 = 0%) can we ignore of Ice damage?
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Defenses")
+		float IceAmmoDefense = -1.50f;
+	
+	//How much damage (1 = 100%, 0 = 0%) can we ignore of Shock damage?
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Defenses")
+		float ShockAmmoDefense = -2.25f;
+	
+	//How much damage (1 = 100%, 0 = 0%) can we ignore of Shock damage?
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "Defenses")
+		float AragonAmmoDefense = -3.0f;
 
 	//What is the player's current power 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Powers")
 		ESuitMainAbilities CurrentSuitPower;
 
 	//What is the player's First Power Modifier
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Powers")
 		ESuitPowerModifiers PowerModifierSlotOne;
 
 	//What is the player's Second Power Modifier
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Powers")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Powers")
 		ESuitPowerModifiers PowerModifierSlotTwo;
 
 	//The player's current Quicksilver Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerMainAbilityData QuicksilverStats;
 	
 	//The player's current Showstopper Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerMainAbilityData ShowstopperStats;
 	
 	//The player's current Overload Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerMainAbilityData OverloadStats;
 
 	//The player's current Dash Rush Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerPowerModifierData DashRushStats;
 
 	//The player's current Overload Stats
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Stats|Ability")
 		struct FPlayerPowerModifierData JumpBlastStats;
 
 	//This will track what abilities the player should have unlocked
@@ -257,10 +263,38 @@ public:
 	//This function will decrease the @param ConsumeAmount to the owner's Current Aragon
 	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
 		void ConsumeAragon(float ConsumeAmount);
+	
+	//This function will decrease the @param ConsumeAmount to the owner's Current Aragon - for timers
+	UFUNCTION(BlueprintCallable, Category = "Stats|Upgrade")
+		void ConsumeAragon_Power();
 
 	//This function will add to the owner's Current Aragon - for timer
 	UFUNCTION(BlueprintCallable, Category = "Stats|Aragon")
 		void RechargeAragon();
+
+	//This function will update Standard resistance to a desired amount
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void ModifyStandardResistance(float NewResistAmount);
+
+	//This function will update Fire resistance to a desired amount
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void ModifyFireResistance(float NewResistAmount);
+
+	//This function will update Fire resistance to a desired amount
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void ModifyIceResistance(float NewResistAmount);
+
+	//This function will update Fire resistance to a desired amount
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void ModifyShockResistance(float NewResistAmount);
+
+	//This function will update Fire resistance to a desired amount
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void ModifyAragonResistance(float NewResistAmount);
+
+	//This function will update Fire resistance to a desired amount
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void ModifyExplosiveResistance(float NewResistAmount);
 
 	//This function will decrease the owner's Current Health
 	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
@@ -269,6 +303,16 @@ public:
 	//This function will increase the owner's Current Health, up to their Max Health
 	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
 		void RecoverHealth(float RecoverAmount);
+
+	//This function will set Current values to Max values - ideally upon creation
+	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
+		void InitStats();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+		void ActivatePower();
+
+	UFUNCTION(BlueprintCallable, Category = "Aragon")
+		void DeactivatePower();
 
 	//Is the owner's Current Health less than or equal to 0?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
@@ -287,6 +331,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		UDataTable* PowerModifierDataTable;
+
+	public:
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+			float fSlowDownValue = 0.65f;
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+			float fActorSlowDownIgnoredValue = 1.10f;
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+			float fActorSpeedUpValue = 1.50f;
 
 
 };

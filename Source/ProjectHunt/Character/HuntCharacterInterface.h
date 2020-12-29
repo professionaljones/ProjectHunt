@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "HuntStatsComponent.h"
 #include "HuntCharacterInterface.generated.h"
 
 // This class does not need to be modified.
@@ -56,12 +57,20 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnRecoverAragon(float RecoverAmount);
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnConsumeAragon(float ConsumeAmount);
+
 	//Overrideable event for handling death
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnCharacterDeath();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnInteract();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnActivateAragonPower(ESuitMainAbilities PowerInUse);
+		UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
+		void OnDeactivateAragonPower(ESuitMainAbilities PowerInUse);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Event Response|Character")
 		void OnTakeFireDamage();
