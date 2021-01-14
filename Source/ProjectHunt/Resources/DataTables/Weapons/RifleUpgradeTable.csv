@@ -1,0 +1,11 @@
+﻿,WeaponDamageLevel,DamageUpgradeAmount,DamageUpgradePrice,FireRateLevel,FireRateUpgradeAmount,FireRateUpgradePrice,ChargeRateLevel,ChargeRateAmountIncrease,ChargeRateUpgradePrice,ChargeLimitLevel,ChargeLimitAmountIncrease,ChargeLimitUpgradePrice
+1,2,2,3000,2,0,0,2,0.02,1000,2,0.02,2000
+2,3,2,5000,3,0,0,3,0.02,3000,3,0.05,4000
+3,4,2,8000,4,0,0,4,0.02,5000,4,0.05,6000
+4,5,2,10000,5,0,0,5,0.02,8000,5,0.02,8000
+5,6,4,5000,6,0,0,6,0.02,10000,6,0.02,12000
+6,7,1,3000,7,0,0,7,0,3000,7,0.02,3000
+7,8,2,4000,8,0,0,8,0,4000,8,0,4000
+8,9,3,5000,9,0,0,9,0,5000,9,0,5000
+9,10,4,6000,10,0,0,10,0.02,6000,10,0.02,6000
+10,11,5,7000,11,0,0,11,0.02,7000,11,0.02,7000

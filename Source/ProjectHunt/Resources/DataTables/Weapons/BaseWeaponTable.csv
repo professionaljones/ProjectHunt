@@ -1,5 +1,5 @@
----,WeaponType,WeaponAmmoType,WeaponDamageLevel,FireRateLevel,ChargeRateLevel,ChargeLimitLevel,MaxWeaponLevel,FireRate,ChargeRate,BaseDamage,DamageMultiplierAmount,DamageModifierAmount,TotalDamage,CriticalHitDamage,SpecialDamageMultiplier,CriticalHitMultiplier,OriginalBaseDamageAmount,OriginalDamageMultiplier,OriginalDamageModifier,WeaponChargeLimit,WeaponChargeDelay
-HSC Driver,WT_Pistol,AT_Standard,1,1,1,1,5,0,0.1,10,1,0,0,0,2,3,0,0,0,1,1
-HSC Ranger,WT_Rifle,AT_Fire,1,1,1,1,5,0.22,0,9,1,0,0,0,1.5,2.5,0,0,0,0,5
-HSC Hailstorm,WT_Shotgun,AT_Ice,1,1,1,1,5,0,0.25,20,1,0,0,0,1.25,1.75,0,0,0,2,2
-Burner,WT_Pistol,AT_Shock,1,1,1,1,5,0,0.25,15,1,0,0,0,2,2,0,0,0,3,1
+---,WeaponType,WeaponAmmoType,WeaponDamageLevel,FireRateLevel,ChargeRateLevel,ChargeLimitLevel,MaxWeaponLevel,FireRate,ChargeRate,BaseDamage,DamageMultiplierAmount,ChargeDamageModifierAmount,DamageModifierAmount,TotalDamage,CriticalHitDamage,SpecialDamageMultiplier,CriticalHitMultiplier,OriginalBaseDamageAmount,OriginalDamageMultiplier,OriginalChargeDamageModifier,OriginalDamageModifier,WeaponChargeLimit,WeaponChargeDelay,bHasUnlockedAlt,bHasUnlockedChargedAlt
+HSC Driver,WT_Pistol,AT_Standard,1,1,1,1,5,0,0.1,10,1,2,0,0,0,2,3,0,0,,0,1,1,FALSE,FALSE
+HSC Ranger,WT_Rifle,AT_Fire,1,1,1,1,5,0.22,0,12,1,1.5,0,0,0,1.5,2.5,0,0,,0,0,5,FALSE,FALSE
+HSC Hailstorm,WT_Shotgun,AT_Ice,1,1,1,1,5,0.65,0.25,16,1,1.75,0,0,0,1.25,1.75,0,0,,0,2,2,FALSE,FALSE
+Burner,WT_Pistol,AT_Shock,1,1,1,1,5,0,0.25,15,1,2,0,0,0,2,2,0,0,,0,3,1,FALSE,FALSE
